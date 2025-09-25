@@ -1,46 +1,324 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const [exercises, forms, warmups] = await Promise.all([
+  getCollection("exercises"),
+  getCollection("forms"),
+  getCollection("warmups"),
+]);
+
+const previewNames = (collection, limit = 3) =>
+  collection
+    .map((entry) => entry?.data?.name)
+    .filter(Boolean)
+    .slice(0, limit);
+
+const formatPreview = (names) =>
+  names.length ? `${names.join(" • ")}${names.length >= 3 ? " …" : ""}` : "";
+
+const categories = [
+  {
+    href: "/exercises",
+    label: "Exercises",
+    icon: "🎭",
+    blurb: "Skill-tuned reps for teams and classes.",
+    preview: formatPreview(previewNames(exercises)),
+  },
+  {
+    href: "/forms",
+    label: "Forms",
+    icon: "🧩",
+    blurb: "Layouts, beats, and scenic frameworks.",
+    preview: formatPreview(previewNames(forms)),
+  },
+  {
+    href: "/warmups",
+    label: "Warmups",
+    icon: "🔥",
+    blurb: "High-energy games to dial in the group mind.",
+    preview: formatPreview(previewNames(warmups)),
+  },
+  {
+    href: "/tools",
+    label: "Tools",
+    icon: "🧰",
+    blurb: "Timers, prompts, and utilities built for rehearsal.",
+    preview: "Timer • Gauss Timer …",
+  },
+];
+
+const highlights = [
+  {
+    title: "Ready in the wings",
+    text: "Each resource is mobile-first and class-ready, so you can run it right from your phone in the rehearsal room.",
+  },
+  {
+    title: "Curated by players",
+    text: "Everything here is hand-picked from real-world workshops and shows—no filler, just crowd-tested material.",
+  },
+  {
+    title: "Always evolving",
+    text: "New exercises, forms, and digital helpers land regularly. Save your favorites and revisit fast.",
+  },
+];
 ---
 
 <BaseLayout
   title="Improv Toolbox"
   description="Mobile-first PWA using Pico.css"
 >
-  <section class="center" style="--center-max: 60ch;">
-    <!-- Hero Image -->
-    <img
-      src="/hero.png"
-      alt="Improv Toolbox Hero"
-      style="width:100%;max-width:400px;margin:auto;display:block;border-radius:1rem;box-shadow:0 2px 16px #0002;"
-    />
-    <!-- Intro Text -->
-    <h1 class="mar-0">Improv Toolbox</h1>
-    <p class="mute" style="font-size:1.2em;margin-bottom:2em;">
-      A simple toolbox for improv teachers and players. Explore exercises,
-      forms, warmups, and handy tools.
-    </p>
-    <!-- Links -->
-    <nav class="stack" style="gap:1.5rem;align-items:center;">
-      <a
-        href="/exercises"
-        class="contrast card"
-        style="padding:1.5em 2em;font-size:1.2em;">Exercises</a
-      >
-      <a
-        href="/forms"
-        class="contrast card"
-        style="padding:1.5em 2em;font-size:1.2em;">Forms</a
-      >
-      <a
-        href="/warmups"
-        class="contrast card"
-        style="padding:1.5em 2em;font-size:1.2em;">Warmups</a
-      >
-      <a
-        href="/tools"
-        class="contrast card"
-        style="padding:1.5em 2em;font-size:1.2em;">Tools</a
-      >
-    </nav>
+  <section class="hero" aria-labelledby="hero-heading">
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="hero__content">
+      <p class="hero__eyebrow">Improv, streamlined</p>
+      <h1 id="hero-heading">Improv Toolbox</h1>
+      <p class="hero__lead">
+        Prep faster, play sharper. Build lineups from curated warmups,
+        signature forms, and rehearsal-friendly tools—right when you need them.
+      </p>
+      <div class="hero__actions">
+        <a class="contrast" href="/tools/timer">Try the timer</a>
+        <a class="secondary" href="/tools">Browse all tools</a>
+      </div>
+    </div>
+    <div class="hero__image">
+      <div class="hero__badge">PWA ready</div>
+      <img src="/hero.png" alt="Two improvisers in motion" />
+    </div>
   </section>
+
+  <section class="categories" aria-label="Explore the toolbox">
+    {categories.map((category) => (
+      <a class="category-card" href={category.href}>
+        <div class="category-card__header">
+          <span class="category-card__icon">{category.icon}</span>
+          <h2>{category.label}</h2>
+        </div>
+        <p class="category-card__blurb">{category.blurb}</p>
+        {category.preview ? (
+          <p class="category-card__preview" aria-label="Highlights">
+            {category.preview}
+          </p>
+        ) : null}
+      </a>
+    ))}
+  </section>
+
+  <section class="highlights" aria-label="Why teachers like this">
+    {highlights.map((item) => (
+      <article class="highlight-card">
+        <h3>{item.title}</h3>
+        <p>{item.text}</p>
+      </article>
+    ))}
+  </section>
+
+  <section class="cta" aria-labelledby="cta-heading">
+    <div class="cta__content">
+      <h2 id="cta-heading">Build tonight&apos;s run faster</h2>
+      <p>
+        Stack a few warmups, drop in a form, cue the timer, and you&apos;re ready to
+        play. Bookmark your go-tos and bring the toolbox to every rehearsal.
+      </p>
+      <a class="contrast" href="/exercises">Plan a session</a>
+    </div>
+  </section>
+
+  <style>
+    .hero {
+      position: relative;
+      display: grid;
+      gap: 2.5rem;
+      align-items: center;
+      padding: 3.5rem 0 2.5rem;
+      background:
+        radial-gradient(circle at 25% 15%, #43317f44, transparent 55%),
+        radial-gradient(circle at 80% 0%, #7b1fa24d, transparent 60%);
+      border-radius: 1.8rem;
+      overflow: hidden;
+      box-shadow: 0 24px 60px #04010c66;
+    }
+    .hero__glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 10% 20%, #6f56ff33, transparent 55%),
+        radial-gradient(circle at 80% 40%, #ff6f9133, transparent 60%),
+        linear-gradient(160deg, #0f172a 0%, transparent 55%);
+      filter: blur(2px);
+      z-index: 0;
+    }
+    .hero__content,
+    .hero__image {
+      position: relative;
+      z-index: 1;
+    }
+    .hero__content {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      color: #f9f8ff;
+    }
+    .hero__eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #a389ff;
+    }
+    .hero__lead {
+      font-size: 1.2rem;
+      max-width: 38ch;
+      color: #d2d7ff;
+    }
+    .hero__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .hero__actions a {
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      font-weight: 600;
+      box-shadow: 0 0 0 1px #ffffff1f;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .hero__actions a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px #00000022;
+    }
+    .hero__image {
+      justify-self: center;
+      position: relative;
+    }
+    .hero__image img {
+      width: min(320px, 100%);
+      border-radius: 1.5rem;
+      box-shadow: 0 20px 50px #05031a80;
+    }
+    .hero__badge {
+      position: absolute;
+      top: -1rem;
+      right: -1rem;
+      background: linear-gradient(135deg, #7a5cff, #ff6f91);
+      color: #fff;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      box-shadow: 0 12px 26px #05031580;
+    }
+    .categories {
+      display: grid;
+      gap: 1.5rem;
+      margin: 2rem 0 3rem;
+    }
+    .category-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1.75rem;
+      border-radius: 1.2rem;
+      background: linear-gradient(145deg, #131a2f, #0f1525);
+      box-shadow: 0 18px 40px #03010e66;
+      text-decoration: none;
+      color: #f5f6ff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid #2f3457;
+    }
+    .category-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 28px 50px #04021799;
+    }
+    .category-card__header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .category-card__icon {
+      font-size: 1.8rem;
+    }
+    .category-card__blurb {
+      color: #b3badf;
+      margin: 0;
+    }
+    .category-card__preview {
+      font-size: 0.9rem;
+      color: #7c9bff;
+      margin: 0;
+    }
+    .highlights {
+      display: grid;
+      gap: 1.25rem;
+    }
+    .highlight-card {
+      padding: 1.5rem;
+      border-radius: 1rem;
+      background: linear-gradient(145deg, #141827, #191f33);
+      box-shadow: inset 0 0 0 1px #2d365a;
+      color: #f1f2ff;
+    }
+    .highlight-card h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+    .highlight-card p {
+      margin: 0;
+      color: #b6c2ff;
+    }
+    .cta {
+      margin: 3rem auto 0;
+      padding: 2.5rem;
+      border-radius: 1.5rem;
+      background: linear-gradient(135deg, #1c1a3a, #5b21b6);
+      color: #f7f0ff;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -50% 60%;
+      height: 140%;
+      background: radial-gradient(circle, #ffffff44 0%, transparent 70%);
+      transform: rotate(-12deg);
+    }
+    .cta__content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 46ch;
+    }
+    .cta a {
+      align-self: flex-start;
+      background: #f7f0ff;
+      color: #262354;
+      border-radius: 999px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      box-shadow: 0 12px 28px #05031a80;
+    }
+    @media (min-width: 720px) {
+      .hero {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .categories {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .highlights {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 719px) {
+      .hero__image {
+        order: -1;
+      }
+      .hero__badge {
+        right: 0.5rem;
+      }
+    }
+  </style>
 </BaseLayout>
