@@ -36,7 +36,16 @@ const minPeople = Array.from(
   <ul id="warmupList" class="no-bullets">
     {
       warmups.map((warmup) => (
-        <li class="no-bullets-li">
+        <li
+          class="no-bullets-li"
+          data-name={warmup.data.name}
+          data-focus={warmup.data.focus ?? ""}
+          data-minimum-people={
+            warmup.data.minimumPeople != null
+              ? String(warmup.data.minimumPeople)
+              : ""
+          }
+        >
           <article>
             <header>
               <h2 style="margin-bottom:0.5rem;">

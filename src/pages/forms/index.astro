@@ -25,7 +25,11 @@ const types = Array.from(
   <ul id="formList" class="no-bullets">
     {
       forms.map((form) => (
-        <li class="no-bullets-li">
+        <li
+          class="no-bullets-li"
+          data-name={form.data.name}
+          data-type={form.data.type ?? ""}
+        >
           <article>
             <header>
               <h2 style="margin-bottom:0.5rem;">

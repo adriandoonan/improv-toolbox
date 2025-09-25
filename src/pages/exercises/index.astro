@@ -36,7 +36,16 @@ const minPeople = Array.from(
   <ul id="exerciseList" class="no-bullets">
     {
       exercises.map((exercise) => (
-        <li class="no-bullets-li">
+        <li
+          class="no-bullets-li"
+          data-name={exercise.data.name}
+          data-focus={exercise.data.focus ?? ""}
+          data-minimum-people={
+            exercise.data.minimumPeople != null
+              ? String(exercise.data.minimumPeople)
+              : ""
+          }
+        >
           <article>
             <header>
               <h2 style="margin-bottom:0.5rem;">
