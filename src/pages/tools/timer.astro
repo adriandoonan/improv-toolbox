@@ -36,12 +36,19 @@ export const tool = {
         01:00
       </h2>
       <small id="timerStatus" class="mute">Ready.</small>
+      <div style="margin-top:2rem;display:flex;flex-direction:column;gap:0.5rem;align-items:center;">
+        <button id="suggestionBtn" class="secondary">Get suggestion</button>
+        <p id="suggestionOutput" class="mute" style="min-height:1.5em;margin:0;">
+          Need a prompt? Grab a word.
+        </p>
+      </div>
     </div>
   </section>
   <script>
     let duration = 60;
     let remaining = 60;
     let running = false;
+    let paused = false;
     let countingUp = false;
     let tickHandle = null;
     let flashHandle = null;
@@ -53,6 +60,18 @@ export const tool = {
     const startBtn = document.getElementById("startBtn");
     const resetBtn = document.getElementById("resetBtn");
     const status = document.getElementById("timerStatus");
+    const suggestionBtn = document.getElementById("suggestionBtn");
+    const suggestionOutput = document.getElementById("suggestionOutput");
+    const fallbackWords = [
+      "spark",
+      "stride",
+      "whirl",
+      "pivot",
+      "echo",
+      "glimmer",
+      "pulse",
+      "riff",
+    ];
     function fmt(sec) {
       const m = String(Math.floor(sec / 60)).padStart(2, "0");
       const s = String(Math.abs(sec % 60)).padStart(2, "0");
@@ -67,14 +86,15 @@ export const tool = {
         if (display) display.style.color = "#c00";
       }
     }
-    function startTimer() {
-      if (running) return;
+    function setStartLabel(text) {
+      if (startBtn) startBtn.textContent = text;
+    }
+    function beginTick() {
       running = true;
-      countingUp = false;
-      duration = Math.max(1, input ? Number(input.value) || 1 : 1);
-      remaining = duration;
-      render();
-      if (status) status.textContent = "Running…";
+      paused = false;
+      setStartLabel("Pause");
+      if (status)
+        status.textContent = countingUp ? "Time's up!" : "Running…";
       tickHandle = window.setInterval(() => {
         if (!countingUp) {
           remaining--;
@@ -93,9 +113,38 @@ export const tool = {
       }, 1000);
       requestWakeLock();
     }
+    function startTimer() {
+      if (running) return;
+      countingUp = false;
+      duration = Math.max(1, input ? Number(input.value) || 1 : 1);
+      remaining = duration;
+      if (flashHandle !== null) {
+        clearInterval(flashHandle);
+        flashHandle = null;
+        document.body.style.background = "";
+      }
+      render();
+      beginTick();
+    }
+    function resumeTimer() {
+      if (running || !paused) return;
+      beginTick();
+    }
+    function pauseTimer() {
+      if (!running) return;
+      running = false;
+      paused = true;
+      if (tickHandle !== null) clearInterval(tickHandle);
+      tickHandle = null;
+      setStartLabel("Start");
+      if (status)
+        status.textContent = countingUp ? "Paused (overtime)." : "Paused.";
+      releaseWakeLock();
+    }
     function resetTimer() {
       running = false;
       countingUp = false;
+      paused = false;
       if (tickHandle !== null) clearInterval(tickHandle);
       if (flashHandle !== null) clearInterval(flashHandle);
       tickHandle = null;
@@ -105,6 +154,7 @@ export const tool = {
       if (status) status.textContent = "Ready.";
       document.body.style.background = "";
       releaseWakeLock();
+      setStartLabel("Start");
     }
     function flashBackground() {
       let on = false;
@@ -133,15 +183,60 @@ export const tool = {
         wakeLock = null;
       }
     }
-    if (startBtn) startBtn.addEventListener("click", startTimer);
+    function toggleTimer() {
+      if (running) {
+        pauseTimer();
+      } else if (paused) {
+        resumeTimer();
+      } else {
+        startTimer();
+      }
+    }
+    if (startBtn) startBtn.addEventListener("click", toggleTimer);
     if (resetBtn) resetBtn.addEventListener("click", resetTimer);
+    async function fetchSuggestion() {
+      if (!suggestionBtn || !suggestionOutput) return;
+      const originalLabel = suggestionBtn.textContent || "Get suggestion";
+      suggestionBtn.disabled = true;
+      suggestionBtn.textContent = "Loading…";
+      suggestionOutput.textContent = "";
+      try {
+        const response = await fetch(
+          "https://random-word-api.herokuapp.com/word?lang=en&number=1",
+          {
+            cache: "no-store",
+          }
+        );
+        if (!response.ok) throw new Error("Bad response");
+        const data = await response.json();
+        const word = Array.isArray(data) ? data[0] : "";
+        if (word) {
+          suggestionOutput.textContent = String(word);
+          suggestionOutput.classList.remove("mute");
+        } else {
+          suggestionOutput.textContent = "No suggestion right now.";
+          suggestionOutput.classList.add("mute");
+        }
+      } catch (err) {
+        const fallback =
+          fallbackWords[Math.floor(Math.random() * fallbackWords.length)] ||
+          "idea";
+        suggestionOutput.textContent = fallback;
+        suggestionOutput.classList.remove("mute");
+      } finally {
+        suggestionBtn.disabled = false;
+        suggestionBtn.textContent = originalLabel;
+      }
+    }
+    if (suggestionBtn) suggestionBtn.addEventListener("click", fetchSuggestion);
     if (input)
       input.addEventListener("input", () => {
-        if (!running) {
+        if (!running && !paused) {
           remaining = Math.max(1, Number(input.value) || 1);
           render();
         }
       });
+    setStartLabel("Start");
     render();
   </script>
 </BaseLayout>
