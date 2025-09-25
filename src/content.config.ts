@@ -6,7 +6,7 @@ const exercises = defineCollection({
     shortDescription: z.string(),
     focus: z.string().optional(),
     minimumPeople: z.number().optional(),
-  })
+  }),
 });
 
 const warmups = defineCollection({
@@ -15,7 +15,7 @@ const warmups = defineCollection({
     shortDescription: z.string(),
     focus: z.string().optional(),
     minimumPeople: z.number().optional(),
-  })
+  }),
 });
 
 const forms = defineCollection({
@@ -23,7 +23,7 @@ const forms = defineCollection({
     name: z.string(),
     shortDescription: z.string(),
     type: z.string().optional(),
-  })
+  }),
 });
 
 export const collections = {

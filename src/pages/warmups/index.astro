@@ -5,8 +5,12 @@ import FilterDrawer from "../../components/FilterDrawer.astro";
 import { getCollection } from "astro:content";
 const warmups = await getCollection("warmups");
 const names = Array.from(new Set(warmups.map((w) => w.data.name)));
-const focuses = Array.from(new Set(warmups.map((w) => w.data.focus).filter(Boolean)));
-const minPeople = Array.from(new Set(warmups.map((w) => w.data.minimumPeople).filter(Boolean)));
+const focuses = Array.from(
+  new Set(warmups.map((w) => w.data.focus).filter(Boolean))
+);
+const minPeople = Array.from(
+  new Set(warmups.map((w) => w.data.minimumPeople).filter(Boolean))
+);
 ---
 
 <BaseLayout>
@@ -15,8 +19,17 @@ const minPeople = Array.from(new Set(warmups.map((w) => w.data.minimumPeople).fi
     <FilterDrawer
       fields={[
         { name: "name", label: "Name", type: "select", options: names },
-        focuses.length ? { name: "focus", label: "Focus", type: "select", options: focuses } : null,
-        minPeople.length ? { name: "minimumPeople", label: "Minimum People", type: "select", options: minPeople.map(String) } : null
+        focuses.length
+          ? { name: "focus", label: "Focus", type: "select", options: focuses }
+          : null,
+        minPeople.length
+          ? {
+              name: "minimumPeople",
+              label: "Minimum People",
+              type: "select",
+              options: minPeople.map(String),
+            }
+          : null,
       ].filter(Boolean)}
     />
   </div>
@@ -26,7 +39,9 @@ const minPeople = Array.from(new Set(warmups.map((w) => w.data.minimumPeople).fi
         <li class="no-bullets-li">
           <article>
             <header>
-              <h2 style="margin-bottom:0.5rem;"><a href={`/warmups/${warmup.slug}`}>{warmup.data.name}</a></h2>
+              <h2 style="margin-bottom:0.5rem;">
+                <a href={`/warmups/${warmup.slug}`}>{warmup.data.name}</a>
+              </h2>
             </header>
             <p>{warmup.data.shortDescription}</p>
           </article>
@@ -49,8 +64,10 @@ const minPeople = Array.from(new Set(warmups.map((w) => w.data.minimumPeople).fi
           const el = li;
           const matchesName = !name || el.dataset.name === name;
           const matchesFocus = !focus || el.dataset.focus === focus;
-          const matchesMinPeople = !minPeople || el.dataset.minimumPeople === minPeople;
-          el.style.display = matchesName && matchesFocus && matchesMinPeople ? "" : "none";
+          const matchesMinPeople =
+            !minPeople || el.dataset.minimumPeople === minPeople;
+          el.style.display =
+            matchesName && matchesFocus && matchesMinPeople ? "" : "none";
         });
       });
   </script>

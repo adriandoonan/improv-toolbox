@@ -5,7 +5,9 @@ import FilterDrawer from "../../components/FilterDrawer.astro";
 import { getCollection } from "astro:content";
 const forms = await getCollection("forms");
 const names = Array.from(new Set(forms.map((f) => f.data.name)));
-const types = Array.from(new Set(forms.map((f) => f.data.type).filter(Boolean)));
+const types = Array.from(
+  new Set(forms.map((f) => f.data.type).filter(Boolean))
+);
 ---
 
 <BaseLayout>
@@ -14,7 +16,9 @@ const types = Array.from(new Set(forms.map((f) => f.data.type).filter(Boolean)))
     <FilterDrawer
       fields={[
         { name: "name", label: "Name", type: "select", options: names },
-        types.length ? { name: "type", label: "Type", type: "select", options: types } : null
+        types.length
+          ? { name: "type", label: "Type", type: "select", options: types }
+          : null,
       ].filter(Boolean)}
     />
   </div>
@@ -24,7 +28,9 @@ const types = Array.from(new Set(forms.map((f) => f.data.type).filter(Boolean)))
         <li class="no-bullets-li">
           <article>
             <header>
-              <h2 style="margin-bottom:0.5rem;"><a href={`/forms/${form.slug}`}>{form.data.name}</a></h2>
+              <h2 style="margin-bottom:0.5rem;">
+                <a href={`/forms/${form.slug}`}>{form.data.name}</a>
+              </h2>
             </header>
             <p>{form.data.shortDescription}</p>
           </article>
