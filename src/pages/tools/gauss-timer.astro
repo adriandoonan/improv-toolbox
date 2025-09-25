@@ -1,0 +1,241 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+export const tool = {
+  name: "Gauss Timer",
+  description: "A timer for decreasing scene lengths.",
+  icon: "🧮",
+  creator: "Adrian Doonan",
+  href: "/tools/gauss-timer",
+};
+---
+
+<BaseLayout
+  title="Gauss Timer"
+  description="A timer for decreasing scene lengths."
+>
+  <section class="center" style="max-width:28rem;margin-top:2rem;">
+    <h1 class="mar-0">Gauss Timer</h1>
+    <p class="mute">
+      Set total time, step length, and last scene length. Timer counts down in
+      decreasing steps.
+    </p>
+    <div class="card" style="padding:2rem;">
+      <label>Total Length:</label>
+      <input
+        id="totalMin"
+        type="number"
+        min="0"
+        value="25"
+        style="width:4em;"
+      /> min
+      <input
+        id="totalSec"
+        type="number"
+        min="0"
+        max="59"
+        value="0"
+        style="width:4em;"
+      /> sec
+      <br /><label>Step Length (sec):</label>
+      <input id="stepLen" type="number" min="1" value="1" style="width:4em;" />
+      <br /><label>Last Scene Length (sec):</label>
+      <input id="lastLen" type="number" min="1" value="1" style="width:4em;" />
+      <br />
+      <button id="startPauseBtn" class="contrast" style="margin-top:1em;"
+        >Start</button
+      >
+      <button
+        id="stopBtn"
+        class="secondary"
+        style="margin-left:1em;display:none;">Stop</button
+      >
+      <h2
+        id="timerDisplay"
+        class="num"
+        style="font-size:2.5em;margin:1.5em 0 0 0;"
+      >
+        25:00
+      </h2>
+      <small id="timerStatus" class="mute">Ready.</small>
+    </div>
+  </section>
+  <script>
+    let total = 1500; // 25 min default
+    let step = 1;
+    let last = 1;
+    let running = false;
+    let paused = false;
+    let tickHandle: number | null = null;
+    let steps: number[] = [];
+    let currentStep = 0;
+    let audioCtx;
+    const minInput = document.getElementById(
+      "totalMin"
+    ) as HTMLInputElement | null;
+    const secInput = document.getElementById(
+      "totalSec"
+    ) as HTMLInputElement | null;
+    const stepInput = document.getElementById(
+      "stepLen"
+    ) as HTMLInputElement | null;
+    const lastInput = document.getElementById(
+      "lastLen"
+    ) as HTMLInputElement | null;
+    const display = document.getElementById("timerDisplay");
+    const startPauseBtn = document.getElementById(
+      "startPauseBtn"
+    ) as HTMLButtonElement | null;
+    const stopBtn = document.getElementById(
+      "stopBtn"
+    ) as HTMLButtonElement | null;
+    const status = document.getElementById("timerStatus");
+    function fmt(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, "0");
+      const s = String(Math.abs(sec % 60)).padStart(2, "0");
+      return m + ":" + s;
+    }
+    function chime(freq = 880, dur = 0.2) {
+      audioCtx =
+        audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const t = audioCtx.currentTime,
+        osc = audioCtx.createOscillator(),
+        g = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      g.gain.value = 0.0001;
+      osc.connect(g).connect(audioCtx.destination);
+      g.gain.exponentialRampToValueAtTime(0.2, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+    }
+    function lastChime() {
+      chime(392, 0.25);
+      setTimeout(() => chime(880, 0.25), 250);
+    }
+    function render(sec) {
+      if (display) display.textContent = fmt(sec);
+    }
+    function calcGaussSeries() {
+      total =
+        (minInput ? Number(minInput.value) : 25) * 60 +
+        (secInput ? Number(secInput.value) : 0);
+      step = stepInput ? Number(stepInput.value) : 1;
+      last = lastInput ? Number(lastInput.value) : 1;
+      steps = [];
+      // Find n such that S = n/2 * (a + l) is closest to total
+      let bestN = 1;
+      let bestA = last;
+      let minDiff = Infinity;
+      for (let n = 1; n < 1000; n++) {
+        let a = last + (n - 1) * step;
+        let sum = (n / 2) * (a + last);
+        if (a <= 0) break;
+        let diff = Math.abs(sum - total);
+        if (diff < minDiff) {
+          minDiff = diff;
+          bestN = n;
+          bestA = a;
+        }
+        if (sum > total) break;
+      }
+      // Build the series
+      for (let i = 0; i < bestN; i++) {
+        let sceneLen = bestA - i * step;
+        if (sceneLen < last) sceneLen = last;
+        steps.push(sceneLen);
+      }
+    }
+    function updateButtons() {
+      if (running) {
+        if (startPauseBtn)
+          startPauseBtn.textContent = paused ? "Resume" : "Pause";
+        if (stopBtn) stopBtn.style.display = "inline-block";
+      } else {
+        if (startPauseBtn) startPauseBtn.textContent = "Start";
+        if (stopBtn) stopBtn.style.display = "none";
+      }
+    }
+    function startTimer() {
+      if (running && !paused) return;
+      if (!running) {
+        calcGaussSeries();
+        currentStep = 0;
+      }
+      running = true;
+      paused = false;
+      if (status) status.textContent = "Running…";
+      updateButtons();
+      runStep();
+    }
+    function pauseTimer() {
+      paused = true;
+      if (status) status.textContent = "Paused.";
+      if (tickHandle !== null) clearInterval(tickHandle);
+      tickHandle = null;
+      updateButtons();
+    }
+    function stopTimer() {
+      running = false;
+      paused = false;
+      if (tickHandle !== null) clearInterval(tickHandle);
+      tickHandle = null;
+      currentStep = 0;
+      calcGaussSeries();
+      render(steps[0] || total);
+      if (status) status.textContent = "Ready.";
+      updateButtons();
+    }
+    function runStep() {
+      if (!running || paused) return;
+      if (currentStep >= steps.length) {
+        if (status) status.textContent = "Done!";
+        running = false;
+        paused = false;
+        updateButtons();
+        return;
+      }
+      let sec = steps[currentStep];
+      render(sec);
+      if (currentStep === steps.length - 1) {
+        lastChime();
+      } else {
+        chime();
+      }
+      tickHandle = window.setInterval(() => {
+        if (!running || paused) {
+          if (tickHandle !== null) clearInterval(tickHandle);
+          tickHandle = null;
+          return;
+        }
+        sec--;
+        render(sec);
+        if (sec <= 0) {
+          if (tickHandle !== null) clearInterval(tickHandle);
+          tickHandle = null;
+          currentStep++;
+          setTimeout(runStep, 500);
+        }
+      }, 1000);
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      // Attach event listeners after DOM is ready
+      if (startPauseBtn)
+        startPauseBtn.addEventListener("click", () => {
+          if (!running || paused) {
+            startTimer();
+          } else {
+            pauseTimer();
+          }
+        });
+      if (stopBtn) stopBtn.addEventListener("click", stopTimer);
+      if (minInput) minInput.addEventListener("input", stopTimer);
+      if (secInput) secInput.addEventListener("input", stopTimer);
+      if (stepInput) stepInput.addEventListener("input", stopTimer);
+      if (lastInput) lastInput.addEventListener("input", stopTimer);
+      calcGaussSeries();
+      render(steps[0] || total);
+      updateButtons();
+    });
+  </script>
+</BaseLayout>

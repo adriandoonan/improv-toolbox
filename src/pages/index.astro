@@ -1,11 +1,46 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<BaseLayout
+  title="Improv Toolbox"
+  description="Mobile-first PWA using Pico.css"
+>
+  <section class="center" style="--center-max: 60ch;">
+    <!-- Hero Image -->
+    <img
+      src="/hero.png"
+      alt="Improv Toolbox Hero"
+      style="width:100%;max-width:400px;margin:auto;display:block;border-radius:1rem;box-shadow:0 2px 16px #0002;"
+    />
+    <!-- Intro Text -->
+    <h1 class="mar-0">Improv Toolbox</h1>
+    <p class="mute" style="font-size:1.2em;margin-bottom:2em;">
+      A simple toolbox for improv teachers and players. Explore exercises,
+      forms, warmups, and handy tools.
+    </p>
+    <!-- Links -->
+    <nav class="stack" style="gap:1.5rem;align-items:center;">
+      <a
+        href="/exercises"
+        class="contrast card"
+        style="padding:1.5em 2em;font-size:1.2em;">Exercises</a
+      >
+      <a
+        href="/forms"
+        class="contrast card"
+        style="padding:1.5em 2em;font-size:1.2em;">Forms</a
+      >
+      <a
+        href="/warmups"
+        class="contrast card"
+        style="padding:1.5em 2em;font-size:1.2em;">Warmups</a
+      >
+      <a
+        href="/tools"
+        class="contrast card"
+        style="padding:1.5em 2em;font-size:1.2em;">Tools</a
+      >
+    </nav>
+  </section>
+</BaseLayout>

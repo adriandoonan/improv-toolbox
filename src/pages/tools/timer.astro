@@ -1,0 +1,147 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+export const tool = {
+  name: "Timer",
+  description: "Simple countdown timer for improv.",
+  icon: "⏱",
+  creator: "Adrian Doonan",
+  href: "/tools/timer",
+};
+---
+
+<BaseLayout title="Timer Tool" description="Simple countdown timer for improv.">
+  <section class="center" style="max-width:28rem;margin-top:2rem;">
+    <h1 class="mar-0">Timer</h1>
+    <p class="mute">Set a time, start, and go!</p>
+    <div class="card" style="padding:2rem;">
+      <label for="timerInput">Seconds:</label>
+      <input
+        id="timerInput"
+        type="number"
+        min="1"
+        value="60"
+        style="width:6em;text-align:center;font-size:1.2em;"
+      />
+      <button id="startBtn" class="contrast" style="margin-left:1em;"
+        >Start</button
+      >
+      <button id="resetBtn" class="secondary" style="margin-left:1em;"
+        >Reset</button
+      >
+      <h2
+        id="timerDisplay"
+        class="num"
+        style="font-size:3em;margin:1.5em 0 0 0;"
+      >
+        01:00
+      </h2>
+      <small id="timerStatus" class="mute">Ready.</small>
+    </div>
+  </section>
+  <script>
+    let duration = 60;
+    let remaining = 60;
+    let running = false;
+    let countingUp = false;
+    let tickHandle = null;
+    let flashHandle = null;
+    let wakeLock = null;
+    const input = document.getElementById(
+      "timerInput"
+    ) as HTMLInputElement | null;
+    const display = document.getElementById("timerDisplay");
+    const startBtn = document.getElementById("startBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const status = document.getElementById("timerStatus");
+    function fmt(sec) {
+      const m = String(Math.floor(sec / 60)).padStart(2, "0");
+      const s = String(Math.abs(sec % 60)).padStart(2, "0");
+      return m + ":" + s;
+    }
+    function render() {
+      if (display) display.textContent = fmt(remaining);
+      if (!countingUp) {
+        if (display) display.style.color = "";
+        document.body.style.background = "";
+      } else {
+        if (display) display.style.color = "#c00";
+      }
+    }
+    function startTimer() {
+      if (running) return;
+      running = true;
+      countingUp = false;
+      duration = Math.max(1, input ? Number(input.value) || 1 : 1);
+      remaining = duration;
+      render();
+      if (status) status.textContent = "Running…";
+      tickHandle = window.setInterval(() => {
+        if (!countingUp) {
+          remaining--;
+          render();
+          if (remaining <= 0) {
+            countingUp = true;
+            remaining = 0;
+            if (status) status.textContent = "Time's up!";
+            if (display) display.style.color = "#c00";
+            flashBackground();
+          }
+        } else {
+          remaining++;
+          render();
+        }
+      }, 1000);
+      requestWakeLock();
+    }
+    function resetTimer() {
+      running = false;
+      countingUp = false;
+      if (tickHandle !== null) clearInterval(tickHandle);
+      if (flashHandle !== null) clearInterval(flashHandle);
+      tickHandle = null;
+      flashHandle = null;
+      remaining = Math.max(1, input ? Number(input.value) || 1 : 1);
+      render();
+      if (status) status.textContent = "Ready.";
+      document.body.style.background = "";
+      releaseWakeLock();
+    }
+    function flashBackground() {
+      let on = false;
+      flashHandle = window.setInterval(() => {
+        document.body.style.background = on ? "#fff3f3" : "#ffe3e3";
+        on = !on;
+      }, 400);
+    }
+    function requestWakeLock() {
+      if ("wakeLock" in navigator && running) {
+        navigator.wakeLock
+          .request("screen")
+          .then((lock) => {
+            wakeLock = lock;
+            if (wakeLock)
+              wakeLock.addEventListener("release", () => {
+                wakeLock = null;
+              });
+          })
+          .catch(() => {});
+      }
+    }
+    function releaseWakeLock() {
+      if (wakeLock && typeof wakeLock.release === "function") {
+        wakeLock.release();
+        wakeLock = null;
+      }
+    }
+    if (startBtn) startBtn.addEventListener("click", startTimer);
+    if (resetBtn) resetBtn.addEventListener("click", resetTimer);
+    if (input)
+      input.addEventListener("input", () => {
+        if (!running) {
+          remaining = Math.max(1, Number(input.value) || 1);
+          render();
+        }
+      });
+    render();
+  </script>
+</BaseLayout>

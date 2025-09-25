@@ -1,0 +1,85 @@
+---
+import Drawer from "../components/Drawer.astro";
+const {
+  title = "Improv Toolbox",
+  description = "Exercises, warmups, forms, and show tools.",
+  themeColor = "#0f172a", // slate-900-ish
+} = Astro.props;
+const navLinks = [
+  { href: "/", label: "Home" },
+  { href: "/exercises", label: "Exercises" },
+  { href: "/forms", label: "Forms" },
+  { href: "/warmups", label: "Warmups" },
+  { href: "/tools", label: "Tools" },
+];
+---
+
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content={themeColor} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Pico.css (Classless) -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@picocss/pico@2.0.6/css/pico.min.css"
+    />
+
+    <!-- Our Every-Layout utilities -->
+    <link rel="stylesheet" href="/styles/every.css" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- Safe area on iOS -->
+    <style>
+      :root {
+        --app-safe-top: env(safe-area-inset-top);
+        --app-safe-bottom: env(safe-area-inset-bottom);
+      }
+      header,
+      footer {
+        padding-top: max(0.75rem, var(--app-safe-top));
+        padding-bottom: max(0.75rem, var(--app-safe-bottom));
+      }
+      body {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      main.container {
+        flex: 1 0 auto;
+      }
+      footer.container {
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <Drawer title="Menu" links={navLinks} />
+    <!-- Removed header navigation bar, drawer is now main navigation -->
+    <main class="container">
+      <slot />
+    </main>
+    <footer class="container center">
+      <small class="mute">© Community — Built with Astro + Pico.css</small>
+    </footer>
+
+    <script>
+      // Register service worker (silent fail if unsupported)
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      }
+    </script>
+  </body>
+</html>

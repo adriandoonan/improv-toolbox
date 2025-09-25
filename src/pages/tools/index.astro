@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+// Import all tool pages except index
+const toolPages = Object.values(
+  import.meta.glob("./*.astro", { eager: true })
+).filter(
+  (mod) =>
+    mod && mod.tool && mod.tool.name && mod.tool.description && mod.tool.icon
+);
+---
+
+<BaseLayout
+  title="Tools"
+  description="Handy improv tools for shows and classes."
+>
+  <section class="center" style="max-width:28rem;margin-top:2rem;">
+    <h1 class="mar-0">Tools</h1>
+    <p class="mute">Choose a tool below:</p>
+    <div class="stack" style="margin-top:2rem;">
+      {
+        toolPages.map((tool) => (
+          <a
+            href={tool.tool.href}
+            class="card contrast"
+            style="padding:2em 1em;text-align:center;display:block;font-size:1.2em;"
+          >
+            <strong>
+              {tool.tool.icon} {tool.tool.name}
+            </strong>
+            <div class="mute" style="font-size:0.95em;margin-top:0.5em;">
+              {tool.tool.description}
+            </div>
+            {tool.tool.creator && (
+              <div style="font-size:0.85em;margin-top:0.5em;">
+                By {tool.tool.creator}
+              </div>
+            )}
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

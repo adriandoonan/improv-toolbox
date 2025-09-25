@@ -1,0 +1,140 @@
+:root {
+  /* rhythm + radius */
+  --space-1: 0.5rem;
+  --space-2: 0.75rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2rem;
+  --radius: 14px;
+  --surface-1: var(--pico-background-color, #0b0d12);
+  --surface-2: color-mix(in oklab, var(--surface-1), white 4%);
+  --muted: var(--pico-muted-color, #94a3b8);
+}
+
+/* Flow spacing between elements inside .stack */
+.stack > * + * {
+  margin-top: var(--stack-space, var(--space-3));
+}
+
+/* Pile items horizontally with wrap */
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cluster-gap, var(--space-2));
+}
+.cluster .push {
+  margin-left: auto;
+}
+
+/* Center a block and limit width */
+.center {
+  margin-inline: auto;
+  max-width: var(--center-max, 70ch);
+  padding-inline: var(--space-3);
+  text-align: center;
+}
+
+/* Switcher: responsive split layout that stacks below a threshold */
+.switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--switcher-gap, var(--space-3));
+}
+.switcher > * {
+  flex-grow: 1;
+  flex-basis: calc((var(--switcher-threshold, 32rem) - 100%) * 999);
+}
+.switcher > :nth-last-child(n + 3),
+.switcher > :nth-last-child(n + 3) ~ * {
+  flex-basis: 100%;
+}
+
+/* Sidebar layout: sticky aside + content */
+.sidebar {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: minmax(14rem, 22rem) 1fr;
+}
+@media (max-width: 800px) {
+  .sidebar {
+    grid-template-columns: 1fr;
+  }
+}
+.sidebar > aside {
+  position: sticky;
+  top: calc(var(--space-3) + env(safe-area-inset-top));
+  align-self: start;
+}
+
+/* Simple grid */
+.grid {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+
+/* Card helper that plays nice with Pico */
+.card {
+  border: 1px solid color-mix(in oklab, var(--surface-1), white 10%);
+  background: var(--surface-2);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+}
+.card > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+.card {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 16px #0002;
+  border: 1px solid #eee;
+  transition: box-shadow 0.2s;
+}
+.card:hover {
+  box-shadow: 0 4px 24px #0003;
+}
+
+/* Utility classes for landing page */
+.center {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.contrast {
+  color: #fff;
+  background: #222;
+  border: none;
+}
+
+/* Utility spacing */
+.pad-1 {
+  padding: var(--space-1);
+}
+.pad-2 {
+  padding: var(--space-2);
+}
+.pad-3 {
+  padding: var(--space-3);
+}
+.mar-0 {
+  margin: 0;
+}
+.mt-2 {
+  margin-top: var(--space-2);
+}
+.mb-2 {
+  margin-bottom: var(--space-2);
+}
+
+/* Typographic helpers */
+.num {
+  font-variant-numeric: tabular-nums;
+}
