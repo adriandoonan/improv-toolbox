@@ -1,0 +1,32 @@
+---
+// props: fields = [{ name: string, label: string, type: string, options?: string[] }], onFilter
+const { fields = [], onFilter } = Astro.props;
+---
+
+<form class="filter-form" on:change={onFilter}>
+  {
+    fields.map((field) => (
+      <label style="margin-right:1em;">
+        {field.label}
+        {field.type === "select" ? (
+          <select name={field.name}>
+            <option value="">All</option>
+            {field.options?.map((opt) => (
+              <option value={opt}>{opt}</option>
+            ))}
+          </select>
+        ) : (
+          <input type={field.type} name={field.name} />
+        )}
+      </label>
+    ))
+  }
+</form>
+<style>
+  .filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    margin-bottom: 1.5em;
+  }
+</style>

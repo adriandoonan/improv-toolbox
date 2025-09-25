@@ -39,6 +39,7 @@ const icons = {
     display: flex;
     flex-direction: column;
     padding: 2rem 1.5rem 1.5rem 1.5rem;
+    padding-top: max(2rem, env(safe-area-inset-top, 1rem));
   }
   .drawer.open {
     transform: translateX(0);
@@ -64,9 +65,14 @@ const icons = {
     text-decoration: none;
     color: #222;
     transition: background 0.2s;
+    min-height: 48px;
   }
   .drawer-nav a:hover {
     background: #f3f3f3;
+  }
+  .drawer-nav a:focus {
+    outline: 2px solid #0366d6;
+    outline-offset: 2px;
   }
   .drawer-nav svg {
     flex-shrink: 0;
@@ -74,22 +80,28 @@ const icons = {
   }
   .drawer-toggle {
     position: fixed;
-    top: 1rem;
-    left: 1rem;
+    top: max(1rem, env(safe-area-inset-top, 0));
+    right: 1rem;
+    left: auto;
+    width: 56px;
+    height: 56px;
+    font-size: 2.2rem;
+    padding: 0;
     z-index: 1100;
     background: #222;
     color: #fff;
     border-radius: 50%;
-    width: 48px;
-    height: 48px;
     border: none;
-    font-size: 2rem;
     box-shadow: 0 2px 8px #0002;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: background 0.2s;
+  }
+  .drawer-toggle:focus {
+    outline: 2px solid #0366d6;
+    outline-offset: 2px;
   }
   .drawer-toggle svg {
     transition: transform 0.3s cubic-bezier(0.4, 1.4, 0.4, 1);
@@ -109,20 +121,27 @@ const icons = {
     }
   }
 </style>
-<button class="drawer-toggle" id="drawerToggle" aria-label="Menu">
+<button
+  class="drawer-toggle"
+  id="drawerToggle"
+  aria-label="Open navigation menu"
+  aria-controls="drawer"
+  aria-expanded="false"
+  tabindex="0"
+>
   <svg id="drawerIcon" width="32" height="32" viewBox="0 0 32 32">
     <rect y="8" width="32" height="4" rx="2" fill="currentColor"></rect>
     <rect y="20" width="32" height="4" rx="2" fill="currentColor"></rect>
   </svg>
 </button>
-<div class="drawer" id="drawer">
+<div class="drawer" id="drawer" role="navigation" aria-label="Main">
   <div class="drawer-header">
     <strong>{title}</strong>
   </div>
-  <nav class="drawer-nav">
+  <nav class="drawer-nav" aria-label="Main navigation">
     {
-      links.map((l: { href: string; label: string }) => (
-        <a href={l.href}>
+      links.map((l) => (
+        <a href={l.href} tabindex="0">
           <span set:html={icons[l.label] || ""} />
           <span style="margin-left:0.5em;">{l.label}</span>
         </a>
@@ -145,6 +164,7 @@ const icons = {
     icon.innerHTML = open
       ? `<rect x="8" y="8" width="16" height="4" rx="2" fill="currentColor"/><rect x="8" y="20" width="16" height="4" rx="2" fill="currentColor" transform="rotate(45 16 16)"/><rect x="8" y="20" width="16" height="4" rx="2" fill="currentColor" transform="rotate(-45 16 16)"/>`
       : `<rect y="8" width="32" height="4" rx="2" fill="currentColor" /><rect y="20" width="32" height="4" rx="2" fill="currentColor" />`;
+    toggleBtn.setAttribute("aria-expanded", open ? "true" : "false");
   }
   function openDrawer() {
     if (drawer) drawer.classList.add("open");
@@ -152,6 +172,9 @@ const icons = {
     if (toggleBtn) toggleBtn.classList.add("open");
     setIcon(true);
     open = true;
+    drawer.focus();
+    // Trap focus inside drawer
+    document.addEventListener("keydown", trapFocus);
   }
   function closeDrawer() {
     if (drawer) drawer.classList.remove("open");
@@ -159,11 +182,36 @@ const icons = {
     if (toggleBtn) toggleBtn.classList.remove("open");
     setIcon(false);
     open = false;
+    toggleBtn.focus();
+    document.removeEventListener("keydown", trapFocus);
+  }
+  function trapFocus(e) {
+    if (e.key === "Escape") {
+      closeDrawer();
+    }
+    if (open && e.key === "Tab") {
+      const focusable = drawer.querySelectorAll(
+        'a,button,[tabindex]:not([tabindex="-1"])'
+      );
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
   }
   toggleBtn &&
     toggleBtn.addEventListener("click", () => {
       open ? closeDrawer() : openDrawer();
     });
   backdrop && backdrop.addEventListener("click", closeDrawer);
+  // Close drawer on link click
+  drawer.querySelectorAll(".drawer-nav a").forEach((a) => {
+    a.addEventListener("click", closeDrawer);
+  });
   setIcon(false);
 </script>

@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import { getCollection } from "astro:content";
+const forms = await getCollection("forms");
+---
+
+<BaseLayout>
+  <Breadcrumbs items={[{ label: "Forms" }]} />
+  <h1>Improv Forms</h1>
+  <ul>
+    {
+      forms.map((form) => (
+        <li>
+          <a href={`/forms/${form.slug}`}>{form.data.name}</a>
+          <p>{form.data.shortDescription}</p>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

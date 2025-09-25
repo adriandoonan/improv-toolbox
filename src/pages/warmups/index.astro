@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Filter from "../../components/Filter.astro";
+import { getCollection } from "astro:content";
+const warmups = await getCollection("warmups");
+const focuses = Array.from(
+  new Set(
+    warmups
+      .map((w) => w.data.focus)
+      .flatMap((f) => f.split(",").map((s) => s.trim()))
+  )
+);
+---
+
+<BaseLayout>
+  <h1>Improv Warmups</h1>
+  <Filter
+    fields={[
+      { name: "minimumPeople", label: "Minimum People", type: "number" },
+      { name: "focus", label: "Focus", type: "select", options: focuses },
+    ]}
+  />
+  <ul id="warmupList">
+    {warmups.map((warmup) => (
+      <li data-minimum={warmup.data.minimumPeople} data-focus={warmup.data.focus}>
+        <a href={`/warmups/${warmup.slug}`}>{warmup.data.name}</a>
+        <p>{warmup.data.shortDescription}</p>
+      </li>
+    ))}
+  </ul>
+  <script>
+    const form = document.querySelector('.filter-form');
+    const list = document.getElementById('warmupList');
+    form && form.addEventListener('change', () => {
+      const min = form.minimumPeople.value;
+      const focus = form.focus.value;
+      Array.from(list.children).forEach(li => {
+        const matchesMin = !min || Number(li.dataset.minimum) >= Number(min);
+        const matchesFocus = !focus || li.dataset.focus.includes(focus);
+        li.style.display = matchesMin && matchesFocus ? '' : 'none';
+      });
+    });
+  </script>
+</BaseLayout>

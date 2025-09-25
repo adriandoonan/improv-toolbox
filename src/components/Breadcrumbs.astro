@@ -1,0 +1,35 @@
+---
+// props: items = [{ label: string, href: string }]
+const { items = [] } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class="breadcrumbs">
+  <ul
+    style="display: flex; gap: 0.5em; list-style: none; padding: 0; margin: 0;"
+  >
+    {
+      items.map((item, idx) => (
+        <li>
+          {idx > 0 && <span aria-hidden="true">/</span>}
+          {item.href ? (
+            <a href={item.href}>{item.label}</a>
+          ) : (
+            <span>{item.label}</span>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+<style>
+  .breadcrumbs {
+    margin-right: 64px;
+  }
+  .breadcrumbs a {
+    text-decoration: none;
+    color: var(--primary, #0366d6);
+  }
+  .breadcrumbs span {
+    color: #888;
+  }
+</style>

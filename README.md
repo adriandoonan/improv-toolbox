@@ -1,46 +1,53 @@
-# Astro Starter Kit: Basics
+# Improv Toolbox
 
-```sh
-npm create astro@latest -- --template basics
-```
+Improv Toolbox is a mobile-first Progressive Web App (PWA) for improv teachers and players. It provides timers, suggestions, and a pocket database of exercises, forms, and warmups, all optimized for quick use on phones and tablets.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Features
 
-## 🚀 Project Structure
+- **Main Navigation Drawer**: Unified navigation for all categories and tools.
+- **Landing Page**: Quick links to Exercises, Forms, Warmups, and Tools.
+- **Tools**:
+  - **Timer**: Simple countdown timer with wake lock and visual cues.
+  - **Gauss Timer**: Scene timer using the Gauss summation formula for decreasing scene lengths.
+- **Exercises, Forms, Warmups**: Easily browsable and filterable lists (coming soon).
+- **PWA**: Installable, offline-capable, and touch-friendly.
 
-Inside of your Astro project, you'll see the following folders and files:
+## Getting Started
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+1. Install dependencies:
+   ```sh
+   npm install
+   ```
+2. Start the development server:
+   ```sh
+   npm run dev
+   ```
+3. Build for production:
+   ```sh
+   npm run build
+   ```
+4. Preview your build:
+   ```sh
+   npm run preview
+   ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Project Structure
 
-## 🧞 Commands
+- `public/` — Static assets, icons, and styles
+- `src/components/` — Reusable UI components (e.g., Drawer)
+- `src/layouts/` — Main layout files
+- `src/pages/` — All routes, including tools, exercises, forms, and warmups
 
-All commands are run from the root of the project, from a terminal:
+## Tech Stack
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+- [Astro](https://astro.build/) — Static site generator
+- [Pico.css](https://picocss.com/) — Minimal CSS framework
+- Plain JavaScript for all interactivity
 
-## 👀 Want to learn more?
+## Author
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Adrian Doonan
+
+---
+
+For more details, see the code and explore the app!
