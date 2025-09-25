@@ -20,10 +20,10 @@ const minPeople = Array.from(new Set(exercises.map((e) => e.data.minimumPeople).
       ].filter(Boolean)}
     />
   </div>
-  <ul id="exerciseList" style="list-style:none; padding:0;">
+  <ul id="exerciseList" class="no-bullets">
     {
       exercises.map((exercise) => (
-        <li style="margin-bottom:1rem;">
+        <li class="no-bullets-li">
           <article>
             <header>
               <h2 style="margin-bottom:0.5rem;"><a href={`/exercises/${exercise.slug}`}>{exercise.data.name}</a></h2>
@@ -54,4 +54,15 @@ const minPeople = Array.from(new Set(exercises.map((e) => e.data.minimumPeople).
         });
       });
   </script>
+  <style>
+    .no-bullets {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .no-bullets-li {
+      list-style: none;
+      padding-left: 0;
+    }
+  </style>
 </BaseLayout>

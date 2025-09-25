@@ -18,10 +18,10 @@ const types = Array.from(new Set(forms.map((f) => f.data.type).filter(Boolean)))
       ].filter(Boolean)}
     />
   </div>
-  <ul id="formList" style="list-style:none; padding:0;">
+  <ul id="formList" class="no-bullets">
     {
       forms.map((form) => (
-        <li style="margin-bottom:1rem;">
+        <li class="no-bullets-li">
           <article>
             <header>
               <h2 style="margin-bottom:0.5rem;"><a href={`/forms/${form.slug}`}>{form.data.name}</a></h2>
@@ -49,4 +49,15 @@ const types = Array.from(new Set(forms.map((f) => f.data.type).filter(Boolean)))
         });
       });
   </script>
+  <style>
+    .no-bullets {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .no-bullets-li {
+      list-style: none;
+      padding-left: 0;
+    }
+  </style>
 </BaseLayout>
