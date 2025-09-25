@@ -5,6 +5,7 @@ const exercises = defineCollection({
     name: z.string(),
     shortDescription: z.string(),
     focus: z.string().optional(),
+    description: z.string(),
     minimumPeople: z.number().optional(),
   }),
 });
@@ -13,6 +14,7 @@ const warmups = defineCollection({
   schema: z.object({
     name: z.string(),
     shortDescription: z.string(),
+    description: z.string(),
     focus: z.string().optional(),
     minimumPeople: z.number().optional(),
   }),
@@ -22,6 +24,7 @@ const forms = defineCollection({
   schema: z.object({
     name: z.string(),
     shortDescription: z.string(),
+    description: z.string(),
     type: z.string().optional(),
   }),
 });
