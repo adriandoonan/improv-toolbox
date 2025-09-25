@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Filter from '../../components/Filter.astro';
+import { getCollection } from 'astro:content';
+const exercises = await getCollection('exercises');
+const focuses = Array.from(new Set(exercises.map(e => e.data.focus).flatMap((f: string) => f.split(',').map((s: string) => s.trim()))));
+---
+<BaseLayout>
+  <h1>Improv Exercises</h1>
+  <Filter fields={[
+    { name: 'minimumPeople', label: 'Minimum People', type: 'number' },
+    { name: 'focus', label: 'Focus', type: 'select', options: focuses }
+  ]} />
+  <ul id="exerciseList">
+    {exercises.map(exercise => (
+      <li data-minimum={exercise.data.minimumPeople} data-focus={exercise.data.focus}>
+        <a href={`/exercises/${exercise.slug}`}>{exercise.data.name}</a>
+        <p>{exercise.data.shortDescription}</p>
+      </li>
+    ))}
+  </ul>
+  <script>
+    const form = document.querySelector('.filter-form');
+    const list = document.getElementById('exerciseList');
+    form && form.addEventListener('change', () => {
+      const minInput = form.querySelector('[name="minimumPeople"]');
+      const focusInput = form.querySelector('[name="focus"]');
+      const min = minInput ? minInput.value : '';
+      const focus = focusInput ? focusInput.value : '';
+      Array.from(list?.children || []).forEach(li => {
+        const el = li;
+        const matchesMin = !min || Number(el.dataset.minimum) >= Number(min);
+        const matchesFocus = !focus || (el.dataset.focus && el.dataset.focus.includes(focus));
+        el.style.display = matchesMin && matchesFocus ? '' : 'none';
+      });
+    });
+  </script>
+</BaseLayout>
