@@ -12,7 +12,10 @@ const warmup = await getEntry("warmups", slug);
 
 <BaseLayout>
   <Breadcrumbs
-    items={[{ label: "Warmups", href: "/warmups" }, { label: warmup?.data.name }]}
+    items={[
+      { label: "Warmups", href: "/warmups" },
+      { label: warmup?.data.name },
+    ]}
   />
   <h1>{warmup?.data.name}</h1>
   <p>{warmup?.data.shortDescription}</p>

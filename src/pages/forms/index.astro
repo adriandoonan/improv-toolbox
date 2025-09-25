@@ -1,21 +1,48 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import FilterDrawer from "../../components/FilterDrawer.astro";
 import { getCollection } from "astro:content";
 const forms = await getCollection("forms");
+const names = Array.from(new Set(forms.map((f) => f.data.name)));
+const types = Array.from(new Set(forms.map((f) => f.data.type).filter(Boolean)));
 ---
 
 <BaseLayout>
   <Breadcrumbs items={[{ label: "Forms" }]} />
-  <h1>Improv Forms</h1>
-  <ul>
+  <div style="margin-bottom: 1rem;">
+    <FilterDrawer
+      fields={[
+        { name: "name", label: "Name", type: "select", options: names },
+        types.length ? { name: "type", label: "Type", type: "select", options: types } : null
+      ].filter(Boolean)}
+    />
+  </div>
+  <ul id="formList">
     {
       forms.map((form) => (
-        <li>
+        <li data-name={form.data.name} data-type={form.data.type}>
           <a href={`/forms/${form.slug}`}>{form.data.name}</a>
           <p>{form.data.shortDescription}</p>
         </li>
       ))
     }
   </ul>
+  <script>
+    const form = document.querySelector(".filter-form");
+    const list = document.getElementById("formList");
+    form &&
+      form.addEventListener("change", () => {
+        const nameInput = form.querySelector('[name="name"]');
+        const typeInput = form.querySelector('[name="type"]');
+        const name = nameInput ? nameInput.value : "";
+        const type = typeInput ? typeInput.value : "";
+        Array.from(list?.children || []).forEach((li) => {
+          const el = li;
+          const matchesName = !name || el.dataset.name === name;
+          const matchesType = !type || el.dataset.type === type;
+          el.style.display = matchesName && matchesType ? "" : "none";
+        });
+      });
+  </script>
 </BaseLayout>

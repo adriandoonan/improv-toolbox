@@ -1,0 +1,113 @@
+---
+// props: fields = [{ name: string, label: string, type: string, options?: string[] }], onFilter
+const { fields = [], slot } = Astro.props;
+---
+
+<style>
+  .filter-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: #0008;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .filter-drawer.open + .filter-drawer-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .filter-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 80vw;
+    max-width: 320px;
+    background: #fff;
+    box-shadow: -2px 0 16px #0002;
+    z-index: 1001;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 1.4, 0.4, 1);
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+  }
+  .filter-drawer.open {
+    transform: translateX(0);
+  }
+  .filter-drawer-toggle {
+    /* Remove custom styles, let Pico.css style the button */
+    all: unset;
+  }
+  @media (min-width: 600px) {
+    .filter-drawer {
+      width: 320px;
+    }
+  }
+</style>
+<button
+  class="secondary"
+  id="filterDrawerToggle"
+  aria-label="Filter"
+  aria-controls="filterDrawer"
+  aria-expanded="false"
+  tabindex="0"
+  style="margin-bottom: 1rem;"
+>
+  Filter
+</button>
+<div class="filter-drawer" id="filterDrawer">
+  <form class="filter-form">
+    {
+      fields.map((field) => (
+        <label style="margin-bottom:1em;display:block;">
+          {field.label}
+          {field.type === "select" ? (
+            <select name={field.name}>
+              <option value="">All</option>
+              {field.options?.map((opt) => (
+                <option value={opt}>{opt}</option>
+              ))}
+            </select>
+          ) : (
+            <input type={field.type} name={field.name} />
+          )}
+        </label>
+      ))
+    }
+  </form>
+  <slot />
+</div>
+<div class="filter-drawer-backdrop" id="filterDrawerBackdrop"></div>
+<script>
+  const drawer = document.getElementById("filterDrawer");
+  const toggleBtn = document.getElementById("filterDrawerToggle");
+  const backdrop = document.getElementById("filterDrawerBackdrop");
+  let open = false;
+  function openDrawer() {
+    if (drawer) drawer.classList.add("open");
+    if (backdrop) backdrop.classList.add("open");
+    if (toggleBtn) toggleBtn.classList.add("open");
+    toggleBtn.setAttribute("aria-expanded", "true");
+    open = true;
+  }
+  function closeDrawer() {
+    if (drawer) drawer.classList.remove("open");
+    if (backdrop) backdrop.classList.remove("open");
+    if (toggleBtn) toggleBtn.classList.remove("open");
+    toggleBtn.setAttribute("aria-expanded", "false");
+    open = false;
+  }
+  toggleBtn &&
+    toggleBtn.addEventListener("click", () => {
+      open ? closeDrawer() : openDrawer();
+    });
+  backdrop && backdrop.addEventListener("click", closeDrawer);
+  drawer &&
+    drawer.querySelectorAll("input,select").forEach((el) => {
+      el.addEventListener("change", () => {
+        closeDrawer();
+      });
+    });
+</script>

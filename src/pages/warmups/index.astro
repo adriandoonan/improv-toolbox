@@ -1,44 +1,53 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import Filter from "../../components/Filter.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import FilterDrawer from "../../components/FilterDrawer.astro";
 import { getCollection } from "astro:content";
 const warmups = await getCollection("warmups");
-const focuses = Array.from(
-  new Set(
-    warmups
-      .map((w) => w.data.focus)
-      .flatMap((f) => f.split(",").map((s) => s.trim()))
-  )
-);
+const names = Array.from(new Set(warmups.map((w) => w.data.name)));
+const focuses = Array.from(new Set(warmups.map((w) => w.data.focus).filter(Boolean)));
+const minPeople = Array.from(new Set(warmups.map((w) => w.data.minimumPeople).filter(Boolean)));
 ---
 
 <BaseLayout>
-  <h1>Improv Warmups</h1>
-  <Filter
-    fields={[
-      { name: "minimumPeople", label: "Minimum People", type: "number" },
-      { name: "focus", label: "Focus", type: "select", options: focuses },
-    ]}
-  />
+  <Breadcrumbs items={[{ label: "Warmups" }]} />
+  <div style="margin-bottom: 1rem;">
+    <FilterDrawer
+      fields={[
+        { name: "name", label: "Name", type: "select", options: names },
+        focuses.length ? { name: "focus", label: "Focus", type: "select", options: focuses } : null,
+        minPeople.length ? { name: "minimumPeople", label: "Minimum People", type: "select", options: minPeople.map(String) } : null
+      ].filter(Boolean)}
+    />
+  </div>
   <ul id="warmupList">
-    {warmups.map((warmup) => (
-      <li data-minimum={warmup.data.minimumPeople} data-focus={warmup.data.focus}>
-        <a href={`/warmups/${warmup.slug}`}>{warmup.data.name}</a>
-        <p>{warmup.data.shortDescription}</p>
-      </li>
-    ))}
+    {
+      warmups.map((warmup) => (
+        <li data-name={warmup.data.name} data-focus={warmup.data.focus} data-minimum-people={warmup.data.minimumPeople}>
+          <a href={`/warmups/${warmup.slug}`}>{warmup.data.name}</a>
+          <p>{warmup.data.shortDescription}</p>
+        </li>
+      ))
+    }
   </ul>
   <script>
-    const form = document.querySelector('.filter-form');
-    const list = document.getElementById('warmupList');
-    form && form.addEventListener('change', () => {
-      const min = form.minimumPeople.value;
-      const focus = form.focus.value;
-      Array.from(list.children).forEach(li => {
-        const matchesMin = !min || Number(li.dataset.minimum) >= Number(min);
-        const matchesFocus = !focus || li.dataset.focus.includes(focus);
-        li.style.display = matchesMin && matchesFocus ? '' : 'none';
+    const form = document.querySelector(".filter-form");
+    const list = document.getElementById("warmupList");
+    form &&
+      form.addEventListener("change", () => {
+        const nameInput = form.querySelector('[name="name"]');
+        const focusInput = form.querySelector('[name="focus"]');
+        const minPeopleInput = form.querySelector('[name="minimumPeople"]');
+        const name = nameInput ? nameInput.value : "";
+        const focus = focusInput ? focusInput.value : "";
+        const minPeople = minPeopleInput ? minPeopleInput.value : "";
+        Array.from(list?.children || []).forEach((li) => {
+          const el = li;
+          const matchesName = !name || el.dataset.name === name;
+          const matchesFocus = !focus || el.dataset.focus === focus;
+          const matchesMinPeople = !minPeople || el.dataset.minimumPeople === minPeople;
+          el.style.display = matchesName && matchesFocus && matchesMinPeople ? "" : "none";
+        });
       });
-    });
   </script>
 </BaseLayout>

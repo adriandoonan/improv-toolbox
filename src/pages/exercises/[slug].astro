@@ -3,16 +3,21 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import { getCollection, getEntry } from "astro:content";
 export async function getStaticPaths() {
-  const exercises = await getCollection('exercises');
-  return exercises.map((exercise: any) => ({ params: { slug: exercise.slug } }));
+  const exercises = await getCollection("exercises");
+  return exercises.map((exercise: any) => ({
+    params: { slug: exercise.slug },
+  }));
 }
 const { slug } = Astro.params;
-const exercise = await getEntry('exercises', slug as string);
+const exercise = await getEntry("exercises", slug as string);
 ---
 
 <BaseLayout>
   <Breadcrumbs
-    items={[{ label: "Exercises", href: "/exercises" }, { label: exercise?.data.name }]}
+    items={[
+      { label: "Exercises", href: "/exercises" },
+      { label: exercise?.data.name },
+    ]}
   />
   <h1>{exercise?.data.name}</h1>
   <p>{exercise?.data.shortDescription}</p>

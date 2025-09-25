@@ -1,38 +1,53 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Filter from '../../components/Filter.astro';
-import { getCollection } from 'astro:content';
-const exercises = await getCollection('exercises');
-const focuses = Array.from(new Set(exercises.map(e => e.data.focus).flatMap((f: string) => f.split(',').map((s: string) => s.trim()))));
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import FilterDrawer from "../../components/FilterDrawer.astro";
+import { getCollection } from "astro:content";
+const exercises = await getCollection("exercises");
+const names = Array.from(new Set(exercises.map((e) => e.data.name)));
+const focuses = Array.from(new Set(exercises.map((e) => e.data.focus).filter(Boolean)));
+const minPeople = Array.from(new Set(exercises.map((e) => e.data.minimumPeople).filter(Boolean)));
 ---
+
 <BaseLayout>
-  <h1>Improv Exercises</h1>
-  <Filter fields={[
-    { name: 'minimumPeople', label: 'Minimum People', type: 'number' },
-    { name: 'focus', label: 'Focus', type: 'select', options: focuses }
-  ]} />
+  <Breadcrumbs items={[{ label: "Exercises" }]} />
+  <div style="margin-bottom: 1rem;">
+    <FilterDrawer
+      fields={[
+        { name: "name", label: "Name", type: "select", options: names },
+        focuses.length ? { name: "focus", label: "Focus", type: "select", options: focuses } : null,
+        minPeople.length ? { name: "minimumPeople", label: "Minimum People", type: "select", options: minPeople.map(String) } : null
+      ].filter(Boolean)}
+    />
+  </div>
   <ul id="exerciseList">
-    {exercises.map(exercise => (
-      <li data-minimum={exercise.data.minimumPeople} data-focus={exercise.data.focus}>
-        <a href={`/exercises/${exercise.slug}`}>{exercise.data.name}</a>
-        <p>{exercise.data.shortDescription}</p>
-      </li>
-    ))}
+    {
+      exercises.map((exercise) => (
+        <li data-name={exercise.data.name} data-focus={exercise.data.focus} data-minimum-people={exercise.data.minimumPeople}>
+          <a href={`/exercises/${exercise.slug}`}>{exercise.data.name}</a>
+          <p>{exercise.data.shortDescription}</p>
+        </li>
+      ))
+    }
   </ul>
   <script>
-    const form = document.querySelector('.filter-form');
-    const list = document.getElementById('exerciseList');
-    form && form.addEventListener('change', () => {
-      const minInput = form.querySelector('[name="minimumPeople"]');
-      const focusInput = form.querySelector('[name="focus"]');
-      const min = minInput ? minInput.value : '';
-      const focus = focusInput ? focusInput.value : '';
-      Array.from(list?.children || []).forEach(li => {
-        const el = li;
-        const matchesMin = !min || Number(el.dataset.minimum) >= Number(min);
-        const matchesFocus = !focus || (el.dataset.focus && el.dataset.focus.includes(focus));
-        el.style.display = matchesMin && matchesFocus ? '' : 'none';
+    const form = document.querySelector(".filter-form");
+    const list = document.getElementById("exerciseList");
+    form &&
+      form.addEventListener("change", () => {
+        const nameInput = form.querySelector('[name="name"]');
+        const focusInput = form.querySelector('[name="focus"]');
+        const minPeopleInput = form.querySelector('[name="minimumPeople"]');
+        const name = nameInput ? nameInput.value : "";
+        const focus = focusInput ? focusInput.value : "";
+        const minPeople = minPeopleInput ? minPeopleInput.value : "";
+        Array.from(list?.children || []).forEach((li) => {
+          const el = li;
+          const matchesName = !name || el.dataset.name === name;
+          const matchesFocus = !focus || el.dataset.focus === focus;
+          const matchesMinPeople = !minPeople || el.dataset.minimumPeople === minPeople;
+          el.style.display = matchesName && matchesFocus && matchesMinPeople ? "" : "none";
+        });
       });
-    });
   </script>
 </BaseLayout>
