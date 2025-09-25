@@ -18,12 +18,16 @@ const types = Array.from(new Set(forms.map((f) => f.data.type).filter(Boolean)))
       ].filter(Boolean)}
     />
   </div>
-  <ul id="formList">
+  <ul id="formList" style="list-style:none; padding:0;">
     {
       forms.map((form) => (
-        <li data-name={form.data.name} data-type={form.data.type}>
-          <a href={`/forms/${form.slug}`}>{form.data.name}</a>
-          <p>{form.data.shortDescription}</p>
+        <li style="margin-bottom:1rem;">
+          <article>
+            <header>
+              <h2 style="margin-bottom:0.5rem;"><a href={`/forms/${form.slug}`}>{form.data.name}</a></h2>
+            </header>
+            <p>{form.data.shortDescription}</p>
+          </article>
         </li>
       ))
     }

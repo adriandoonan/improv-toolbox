@@ -20,12 +20,16 @@ const minPeople = Array.from(new Set(warmups.map((w) => w.data.minimumPeople).fi
       ].filter(Boolean)}
     />
   </div>
-  <ul id="warmupList">
+  <ul id="warmupList" style="list-style:none; padding:0;">
     {
       warmups.map((warmup) => (
-        <li data-name={warmup.data.name} data-focus={warmup.data.focus} data-minimum-people={warmup.data.minimumPeople}>
-          <a href={`/warmups/${warmup.slug}`}>{warmup.data.name}</a>
-          <p>{warmup.data.shortDescription}</p>
+        <li style="margin-bottom:1rem;">
+          <article>
+            <header>
+              <h2 style="margin-bottom:0.5rem;"><a href={`/warmups/${warmup.slug}`}>{warmup.data.name}</a></h2>
+            </header>
+            <p>{warmup.data.shortDescription}</p>
+          </article>
         </li>
       ))
     }
