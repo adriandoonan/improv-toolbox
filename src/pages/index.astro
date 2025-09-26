@@ -74,8 +74,8 @@ const highlights = [
       <p class="hero__eyebrow">Improv, streamlined</p>
       <h1 id="hero-heading">Improv Toolbox</h1>
       <p class="hero__lead">
-        Prep faster, play sharper. Build lineups from curated warmups,
-        signature forms, and rehearsal-friendly tools—right when you need them.
+        Prep faster, play sharper. Build lineups from curated warmups, signature
+        forms, and rehearsal-friendly tools—right when you need them.
       </p>
       <div class="hero__actions">
         <a class="contrast" href="/tools/timer">Try the timer</a>
@@ -89,37 +89,42 @@ const highlights = [
   </section>
 
   <section class="categories" aria-label="Explore the toolbox">
-    {categories.map((category) => (
-      <a class="category-card" href={category.href}>
-        <div class="category-card__header">
-          <span class="category-card__icon">{category.icon}</span>
-          <h2>{category.label}</h2>
-        </div>
-        <p class="category-card__blurb">{category.blurb}</p>
-        {category.preview ? (
-          <p class="category-card__preview" aria-label="Highlights">
-            {category.preview}
-          </p>
-        ) : null}
-      </a>
-    ))}
+    {
+      categories.map((category) => (
+        <a class="category-card" href={category.href}>
+          <div class="category-card__header">
+            <span class="category-card__icon">{category.icon}</span>
+            <h2>{category.label}</h2>
+          </div>
+          <p class="category-card__blurb">{category.blurb}</p>
+          {category.preview ? (
+            <p class="category-card__preview" aria-label="Highlights">
+              {category.preview}
+            </p>
+          ) : null}
+        </a>
+      ))
+    }
   </section>
 
   <section class="highlights" aria-label="Why teachers like this">
-    {highlights.map((item) => (
-      <article class="highlight-card">
-        <h3>{item.title}</h3>
-        <p>{item.text}</p>
-      </article>
-    ))}
+    {
+      highlights.map((item) => (
+        <article class="highlight-card">
+          <h3>{item.title}</h3>
+          <p>{item.text}</p>
+        </article>
+      ))
+    }
   </section>
 
   <section class="cta" aria-labelledby="cta-heading">
     <div class="cta__content">
       <h2 id="cta-heading">Build tonight&apos;s run faster</h2>
       <p>
-        Stack a few warmups, drop in a form, cue the timer, and you&apos;re ready to
-        play. Bookmark your go-tos and bring the toolbox to every rehearsal.
+        Stack a few warmups, drop in a form, cue the timer, and you&apos;re
+        ready to play. Bookmark your go-tos and bring the toolbox to every
+        rehearsal.
       </p>
       <a class="contrast" href="/exercises">Plan a session</a>
     </div>
@@ -131,9 +136,8 @@ const highlights = [
       display: grid;
       gap: 2.5rem;
       align-items: center;
-      padding: 3.5rem 0 2.5rem;
-      background:
-        radial-gradient(circle at 25% 15%, #43317f44, transparent 55%),
+      padding: 3.5rem 2rem 2.5rem;
+      background: radial-gradient(circle at 25% 15%, #43317f44, transparent 55%),
         radial-gradient(circle at 80% 0%, #7b1fa24d, transparent 60%);
       border-radius: 1.8rem;
       overflow: hidden;
@@ -181,7 +185,9 @@ const highlights = [
       border-radius: 999px;
       font-weight: 600;
       box-shadow: 0 0 0 1px #ffffff1f;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
     }
     .hero__actions a:hover {
       transform: translateY(-2px);
@@ -224,7 +230,9 @@ const highlights = [
       box-shadow: 0 18px 40px #03010e66;
       text-decoration: none;
       color: #f5f6ff;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
       border: 1px solid #2f3457;
     }
     .category-card:hover {
