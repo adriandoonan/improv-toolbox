@@ -1,0 +1,16 @@
+export const emotions = [
+  "elated",
+  "anxious",
+  "melancholy",
+  "smitten",
+  "frazzled",
+  "defiant",
+  "serene",
+  "jealous",
+  "bewildered",
+  "giddy",
+  "resentful",
+  "determined",
+  "bashful",
+  "euphoric",
+];

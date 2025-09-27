@@ -2,7 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 // Import all tool pages except index
 const toolPages = Object.values(
-  import.meta.glob("./*.astro", { eager: true })
+  import.meta.glob(["./*.astro", "./*/index.astro"], { eager: true })
 ).filter(
   (mod) =>
     mod && mod.tool && mod.tool.name && mod.tool.description && mod.tool.icon

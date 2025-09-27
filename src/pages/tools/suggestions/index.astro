@@ -1,5 +1,40 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { emotions } from "./emotions";
+import { locations } from "./locations";
+import { relationships } from "./relationships";
+
+const localSets = {
+  emotions: {
+    hint: "Pulls from a curated list of playable emotional states.",
+    items: emotions,
+  },
+  locations: {
+    hint: "Short, specific locations for scene openings.",
+    items: locations,
+  },
+  relationships: {
+    hint: "Quick suggestions for who characters are to each other.",
+    items: relationships,
+  },
+};
+
+const categoryDefs = [
+  {
+    id: "word",
+    label: "Random Word (API)",
+    type: "api",
+    hint: "Single common-English word via random-word-api.herokuapp.com with offline fallback.",
+  },
+  ...Object.entries(localSets).map(([id, data]) => ({
+    id,
+    label: id.charAt(0).toUpperCase() + id.slice(1),
+    type: "local",
+    hint: data.hint,
+  })),
+];
+
+const localCategoryIds = Object.keys(localSets);
 export const tool = {
   name: "Suggestion Generator",
   description: "Grab improv-ready prompts across words, emotions, and more.",
@@ -43,7 +78,7 @@ export const tool = {
       </div>
     </div>
   </section>
-  <script>
+  <script define:vars={{ LOCAL_SETS: localSets, CATEGORY_DEFS: categoryDefs, LOCAL_CATEGORY_IDS: localCategoryIds }}>
     const categorySelect = document.getElementById("categorySelect");
     const hint = document.getElementById("categoryHint");
     const display = document.getElementById("suggestionDisplay");
@@ -53,73 +88,6 @@ export const tool = {
     const historyBlock = document.getElementById("historyBlock");
     const historyList = document.getElementById("historyList");
 
-    const LOCAL_SETS = {
-      emotions: {
-        hint: "Pulls from a curated list of playable emotional states.",
-        items: [
-          "elated",
-          "anxious",
-          "melancholy",
-          "smitten",
-          "frazzled",
-          "defiant",
-          "serene",
-          "jealous",
-          "bewildered",
-          "giddy",
-          "resentful",
-          "determined",
-          "bashful",
-          "euphoric",
-        ],
-      },
-      locations: {
-        hint: "Short, specific locations for scene openings.",
-        items: [
-          "rooftop garden",
-          "abandoned mall",
-          "vet waiting room",
-          "space station lounge",
-          "ice cream truck",
-          "karaoke dive",
-          "community pottery class",
-          "roller rink",
-          "farmers' market",
-          "escape room",
-          "train dining car",
-        ],
-      },
-      relationships: {
-        hint: "Quick suggestions for who characters are to each other.",
-        items: [
-          "former lab partners",
-          "roommates on move-out day",
-          "bandmates on tour",
-          "cousins planning a heist",
-          "coach and understudy",
-          "co-hosts of a podcast",
-          "pilot and air-traffic control",
-          "wedding planner and client",
-          "garden rivals",
-        ],
-      },
-    };
-
-    const CATEGORY_DEFS = [
-      {
-        id: "word",
-        label: "Random Word (API)",
-        type: "api",
-        hint: "Single common-English word via random-word-api.herokuapp.com with offline fallback.",
-      },
-      ...Object.entries(LOCAL_SETS).map(([id, data]) => ({
-        id,
-        label: id.charAt(0).toUpperCase() + id.slice(1),
-        type: "local",
-        hint: data.hint,
-      })),
-    ];
-
     const apiCache = {
       word: [],
     };
@@ -128,6 +96,10 @@ export const tool = {
     const usedSuggestions = {
       word: new Set(),
     };
+
+    LOCAL_CATEGORY_IDS.forEach((id) => {
+      usedSuggestions[id] = new Set();
+    });
 
     function normaliseValue(value) {
       return String(value || "").trim().toLowerCase();
@@ -139,10 +111,6 @@ export const tool = {
       }
       return usedSuggestions[catId];
     }
-
-    Object.keys(LOCAL_SETS).forEach((id) => {
-      getUsageSet(id);
-    });
 
     function populateCategories() {
       CATEGORY_DEFS.forEach((cat) => {
@@ -228,9 +196,13 @@ export const tool = {
         }
       }
 
-      const fallbackPool = LOCAL_SETS.emotions.items
-        .concat(LOCAL_SETS.locations.items, LOCAL_SETS.relationships.items)
-        .filter((item) => !used.has(normalise(item)));
+      const fallbackPool = LOCAL_CATEGORY_IDS.reduce((acc, id) => {
+        const items = LOCAL_SETS[id]?.items || [];
+        items.forEach((item) => {
+          if (!used.has(normalise(item))) acc.push(item);
+        });
+        return acc;
+      }, []);
       if (fallbackPool.length) {
         return fallbackPool[Math.floor(Math.random() * fallbackPool.length)];
       }
