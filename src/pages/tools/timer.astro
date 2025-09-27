@@ -27,14 +27,12 @@ export const tool = {
         <button
           id="startBtn"
           class="contrast fullscreen-hide"
-          style="margin-left:1em;"
-          >Start</button
+          style="margin-left:1em;">Start</button
         >
         <button
           id="resetBtn"
           class="secondary fullscreen-hide"
-          style="margin-left:1em;"
-          >Reset</button
+          style="margin-left:1em;">Reset</button
         >
         <button
           id="fullscreenBtn"
@@ -50,13 +48,7 @@ export const tool = {
         >
           Exit full screen
         </button>
-        <h2
-          id="timerDisplay"
-          class="num"
-          style="font-size:3em;margin:1.5em 0 0 0;"
-        >
-          01:00
-        </h2>
+        <h2 id="timerDisplay" class="num" style="margin:1.5em 0 0 0;">01:00</h2>
         <small id="timerStatus" class="mute fullscreen-hide">Ready.</small>
         <div
           class="suggestion-area"
@@ -100,7 +92,9 @@ export const tool = {
     const suggestionOutput = document.getElementById("suggestionOutput");
     const fullscreenBtn = document.getElementById("fullscreenBtn");
     const exitFullscreenBtn = document.getElementById("exitFullscreenBtn");
-    const timerPanel = document.getElementById("timerPanel") as HTMLElement | null;
+    const timerPanel = document.getElementById(
+      "timerPanel"
+    ) as HTMLElement | null;
     const timerPanelHost = document.getElementById(
       "timerPanelHost"
     ) as HTMLElement | null;
@@ -175,8 +169,7 @@ export const tool = {
       running = true;
       paused = false;
       setStartLabel("Pause");
-      if (status)
-        status.textContent = countingUp ? "Time's up!" : "Running…";
+      if (status) status.textContent = countingUp ? "Time's up!" : "Running…";
       tickHandle = window.setInterval(() => {
         if (!countingUp) {
           remaining--;
@@ -276,9 +269,7 @@ export const tool = {
       }
     }
     function fullscreenActive() {
-      return (
-        usingDialogFullscreen || document.fullscreenElement === timerPanel
-      );
+      return usingDialogFullscreen || document.fullscreenElement === timerPanel;
     }
     function applyFullscreenBaseStyles() {
       if (!timerPanel || !display) return;
@@ -289,7 +280,8 @@ export const tool = {
       display.style.fontFamily = "'Share Tech Mono', 'Courier New', monospace";
     }
     function clearFlashEffects() {
-      if (timerPanel) timerPanel.style.background = fullscreenActive() ? "#000" : "";
+      if (timerPanel)
+        timerPanel.style.background = fullscreenActive() ? "#000" : "";
       if (display) {
         display.style.color = fullscreenActive() ? "#ff5252" : "";
         if (!fullscreenActive()) display.style.fontFamily = "";
@@ -326,8 +318,8 @@ export const tool = {
           typeof statusText === "string"
             ? statusText
             : wasCountingUp
-            ? "Time's up!"
-            : "Stopped.";
+              ? "Time's up!"
+              : "Stopped.";
       render();
       if (shouldExitFullscreen && fullscreenActive()) {
         exitFullscreen();
@@ -451,7 +443,10 @@ export const tool = {
         if (target === display) return;
         const isFlashing = flashHandle !== null && countingUp;
         if (isFlashing) {
-          stopTimerAndCleanup({ exitFullscreen: true, statusText: "Time's up!" });
+          stopTimerAndCleanup({
+            exitFullscreen: true,
+            statusText: "Time's up!",
+          });
         }
       });
     if (exitFullscreenBtn)
@@ -459,7 +454,10 @@ export const tool = {
         event.stopPropagation();
         const isFlashing = flashHandle !== null && countingUp;
         if (isFlashing) {
-          stopTimerAndCleanup({ exitFullscreen: true, statusText: "Time's up!" });
+          stopTimerAndCleanup({
+            exitFullscreen: true,
+            statusText: "Time's up!",
+          });
         } else if (fullscreenActive()) {
           exitFullscreen();
         }
@@ -568,7 +566,9 @@ export const tool = {
       margin: 0 !important;
       cursor: pointer;
       line-height: 1;
-      text-shadow: 0 0 20px #ff3b3b66, 0 0 40px #ff000044;
+      text-shadow:
+        0 0 20px #ff3b3b66,
+        0 0 40px #ff000044;
     }
     .fullscreen-active .suggestion-area {
       margin-top: auto;
