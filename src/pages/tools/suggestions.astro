@@ -1,0 +1,372 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+export const tool = {
+  name: "Suggestion Generator",
+  description: "Grab improv-ready prompts across words, emotions, and more.",
+  icon: "💡",
+  creator: "Improv Toolbox",
+  href: "/tools/suggestions",
+};
+---
+
+<BaseLayout title="Suggestion Generator" description="Grab improv-ready prompts on the fly.">
+  <section class="center" style="max-width:32rem;margin-top:2rem;">
+    <h1 class="mar-0">Suggestion Generator</h1>
+    <p class="mute">
+      Pick a category and tap for a fresh prompt. Works offline with built-in lists and
+      fetches from the Random Word API when online.
+    </p>
+    <div class="card" style="padding:2rem;">
+      <form class="stack" id="suggestionConfig" style="gap:1rem;">
+        <label for="categorySelect" style="margin-bottom:0.25rem;">
+          Category
+        </label>
+        <select id="categorySelect" name="category" style="margin-bottom:0.5rem;">
+          <option value="word">Random Word (API)</option>
+        </select>
+        <label class="mute" style="font-size:0.9rem;" id="categoryHint"></label>
+      </form>
+      <div class="display" id="suggestionDisplay" role="status" aria-live="polite">
+        Tap "New suggestion" to get started.
+      </div>
+      <div class="stack" style="gap:0.75rem;margin-top:1.5rem;">
+        <div class="button-row">
+          <button id="generateBtn" class="contrast">New suggestion</button>
+          <button id="copyBtn" class="secondary" disabled>Copy</button>
+        </div>
+        <small class="mute" id="feedback" aria-live="polite"></small>
+      </div>
+      <div id="historyBlock" style="margin-top:2rem;display:none;">
+        <h2 style="font-size:1rem;margin-bottom:0.5rem;">Recent draws</h2>
+        <ol id="historyList" style="padding-left:1.25rem;margin:0;">
+        </ol>
+      </div>
+    </div>
+  </section>
+  <script>
+    const categorySelect = document.getElementById("categorySelect");
+    const hint = document.getElementById("categoryHint");
+    const display = document.getElementById("suggestionDisplay");
+    const generateBtn = document.getElementById("generateBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const feedback = document.getElementById("feedback");
+    const historyBlock = document.getElementById("historyBlock");
+    const historyList = document.getElementById("historyList");
+
+    const LOCAL_SETS = {
+      emotions: {
+        hint: "Pulls from a curated list of playable emotional states.",
+        items: [
+          "elated",
+          "anxious",
+          "melancholy",
+          "smitten",
+          "frazzled",
+          "defiant",
+          "serene",
+          "jealous",
+          "bewildered",
+          "giddy",
+          "resentful",
+          "determined",
+          "bashful",
+          "euphoric",
+        ],
+      },
+      locations: {
+        hint: "Short, specific locations for scene openings.",
+        items: [
+          "rooftop garden",
+          "abandoned mall",
+          "vet waiting room",
+          "space station lounge",
+          "ice cream truck",
+          "karaoke dive",
+          "community pottery class",
+          "roller rink",
+          "farmers' market",
+          "escape room",
+          "train dining car",
+        ],
+      },
+      relationships: {
+        hint: "Quick suggestions for who characters are to each other.",
+        items: [
+          "former lab partners",
+          "roommates on move-out day",
+          "bandmates on tour",
+          "cousins planning a heist",
+          "coach and understudy",
+          "co-hosts of a podcast",
+          "pilot and air-traffic control",
+          "wedding planner and client",
+          "garden rivals",
+        ],
+      },
+    };
+
+    const CATEGORY_DEFS = [
+      {
+        id: "word",
+        label: "Random Word (API)",
+        type: "api",
+        hint: "Single common-English word via random-word-api.herokuapp.com with offline fallback.",
+      },
+      ...Object.entries(LOCAL_SETS).map(([id, data]) => ({
+        id,
+        label: id.charAt(0).toUpperCase() + id.slice(1),
+        type: "local",
+        hint: data.hint,
+      })),
+    ];
+
+    const apiCache = {
+      word: [],
+    };
+    const history = [];
+    const HISTORY_LIMIT = 6;
+    const usedSuggestions = {
+      word: new Set(),
+    };
+
+    function normaliseValue(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function getUsageSet(catId) {
+      if (!usedSuggestions[catId]) {
+        usedSuggestions[catId] = new Set();
+      }
+      return usedSuggestions[catId];
+    }
+
+    Object.keys(LOCAL_SETS).forEach((id) => {
+      getUsageSet(id);
+    });
+
+    function populateCategories() {
+      CATEGORY_DEFS.forEach((cat) => {
+        if (cat.id === "word") return; // already inserted default option
+        const opt = document.createElement("option");
+        opt.value = cat.id;
+        opt.textContent = cat.label;
+        categorySelect?.appendChild(opt);
+      });
+    }
+
+    function setHint(catId) {
+      const def = CATEGORY_DEFS.find((c) => c.id === catId);
+      if (def && hint) {
+        hint.textContent = def.hint || "";
+      }
+    }
+
+    function setDisplay(text) {
+      if (display) display.textContent = text;
+      if (copyBtn) copyBtn.disabled = !text || !text.trim();
+    }
+
+    function setFeedback(message, tone = "info") {
+      if (!feedback) return;
+      feedback.textContent = message;
+      feedback.dataset.tone = tone;
+    }
+
+    function pushHistory(entry) {
+      if (!historyList || !historyBlock) return;
+      history.unshift(entry);
+      if (history.length > HISTORY_LIMIT) history.pop();
+      historyList.innerHTML = "";
+      history.forEach((item) => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        historyList.appendChild(li);
+      });
+      historyBlock.style.display = history.length ? "block" : "none";
+    }
+
+    function takeFromCache(cacheKey, normaliser = (v) => v) {
+      const store = apiCache[cacheKey];
+      const used = getUsageSet(cacheKey);
+      while (store && store.length) {
+        const candidate = store.pop();
+        const key = normaliser(candidate);
+        if (!used || !used.has(key)) {
+          return candidate;
+        }
+      }
+      return null;
+    }
+
+    async function fetchWord() {
+      const normalise = normaliseValue;
+      const used = getUsageSet("word");
+      const cached = takeFromCache("word", normalise);
+      if (cached) return cached;
+
+      const MAX_ATTEMPTS = 4;
+      for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        try {
+          const response = await fetch(
+            "https://random-word-api.herokuapp.com/word?lang=en&number=5",
+            { cache: "no-store" }
+          );
+          if (!response.ok) throw new Error("Bad response");
+          const data = await response.json();
+          if (Array.isArray(data) && data.length) {
+            const uniquePool = data.filter((word) => !used.has(normalise(word)));
+            if (uniquePool.length) {
+              const [first, ...rest] = uniquePool;
+              apiCache.word.push(...rest.reverse());
+              return first;
+            }
+            // store remaining words even if duplicates for potential reuse once list resets
+            apiCache.word.push(...data.slice().reverse());
+          }
+        } catch (err) {
+          // swallow and continue to fallback below after loop
+        }
+      }
+
+      const fallbackPool = LOCAL_SETS.emotions.items
+        .concat(LOCAL_SETS.locations.items, LOCAL_SETS.relationships.items)
+        .filter((item) => !used.has(normalise(item)));
+      if (fallbackPool.length) {
+        return fallbackPool[Math.floor(Math.random() * fallbackPool.length)];
+      }
+      used.clear();
+      return "spark";
+    }
+
+    async function getSuggestion(catId) {
+      const def = CATEGORY_DEFS.find((c) => c.id === catId) || CATEGORY_DEFS[0];
+      if (def.type === "local") {
+        const set = LOCAL_SETS[def.id];
+        const items = set?.items || [];
+        if (!items.length) return "(no items configured)";
+        const used = getUsageSet(def.id);
+        let available = items.filter((item) => !used.has(normaliseValue(item)));
+        if (!available.length) {
+          used.clear();
+          available = items.slice();
+        }
+        return available[Math.floor(Math.random() * available.length)];
+      }
+      return fetchWord();
+    }
+
+    async function handleGenerate() {
+      if (!generateBtn) return;
+      generateBtn.disabled = true;
+      setFeedback("Generating…");
+      const cat = categorySelect?.value || "word";
+      setHint(cat);
+      const suggestion = await getSuggestion(cat);
+      const suggestionText = String(suggestion);
+      setDisplay(suggestionText);
+      pushHistory(suggestionText);
+      recordUsage(cat, suggestionText);
+      setFeedback("Ready", "success");
+      generateBtn.disabled = false;
+      generateBtn.focus();
+    }
+
+    function handleCategoryChange() {
+      const cat = categorySelect?.value || "word";
+      setHint(cat);
+      setFeedback("");
+      setDisplay('Tap "New suggestion" to get started.');
+      copyBtn && (copyBtn.disabled = true);
+    }
+
+    async function handleCopy() {
+      if (!copyBtn || copyBtn.disabled) return;
+      const text = display?.textContent?.trim();
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        setFeedback("Copied to clipboard!", "success");
+      } catch (err) {
+        setFeedback("Couldn't copy, please copy manually.", "error");
+      }
+    }
+
+    function isInteractiveTarget(target) {
+      return target instanceof Element &&
+        Boolean(target.closest("input, select, textarea, button, [contenteditable='true']"));
+    }
+
+    function recordUsage(catId, value) {
+      const key = normaliseValue(value);
+      if (!key) return;
+      const usageKey = catId === "word" ? "word" : catId;
+      const used = getUsageSet(usageKey);
+      used.add(key);
+    }
+
+    function initKeyboardShortcuts() {
+      document.addEventListener("keydown", (event) => {
+        if (event.key === " " && !isInteractiveTarget(event.target)) {
+          event.preventDefault();
+          handleGenerate();
+        }
+        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "c") {
+          if (!isInteractiveTarget(event.target)) {
+            event.preventDefault();
+            handleCopy();
+          }
+        }
+      });
+    }
+
+    populateCategories();
+    setHint("word");
+    if (categorySelect) categorySelect.addEventListener("change", handleCategoryChange);
+    if (generateBtn) generateBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      handleGenerate();
+    });
+    if (copyBtn) copyBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      handleCopy();
+    });
+    initKeyboardShortcuts();
+  </script>
+  <style>
+    .display {
+      min-height: 6rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 600;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      background: var(--surface-2);
+      box-shadow: inset 0 0 0 1px var(--muted-border-color);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .display:active {
+      transform: scale(0.99);
+      box-shadow: inset 0 0 0 2px var(--muted-border-color);
+    }
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    #feedback[data-tone="success"] {
+      color: var(--contrast-hover);
+    }
+    #feedback[data-tone="error"] {
+      color: #ff8787;
+    }
+    .timer-dialog-mount,
+    #suggestionConfig,
+    #historyList,
+    .button-row {
+      width: 100%;
+    }
+  </style>
+</BaseLayout>
