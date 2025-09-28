@@ -1,10 +1,10 @@
 :root {
-  --space-1: 0.5rem;
-  --space-2: 0.75rem;
-  --space-3: 1rem;
-  --space-4: 1.5rem;
-  --space-5: 2.5rem;
-  --radius: 18px;
+  --space-1: var(--size-2, 0.5rem);
+  --space-2: var(--size-3, 0.75rem);
+  --space-3: var(--size-4, 1rem);
+  --space-4: var(--size-5, 1.5rem);
+  --space-5: var(--size-7, 2.5rem);
+  --radius: var(--radius-md, 18px);
   --surface-1: var(--surface-color, #121116);
   --surface-2: color-mix(in oklab, var(--surface-1) 92%, white 8%);
   --surface-3: color-mix(in oklab, var(--surface-1) 86%, white 14%);

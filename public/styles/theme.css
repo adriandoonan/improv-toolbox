@@ -1,31 +1,71 @@
+@import "https://unpkg.com/open-props@latest/normalize.min.css";
+@import "https://unpkg.com/open-props@latest/open-props.min.css";
+
 :root {
   color-scheme: dark;
-  --font-base: "Inter", "Manrope", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-display: "Epilogue", "Inter", "Segoe UI", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular,
-    Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --surface-color: #161018;
-  --surface-raised: #1f1521;
-  --surface-panel: #221721;
-  --color-background: #0a050b;
-  --color-text: #f9f6f8;
-  --color-heading: #fff5f7;
-  --color-muted: #cbbfca;
-  --color-muted-strong: #f1d5dc;
-  --color-accent: #ff2f55;
-  --color-accent-soft: #ff536c;
-  --color-accent-glow: rgba(255, 59, 94, 0.5);
-  --color-border-subtle: rgba(255, 255, 255, 0.08);
-  --shadow-soft: 0 18px 42px rgba(5, 2, 8, 0.45);
-  --shadow-hard: 0 24px 68px rgba(5, 2, 10, 0.6);
-  --radius-md: 18px;
-  --radius-lg: 28px;
+  accent-color: var(--color-accent);
+  --font-base: var(
+      --font-sans,
+      "Inter",
+      "Manrope",
+      "Segoe UI",
+      system-ui,
+      -apple-system,
+      sans-serif
+    );
+  --font-display: "Epilogue", var(--font-base);
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo,
+    Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --surface-color: color-mix(
+    in srgb,
+    var(--gray-12, #120910) 88%,
+    black 12%
+  );
+  --surface-raised: color-mix(in srgb, var(--surface-color) 92%, black 8%);
+  --surface-panel: color-mix(in srgb, var(--surface-color) 96%, black 4%);
+  --color-background: color-mix(
+    in srgb,
+    var(--gray-12, #0a050b) 95%,
+    black 5%
+  );
+  --color-text: var(--gray-1, #f9f6f8);
+  --color-heading: var(--gray-0, #fff5f7);
+  --color-muted: color-mix(in srgb, var(--gray-4, #cbbfca) 88%, white 12%);
+  --color-muted-strong: color-mix(
+    in srgb,
+    var(--gray-3, #f1d5dc) 82%,
+    white 18%
+  );
+  --color-accent: var(--red-6, #ff2f55);
+  --color-accent-soft: var(--red-5, #ff536c);
+  --color-accent-glow: color-mix(
+    in srgb,
+    var(--red-5, #ff536c) 60%,
+    transparent
+  );
+  --color-border-subtle: color-mix(in srgb, var(--color-text) 8%, transparent);
+  --muted-color: color-mix(in srgb, var(--color-text) 70%, black 30%);
+  --muted-border-color: color-mix(in srgb, var(--color-text) 12%, transparent);
+  --contrast: var(--color-accent);
+  --contrast-hover: color-mix(
+    in srgb,
+    var(--color-accent) 90%,
+    white 10%
+  );
+  --shadow-soft: var(--shadow-5, 0 18px 42px rgba(5, 2, 8, 0.45));
+  --shadow-hard: var(--shadow-6, 0 24px 68px rgba(5, 2, 10, 0.6));
+  --radius-md: var(--radius-4, 18px);
+  --radius-lg: var(--radius-6, 28px);
+  --radius-pill: var(--radius-round, 999px);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --container-max: 1100px;
+  --container-max: min(1100px, 100vw - clamp(2rem, 6vw, 4rem));
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-accent) 35%, transparent);
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -33,13 +73,17 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: var(--font-base);
-  font-size: 16px;
-  line-height: 1.6;
+  font-size: var(--font-size-3, 1rem);
+  line-height: var(--font-lineheight-3, 1.6);
   color: var(--color-text);
   background-color: var(--color-background);
   background-image:
-    radial-gradient(110% 120% at 10% 0%, rgba(255, 63, 94, 0.2), transparent 58%),
-    radial-gradient(90% 120% at 100% -10%, rgba(255, 116, 116, 0.12), transparent 55%),
+    radial-gradient(110% 120% at 10% 0%,
+      color-mix(in srgb, var(--color-accent) 20%, transparent) 0%,
+      transparent 60%),
+    radial-gradient(90% 120% at 100% -10%,
+      color-mix(in srgb, var(--color-accent-soft) 16%, transparent) 0%,
+      transparent 55%),
     linear-gradient(160deg, #040206 0%, #100811 48%, #070308 100%);
   -webkit-font-smoothing: antialiased;
 }
@@ -79,6 +123,124 @@ h6 {
   color: var(--color-heading);
   margin-top: 0;
   letter-spacing: 0.01em;
+}
+
+.mute,
+.text-muted {
+  color: var(--muted-color);
+}
+
+button,
+.button {
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.2;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.35rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
+    border-color 0.2s ease, color 0.2s ease;
+  background: color-mix(in srgb, var(--surface-raised) 72%, black 28%);
+  color: var(--color-heading);
+  box-shadow: 0 12px 28px rgba(12, 4, 16, 0.4);
+}
+
+.button:hover,
+.button:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(12, 4, 16, 0.5);
+}
+
+.button:focus-visible {
+  outline: none;
+  box-shadow: 0 16px 36px rgba(12, 4, 16, 0.5), var(--focus-ring);
+}
+
+.button:disabled {
+  opacity: 0.45;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
+
+.button--accent {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-accent) 82%, white 18%),
+    var(--color-accent)
+  );
+  color: #140408;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 40%, white 12%);
+  box-shadow: 0 18px 38px rgba(255, 63, 94, 0.45);
+}
+
+.button--accent:hover {
+  box-shadow: 0 22px 44px rgba(255, 63, 94, 0.5);
+}
+
+.button--accent:focus-visible {
+  box-shadow: 0 22px 44px rgba(255, 63, 94, 0.5), var(--focus-ring);
+}
+
+.button--surface {
+  background: color-mix(in srgb, var(--surface-panel) 88%, black 12%);
+  border: 1px solid var(--color-border-subtle);
+  color: var(--color-heading);
+}
+
+.button--surface:hover {
+  border-color: color-mix(
+    in srgb,
+    var(--color-accent) 35%,
+    var(--color-border-subtle)
+  );
+  box-shadow: 0 14px 32px rgba(12, 4, 16, 0.45);
+}
+
+.button--surface:focus-visible {
+  border-color: color-mix(
+    in srgb,
+    var(--color-accent) 35%,
+    var(--color-border-subtle)
+  );
+  box-shadow: 0 14px 32px rgba(12, 4, 16, 0.45), var(--focus-ring);
+}
+
+.button--ghost {
+  background: color-mix(in srgb, transparent 80%, var(--surface-panel) 20%);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 26%, transparent);
+  color: var(--color-muted-strong);
+  box-shadow: none;
+}
+
+.button--ghost:hover {
+  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  color: var(--color-heading);
+  box-shadow: 0 12px 28px rgba(255, 63, 94, 0.25);
+}
+
+.button--ghost:focus-visible {
+  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  color: var(--color-heading);
+  box-shadow: 0 12px 28px rgba(255, 63, 94, 0.25), var(--focus-ring);
 }
 
 .app-bar {
@@ -263,7 +425,7 @@ input:focus,
 textarea:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--color-accent) 50%, white 20%);
-  box-shadow: 0 0 0 3px rgba(255, 59, 94, 0.25);
+  box-shadow: var(--focus-ring);
 }
 
 .resource-list {
