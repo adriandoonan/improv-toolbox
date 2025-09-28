@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import NotesPanel from "../../components/NotesPanel.astro";
 import { getCollection, getEntry } from "astro:content";
 export async function getStaticPaths() {
   const forms = await getCollection("forms");
@@ -20,4 +21,9 @@ const form = await getEntry("forms", slug);
     <p>{form?.data.description}</p>
   </article>
   <p><a href={form?.data.source} target="_blank">Source</a></p>
+  <NotesPanel
+    contentId={form?.slug ?? ""}
+    contentType="form"
+    contentTitle={form?.data.name ?? "Form"}
+  />
 </BaseLayout>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import NotesPanel from "../../components/NotesPanel.astro";
 import { getCollection, getEntry } from "astro:content";
 export async function getStaticPaths() {
   const warmups = await getCollection("warmups");
@@ -26,4 +27,9 @@ const warmup = await getEntry("warmups", slug);
   <article>
     <p>{warmup?.data.description}</p>
   </article>
+  <NotesPanel
+    contentId={warmup?.slug ?? ""}
+    contentType="warmup"
+    contentTitle={warmup?.data.name ?? "Warmup"}
+  />
 </BaseLayout>
