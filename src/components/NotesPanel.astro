@@ -550,7 +550,7 @@ const noteKey = `${contentType}:${contentId}`;
       );
     });
 
-    saveButton.addEventListener("click", () => {
+    function saveNote() {
       if (!storageReady) {
         setStatus("Cannot save: storage unavailable.");
         return;
@@ -579,6 +579,17 @@ const noteKey = `${contentType}:${contentId}`;
       updateMeta(collection);
       persistAllNotes(payload);
       setStatus("Note saved locally.");
+    }
+
+    saveButton.addEventListener("click", () => {
+      saveNote();
+    });
+
+    textarea.addEventListener("keydown", (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+        event.preventDefault();
+        saveNote();
+      }
     });
 
     clearButton.addEventListener("click", () => {
