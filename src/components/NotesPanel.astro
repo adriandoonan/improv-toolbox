@@ -402,15 +402,90 @@ const noteKey = `${contentType}:${contentId}`;
 
   .note-item__actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.4rem;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
   }
 
-  .note-item__actions .note-button {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.95rem;
-    letter-spacing: 0.02em;
-    text-transform: none;
+  .note-icon-button {
+    width: 2.35rem;
+    height: 2.35rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: color-mix(in srgb, var(--surface-raised, #1f1521) 70%, black 30%);
+    color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 85%, white 15%);
+    box-shadow: 0 14px 30px rgba(8, 4, 12, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease,
+      background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+  }
+
+  .note-icon-button:hover,
+  .note-icon-button:focus-visible {
+    transform: translateY(-2px);
+    outline: none;
+    box-shadow: 0 18px 38px rgba(12, 5, 16, 0.48);
+  }
+
+  .note-icon-button svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .note-icon-button--edit {
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 28%, transparent);
+    color: var(--color-accent-soft, #ff536c);
+  }
+
+  .note-icon-button--edit:hover,
+  .note-icon-button--edit:focus-visible {
+    background: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 18%,
+      var(--surface-raised, #1f1521) 82%
+    );
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 55%, transparent);
+    color: #140408;
+  }
+
+  .note-icon-button--delete {
+    border-color: rgba(255, 94, 94, 0.18);
+    color: color-mix(in srgb, var(--color-warning, #ffb3b3) 60%, white 40%);
+    background: color-mix(
+      in srgb,
+      var(--surface-color, #161018) 75%,
+      rgba(255, 41, 62, 0.08)
+    );
+  }
+
+  .note-icon-button--delete:hover,
+  .note-icon-button--delete:focus-visible {
+    background: color-mix(in srgb, var(--color-accent, #ff2f55) 26%, #1a0d12 74%);
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 60%, transparent);
+    color: #140408;
+  }
+
+  .note-icon-button:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .note-item--editing {
@@ -1191,6 +1266,20 @@ const noteKey = `${contentType}:${contentId}`;
     /**
      * @param {NoteCollection} collection
      */
+    function createIconButton(label, variant, pathD) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `note-icon-button note-icon-button--${variant}`;
+      button.setAttribute("aria-label", label);
+      button.innerHTML = `
+        <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+          <path d="${pathD}" fill="currentColor" />
+        </svg>
+        <span class="visually-hidden">${label}</span>
+      `.trim();
+      return button;
+    }
+
     function renderNoteList(collection) {
       list.innerHTML = "";
       if (!collection || collection.items.length === 0) {
@@ -1242,18 +1331,20 @@ const noteKey = `${contentType}:${contentId}`;
           const actions = document.createElement("div");
           actions.className = "note-item__actions";
 
-          const editButton = document.createElement("button");
-          editButton.type = "button";
-          editButton.className = "note-button note-button--ghost";
-          editButton.textContent = "Edit";
+          const editButton = createIconButton(
+            "Edit note",
+            "edit",
+            "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92 1.33-1.42-1.42 9.9-9.9 1.41 1.42-9.89 9.9zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+          );
           editButton.addEventListener("click", () => {
             beginEdit(item);
           });
 
-          const deleteButton = document.createElement("button");
-          deleteButton.type = "button";
-          deleteButton.className = "note-button note-button--danger";
-          deleteButton.textContent = "Delete";
+          const deleteButton = createIconButton(
+            "Delete note",
+            "delete",
+            "M6 7h12v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7zm12-2h-3.5l-.71-.71A1 1 0 0 0 13.59 4h-3.18a1 1 0 0 0-.71.29L9 5H5a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2zm-7 5a1 1 0 0 0-1 1v7a1 1 0 0 0 2 0v-7a1 1 0 0 0-1-1zm4 0a1 1 0 0 0-1 1v7a1 1 0 0 0 2 0v-7a1 1 0 0 0-1-1z"
+          );
           deleteButton.addEventListener("click", () => {
             deleteNote(item.id);
           });
