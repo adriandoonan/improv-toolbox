@@ -22,6 +22,12 @@ Describe how the PWA is put together so contributors can navigate the project, e
 6. **Deployment** — Cloudflare Pages workflow, environment variables, secrets management.
 7. **Observability** — planned logging/analytics (TBD).
 
+## Build & Test Tooling
+
+- **Astro build step**: `npm run build` outputs static HTML under `dist/` and prepares Cloudflare adapter bundles.
+- **Regression tests**: `npm test` orchestrates a production build, then runs Node's test runner against generated HTML to assert navigation structure, featured categories, tools catalog entries, and exercise filter metadata.
+- **Artifacts**: Tests intentionally avoid network calls and third-party services; HTML snapshots are pulled from the local `dist/` directory for deterministic coverage.
+
 ## Next Steps
 
 - Flesh out sections 1–5 with diagrams and code references.

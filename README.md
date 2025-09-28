@@ -4,13 +4,11 @@ Improv Toolbox is a mobile-first Progressive Web App (PWA) for improv teachers a
 
 ## Features
 
-- **Main Navigation Drawer**: Unified navigation for all categories and tools.
-- **Landing Page**: Quick links to Exercises, Forms, Warmups, and Tools.
-- **Tools**:
-  - **Timer**: Simple countdown timer with wake lock and visual cues.
-  - **Gauss Timer**: Scene timer using the Gauss summation formula for decreasing scene lengths.
-- **Exercises, Forms, Warmups**: Easily browsable and filterable lists (coming soon).
-- **PWA**: Installable, offline-capable, and touch-friendly.
+- **Main navigation drawer** with instant access to Home, Exercises, Forms, Warmups, and Tools.
+- **Landing page** hero cards that preview every collection and highlight sample content.
+- **Tools directory** with dedicated pages for Timer, Gauss Timer, Jam Groupaliser, and Suggestion Generator.
+- **Exercises, forms, and warmups** content collections with filter drawers, rich metadata, and generated detail pages.
+- **PWA shell** that ships a dark theme, offline-friendly build, and install prompts for mobile devices.
 
 ## Getting Started
 
@@ -30,6 +28,37 @@ Improv Toolbox is a mobile-first Progressive Web App (PWA) for improv teachers a
    ```sh
    npm run preview
    ```
+
+## Testing
+
+Build and validate the static HTML output before committing:
+
+```sh
+npm test
+```
+
+The test runner performs an Astro production build, then inspects key pages in `dist/` to verify navigation links, category cards, tool listings, and exercise filters.
+
+## Documentation & Assets
+
+- [Architecture](docs/architecture.md) — build, runtime, and deployment overview
+- [Requirements](docs/requirements.md) — product scope and delivery status
+- [Outline](docs/outline.md) — feature summaries and backlog
+- [API](docs/api.md) — data contracts (work in progress)
+
+Tools page preview:
+
+> **Why no binary image file?**
+> The OpenAI Codex web app currently rejects pull requests that include binary assets. To keep the screenshot available while
+> staying compatible with that workflow, the JPEG has been base64-encoded as text at `docs/images/tools-page.jpg.base64`.
+
+Decode it locally to recreate the screenshot:
+
+```sh
+base64 -d docs/images/tools-page.jpg.base64 > docs/images/tools-page.jpg
+```
+
+After running that command, the README preview image will render as expected.
 
 ## Project Structure
 

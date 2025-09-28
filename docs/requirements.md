@@ -38,9 +38,12 @@ All content sections (warmups, exercises, forms, tools) share the same **base fe
 
 ### 3.0 Implementation Status (MVP vs. backlog)
 
-- **Delivered (v0.1):** Content listing + filters for exercises and warmups; detail pages with static Markdown content.
-- **In progress:** Extending filters to forms; building reusable suggestion/timer embeds.
-- **Planned (backlog):** Favourites, user submissions, user notes, and advanced search remain future scope.
+- **Delivered (alpha):**
+  - Global drawer navigation covering Home, Exercises, Forms, Warmups, and Tools.
+  - Static content collections with list filtering, detail pages, and tool embeds for exercises, warmups, and forms.
+  - Tools directory with Timer, Gauss Timer, Jam Groupaliser, and Suggestion Generator utilities.
+- **In progress:** Enhancing forms-specific filters and deep-link coverage for suggestion APIs.
+- **Planned (backlog):** Favourites, user submissions, user notes, advanced search, and scheduling workflows.
 
 ### 3.1 Warmups
 
@@ -112,6 +115,14 @@ Types:
 
 ---
 
+## 7. Testing & Quality
+
+- **Static build verification**: `npm test` performs an Astro production build and inspects generated HTML for navigation, category previews, tool listings, and exercise filters.
+- **Manual QA**: Continue spot-checking interactive tool behaviour (timers, suggestion feeds) on modern mobile browsers after significant UI or content updates.
+
+---
+
 ## Change Log
 
+- **2025-10-05:** Captured alpha scope (navigation, content collections, tools) and documented automated HTML regression tests.
 - **2025-10-02:** Clarified functional programming expectations, documented feature delivery phases, added timer validation requirement, created Architecture/API doc stubs.
