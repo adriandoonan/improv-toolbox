@@ -3,11 +3,15 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import { getCollection } from "astro:content";
-const forms = await getCollection("forms");
-const names = Array.from(new Set(forms.map((f) => f.data.name)));
+const forms = (await getCollection("forms")).sort((a, b) =>
+  a.data.name.localeCompare(b.data.name)
+);
+const names = Array.from(new Set(forms.map((f) => f.data.name))).sort((a, b) =>
+  a.localeCompare(b)
+);
 const types = Array.from(
   new Set(forms.map((f) => f.data.type).filter(Boolean))
-);
+).sort((a, b) => a.localeCompare(b));
 ---
 
 <BaseLayout>
