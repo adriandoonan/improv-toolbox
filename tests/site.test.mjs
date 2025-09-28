@@ -15,7 +15,8 @@ const [homeHtml, toolsHtml, exercisesHtml] = await Promise.all([
 ]);
 
 test('drawer navigation exposes primary sections', () => {
-  const navRegex = /<a href="([^"]+)"[^>]*>.*?<span style="margin-left:0.5em;"[^>]*>([^<]+)<\/span>\s*<\/a>/gs;
+  const navRegex =
+    /<a href="([^"]+)"[^>]*data-drawer-link[^>]*>\s*(?:<span[^>]*class="drawer-nav__icon"[^>]*>.*?<\/span>\s*)?<span[^>]*>([^<]+)<\/span>\s*<\/a>/gs;
   const navMatches = Array.from(homeHtml.matchAll(navRegex));
   const navItems = navMatches.map(([, href, label]) => [href, label.trim()]);
   assert.deepStrictEqual(navItems, [
@@ -34,7 +35,8 @@ test('home page sets theme color meta', () => {
 });
 
 test('home page features category previews', () => {
-  const categoryRegex = /<a class="category-card" href="([^"]+)"[^>]*>.*?<h2[^>]*>([^<]+)<\/h2>.*?<p class="category-card__blurb"[^>]*>([^<]+)<\/p>.*?<p class="category-card__preview"[^>]*>([^<]+)<\/p>/gs;
+  const categoryRegex =
+    /<a[^>]*class="[^"]*category-card[^"]*"[^>]*href="([^"]+)"[^>]*>.*?<h2[^>]*>([^<]+)<\/h2>.*?<p[^>]*class="[^"]*category-card__blurb[^"]*"[^>]*>([^<]+)<\/p>.*?<p[^>]*class="[^"]*category-card__preview[^"]*"[^>]*>([^<]+)<\/p>/gs;
   const categories = Array.from(homeHtml.matchAll(categoryRegex)).map(([, href, label, blurb, preview]) => ({
     href,
     label: label.trim(),
@@ -55,7 +57,8 @@ test('home page features category previews', () => {
 });
 
 test('tools listing surfaces all published utilities', () => {
-  const cardRegex = /<a href="\/tools\/([^"]+)" class="card contrast"[^>]*>.*?<strong>\s*([^<]+?)\s*<\/strong>.*?<div class="mute"[^>]*>\s*([^<]+)\s*<\/div>/gs;
+  const cardRegex =
+    /<a href="\/tools\/([^"]+)"[^>]*class="[^"]*tool-card[^"]*"[^>]*>.*?<h2[^>]*>([^<]+)<\/h2>.*?<p[^>]*class="[^"]*resource-card__summary[^"]*"[^>]*>([^<]+)<\/p>/gs;
   const toolCards = Array.from(toolsHtml.matchAll(cardRegex)).map(([, slug, label, description]) => ({
     slug,
     label: label.replace(/\s+/g, ' ').trim(),
@@ -102,7 +105,7 @@ test('exercises list exposes filters and dataset metadata', () => {
     exercisesHtml.includes('value="4"'),
     'minimum people filter should include numeric options'
   );
-  const listCount = (exercisesHtml.match(/class="no-bullets-li"/g) || []).length;
+  const listCount = (exercisesHtml.match(/class="resource-card"/g) || []).length;
   assert.strictEqual(listCount, 12, 'expected 12 exercises in the listing');
   assert.ok(
     exercisesHtml.includes('data-focus="Character, Energy, Group Play"'),
