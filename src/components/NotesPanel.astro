@@ -1,0 +1,676 @@
+---
+interface Props {
+  contentId: string;
+  contentType: string;
+  contentTitle: string;
+}
+const { contentId, contentType, contentTitle } = Astro.props as Props;
+const noteKey = `${contentType}:${contentId}`;
+---
+
+<section
+  class="notes-panel"
+  data-note-root
+  data-note-key={noteKey}
+  data-note-title={contentTitle}
+  data-note-type={contentType}
+>
+  <h2>Your notes</h2>
+  <div class="note-history" data-note-history hidden>
+    <h3>Saved notes</h3>
+    <ul class="note-list" data-note-list></ul>
+  </div>
+  <p class="note-helper">
+    Notes live on your device first. We'll keep them ready for optional sync later.
+  </p>
+  <label class="note-field">
+    <span class="note-field__label">Markdown-friendly note</span>
+    <textarea
+      rows="8"
+      placeholder="Capture how you adapt this content to your troupe..."
+      aria-describedby={`note-status-${noteKey}`}
+    ></textarea>
+  </label>
+  <p class="note-meta" data-note-meta></p>
+  <div class="note-toolbar">
+    <button type="button" class="primary" data-note-save>
+      Save note
+    </button>
+    <button type="button" class="secondary" data-note-clear>
+      Clear draft
+    </button>
+    <button type="button" class="secondary" data-note-export>
+      Export all notes
+    </button>
+    <span
+      id={`note-status-${noteKey}`}
+      role="status"
+      class="note-status"
+      aria-live="polite"
+    ></span>
+  </div>
+  <details class="note-preview">
+    <summary>Preview</summary>
+    <div data-note-preview></div>
+  </details>
+</section>
+
+<style>
+  .notes-panel {
+    margin-top: 3rem;
+    border-top: 1px solid var(--pico-muted-border-color, hsla(0, 0%, 100%, 0.1));
+    padding-top: 2rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .note-helper {
+    margin: 0;
+    color: var(--pico-muted-color);
+    font-size: 0.95rem;
+  }
+
+  .note-field {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .note-field textarea {
+    width: 100%;
+    resize: vertical;
+  }
+
+  .note-field textarea.note-field--readonly {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .note-meta {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--pico-muted-color);
+  }
+
+  .note-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .note-status {
+    min-height: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--pico-muted-color);
+  }
+
+  .note-preview summary {
+    cursor: pointer;
+  }
+
+  .note-preview div {
+    padding: 0.5rem 0;
+    white-space: pre-wrap;
+    font-family: var(--pico-font-family-monospace, ui-monospace, SFMono-Regular, SFMono, "Roboto Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+  }
+
+  .note-history {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .note-history h3 {
+    margin: 0;
+  }
+
+  .note-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .note-item {
+    border: 1px solid var(--pico-muted-border-color, hsla(0, 0%, 100%, 0.1));
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    display: grid;
+    gap: 0.5rem;
+    background: var(--pico-card-background-color, rgba(255, 255, 255, 0.03));
+  }
+
+  .note-item__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .note-item__timestamp {
+    font-size: 0.85rem;
+    color: var(--pico-muted-color);
+  }
+
+  .note-item__body {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+
+</style>
+
+<script type="module" lang="ts">
+  const STORAGE_NAMESPACE = "improv-toolbox:notes";
+  const STORAGE_VERSION = 2;
+  const storageSupported = (() => {
+    if (typeof window === "undefined" || !("localStorage" in window)) {
+      return false;
+    }
+    try {
+      const probeKey = "improv-toolbox:notes-probe";
+      localStorage.setItem(probeKey, "ok");
+      localStorage.removeItem(probeKey);
+      return true;
+    } catch (error) {
+      console.warn("Local storage is not available for notes", error);
+      return false;
+    }
+  })();
+
+  const panels = Array.from(document.querySelectorAll("[data-note-root]"));
+
+  panels.forEach((panel) => {
+    const textarea = /** @type {HTMLTextAreaElement | null} */ (
+      panel.querySelector("textarea")
+    );
+    const preview = /** @type {HTMLDivElement | null} */ (
+      panel.querySelector("[data-note-preview]")
+    );
+    const status = /** @type {HTMLSpanElement | null} */ (
+      panel.querySelector(".note-status")
+    );
+    const saveButton = /** @type {HTMLButtonElement | null} */ (
+      panel.querySelector("[data-note-save]")
+    );
+    const exportButton = /** @type {HTMLButtonElement | null} */ (
+      panel.querySelector("[data-note-export]")
+    );
+    const clearButton = /** @type {HTMLButtonElement | null} */ (
+      panel.querySelector("[data-note-clear]")
+    );
+    const meta = /** @type {HTMLParagraphElement | null} */ (
+      panel.querySelector("[data-note-meta]")
+    );
+    const history = /** @type {HTMLDivElement | null} */ (
+      panel.querySelector("[data-note-history]")
+    );
+    const list = /** @type {HTMLUListElement | null} */ (
+      panel.querySelector("[data-note-list]")
+    );
+    if (
+      !textarea ||
+      !preview ||
+      !status ||
+      !exportButton ||
+      !saveButton ||
+      !meta ||
+      !history ||
+      !list ||
+      !clearButton
+    ) {
+      return;
+    }
+
+    const noteKey = panel.dataset.noteKey ?? "";
+    const noteTitle = panel.dataset.noteTitle ?? "";
+    const noteType = panel.dataset.noteType ?? "content";
+
+    let storageReady = storageSupported;
+    /** @type {NotesPayload | null} */
+    let notesPayload = null;
+    function updateSaveButtonState(value) {
+      saveButton.disabled = !storageReady || !value.trim();
+    }
+
+    /**
+     * @returns {NotesPayload}
+     */
+    function emptyNotesPayload() {
+      return { version: STORAGE_VERSION, notes: {}, drafts: {} };
+    }
+
+    /**
+     * @param {Partial<NotesPayloadLegacy>} payload
+     * @returns {NotesPayload}
+     */
+    function migratePayload(payload) {
+      if (
+        !payload ||
+        typeof payload !== "object" ||
+        typeof payload.notes !== "object" ||
+        payload.notes === null
+      ) {
+        return emptyNotesPayload();
+      }
+
+      if (payload.version === STORAGE_VERSION && "drafts" in payload) {
+        return /** @type {NotesPayload} */ (payload);
+      }
+
+      const migrated = emptyNotesPayload();
+      migrated.version = STORAGE_VERSION;
+
+      for (const [key, value] of Object.entries(payload.notes)) {
+        if (!value || typeof value !== "object") continue;
+        const items = [];
+        const content = typeof value.content === "string" ? value.content : "";
+        const updatedAt =
+          typeof value.updatedAt === "string"
+            ? value.updatedAt
+            : new Date().toISOString();
+        if (content.trim()) {
+          items.push({
+            id: `${key}:${updatedAt}`,
+            content,
+            savedAt: updatedAt,
+          });
+        } else if (content) {
+          migrated.drafts[key] = {
+            content,
+            updatedAt,
+          };
+        }
+        migrated.notes[key] = {
+          id: key,
+          type: typeof value.type === "string" ? value.type : "content",
+          title: typeof value.title === "string" ? value.title : "",
+          items,
+          updatedAt,
+        };
+      }
+
+      return migrated;
+    }
+
+    /**
+     * @returns {NotesPayload}
+     */
+    function loadAllNotes() {
+      if (!storageReady) return emptyNotesPayload();
+      try {
+        const raw = localStorage.getItem(STORAGE_NAMESPACE);
+        if (!raw) {
+          return emptyNotesPayload();
+        }
+        const parsed = JSON.parse(raw);
+        const migrated = migratePayload(
+          /** @type {Partial<NotesPayloadLegacy>} */ (parsed)
+        );
+        if (migrated.version !== STORAGE_VERSION) {
+          migrated.version = STORAGE_VERSION;
+          persistAllNotes(migrated);
+        }
+        return migrated;
+      } catch (error) {
+        console.warn("Notes storage unavailable", error);
+        storageReady = false;
+        return emptyNotesPayload();
+      }
+    }
+
+    /**
+     * @param {NotesPayload} payload
+     */
+    function persistAllNotes(payload) {
+      if (!storageReady) return;
+      try {
+        localStorage.setItem(STORAGE_NAMESPACE, JSON.stringify(payload));
+      } catch (error) {
+        console.warn("Failed to persist notes", error);
+        storageReady = false;
+        setStatus("Saving failed: storage is unavailable.");
+        textarea.setAttribute("readonly", "true");
+        textarea.classList.add("note-field--readonly");
+        exportButton.setAttribute("disabled", "true");
+        saveButton.setAttribute("disabled", "true");
+        clearButton.setAttribute("disabled", "true");
+      }
+    }
+
+    function ensurePayload() {
+      if (!notesPayload) {
+        notesPayload = loadAllNotes();
+      }
+      return notesPayload;
+    }
+
+    /**
+     * @returns {NoteCollection}
+     */
+    function loadCollection() {
+      const payload = ensurePayload();
+      const existing = payload.notes[noteKey];
+      if (existing) {
+        return existing;
+      }
+      const collection = {
+        id: noteKey,
+        type: noteType,
+        title: noteTitle,
+        items: [],
+        updatedAt: new Date().toISOString(),
+      };
+      payload.notes[noteKey] = collection;
+      return collection;
+    }
+
+    /**
+     * @returns {DraftEntry | null}
+     */
+    function loadDraft() {
+      const payload = ensurePayload();
+      return payload.drafts[noteKey] ?? null;
+    }
+
+    /**
+     * @param {string} content
+     */
+    function saveDraft(content) {
+      const payload = ensurePayload();
+      if (!content) {
+        delete payload.drafts[noteKey];
+      } else {
+        payload.drafts[noteKey] = {
+          content,
+          updatedAt: new Date().toISOString(),
+        };
+      }
+      persistAllNotes(payload);
+    }
+
+    function clearDraft(shouldPersist = true) {
+      const payload = ensurePayload();
+      if (payload.drafts[noteKey]) {
+        delete payload.drafts[noteKey];
+        if (shouldPersist) {
+          persistAllNotes(payload);
+        }
+      }
+      return payload;
+    }
+
+    /**
+     * @param {string} message
+     */
+    function setStatus(message) {
+      status.textContent = message;
+    }
+
+    /**
+     * @param {string} message
+     */
+    function setMeta(message) {
+      meta.textContent = message;
+    }
+
+    /**
+     * @param {string} value
+     */
+    function sanitizeForPreview(value) {
+      const temp = document.createElement("div");
+      temp.textContent = value;
+      return temp.innerHTML;
+    }
+
+    /**
+     * @param {string} value
+     */
+    function updatePreview(value) {
+      const sanitized = sanitizeForPreview(value);
+      preview.innerHTML = sanitized;
+    }
+
+    /**
+     * @param {string} iso
+     */
+    function formatTimestamp(iso) {
+      const date = new Date(iso);
+      if (Number.isNaN(date.getTime())) {
+        return "";
+      }
+      return date.toLocaleString(undefined, {
+        dateStyle: "short",
+        timeStyle: "short",
+      });
+    }
+
+    /**
+     * @param {NoteCollection} collection
+     */
+    function renderNoteList(collection) {
+      list.innerHTML = "";
+      if (!collection || collection.items.length === 0) {
+        history.setAttribute("hidden", "true");
+        return;
+      }
+
+      history.removeAttribute("hidden");
+      const fragment = document.createDocumentFragment();
+      collection.items
+        .slice()
+        .sort((a, b) => (a.savedAt < b.savedAt ? 1 : -1))
+        .forEach((item) => {
+          const li = document.createElement("li");
+          li.className = "note-item";
+
+          const header = document.createElement("div");
+          header.className = "note-item__header";
+
+          const timestamp = document.createElement("time");
+          timestamp.className = "note-item__timestamp";
+          timestamp.dateTime = item.savedAt;
+          const formatted = formatTimestamp(item.savedAt);
+          timestamp.textContent = formatted
+            ? `Saved ${formatted}`
+            : "Saved locally";
+
+          header.appendChild(timestamp);
+
+          const body = document.createElement("p");
+          body.className = "note-item__body";
+          body.textContent = item.content;
+
+          li.appendChild(header);
+          li.appendChild(body);
+
+          fragment.appendChild(li);
+        });
+
+      list.appendChild(fragment);
+    }
+
+    /**
+     * @param {NoteCollection} collection
+     */
+    function updateMeta(collection) {
+      if (!collection || collection.items.length === 0) {
+        setMeta("");
+        return;
+      }
+      const formatted = formatTimestamp(collection.updatedAt);
+      const count = collection.items.length;
+      setMeta(
+        formatted
+          ? `${count} saved ${count === 1 ? "note" : "notes"}. Latest ${formatted}.`
+          : `${count} saved ${count === 1 ? "note" : "notes"}.`
+      );
+    }
+
+    function refreshFromStorage() {
+      const collection = loadCollection();
+      const draft = loadDraft();
+      const draftContent = draft?.content ?? "";
+      textarea.value = draftContent;
+      updatePreview(draftContent);
+      updateSaveButtonState(draftContent);
+      renderNoteList(collection);
+      updateMeta(collection);
+      setStatus(
+        storageReady
+          ? draftContent
+            ? "Draft restored. Save to add it to your notes or clear it."
+            : collection.items.length
+            ? "Notes loaded from local storage."
+            : "Start a note and it'll stay here until you save."
+          : "Local storage is unavailable; notes stay on this page only."
+      );
+
+      if (!storageReady) {
+        textarea.setAttribute("readonly", "true");
+        textarea.classList.add("note-field--readonly");
+        exportButton.setAttribute("disabled", "true");
+        saveButton.disabled = true;
+        clearButton.setAttribute("disabled", "true");
+      }
+    }
+
+    textarea.addEventListener("input", () => {
+      const value = textarea.value;
+      updatePreview(value);
+      updateSaveButtonState(value);
+      if (!storageReady) {
+        setStatus("Storage unavailable; notes won't persist.");
+        return;
+      }
+      saveDraft(value);
+      setStatus(
+        value.trim()
+          ? "Draft saved locally. Click save to add it to your notes."
+          : "Draft cleared."
+      );
+    });
+
+    saveButton.addEventListener("click", () => {
+      if (!storageReady) {
+        setStatus("Cannot save: storage unavailable.");
+        return;
+      }
+      const value = textarea.value.trim();
+      if (!value) {
+        setStatus("Write something before saving.");
+        return;
+      }
+      const payload = ensurePayload();
+      const collection = loadCollection();
+      const savedAt = new Date().toISOString();
+      const entry = {
+        id: `${noteKey}:${savedAt}`,
+        content: value,
+        savedAt,
+      };
+      collection.items.unshift(entry);
+      collection.updatedAt = savedAt;
+      payload.notes[noteKey] = collection;
+      clearDraft(false);
+      textarea.value = "";
+      updatePreview("");
+      updateSaveButtonState("");
+      renderNoteList(collection);
+      updateMeta(collection);
+      persistAllNotes(payload);
+      setStatus("Note saved locally.");
+    });
+
+    clearButton.addEventListener("click", () => {
+      textarea.value = "";
+      updatePreview("");
+      updateSaveButtonState("");
+      if (storageReady) {
+        clearDraft();
+      }
+      setStatus("Draft cleared.");
+    });
+
+    exportButton.addEventListener("click", () => {
+      if (!storageReady) {
+        setStatus("Nothing to export yet.");
+        return;
+      }
+      const payload = notesPayload ?? loadAllNotes();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      const timestamp = new Date().toISOString().replace(/[:]/g, "-");
+      anchor.href = url;
+      anchor.download = `improv-toolbox-notes-${timestamp}.json`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      window.setTimeout(() => URL.revokeObjectURL(url), 2000);
+      setStatus("Exported notes to a JSON file.");
+    });
+
+    refreshFromStorage();
+
+    window.addEventListener("pageshow", () => {
+      if (storageReady) {
+        notesPayload = null;
+        refreshFromStorage();
+      }
+    });
+
+    window.addEventListener("storage", (event) => {
+      if (event.key === STORAGE_NAMESPACE) {
+        notesPayload = null;
+        refreshFromStorage();
+        setStatus("Note updated from another tab.");
+      }
+    });
+  });
+
+  /**
+   * @typedef {Object} NoteEntry
+   * @property {string} id
+   * @property {string} content
+   * @property {string} savedAt
+   */
+
+  /**
+   * @typedef {Object} NoteCollection
+   * @property {string} id
+   * @property {string} type
+   * @property {string} title
+   * @property {NoteEntry[]} items
+   * @property {string} updatedAt
+   */
+
+  /**
+   * @typedef {Object} DraftEntry
+   * @property {string} content
+   * @property {string} updatedAt
+   */
+
+  /**
+   * @typedef {Object} NotesPayload
+   * @property {number} version
+   * @property {Record<string, NoteCollection>} notes
+   * @property {Record<string, DraftEntry>} drafts
+   */
+
+  /**
+   * @typedef {Object} NotesPayloadLegacy
+   * @property {number} version
+   * @property {Record<string, NoteLegacyEntry>} notes
+   */
+
+  /**
+   * @typedef {Object} NoteLegacyEntry
+   * @property {string} id
+   * @property {string} type
+   * @property {string} title
+   * @property {string} content
+   * @property {string} updatedAt
+   */
+</script>
