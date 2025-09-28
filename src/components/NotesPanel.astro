@@ -32,6 +32,9 @@ const noteKey = `${contentType}:${contentId}`;
     <button type="button" class="primary" data-note-save>
       Save note
     </button>
+    <button type="button" class="secondary" data-note-clear>
+      Clear draft
+    </button>
     <button type="button" class="secondary" data-note-export>
       Export all notes
     </button>
@@ -46,6 +49,10 @@ const noteKey = `${contentType}:${contentId}`;
     <summary>Preview</summary>
     <div data-note-preview></div>
   </details>
+  <div class="note-history">
+    <h3>Saved notes</h3>
+    <ul class="note-list" data-note-list></ul>
+  </div>
 </section>
 
 <style>
@@ -106,11 +113,55 @@ const noteKey = `${contentType}:${contentId}`;
     white-space: pre-wrap;
     font-family: var(--pico-font-family-monospace, ui-monospace, SFMono-Regular, SFMono, "Roboto Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
   }
+
+  .note-history {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .note-history h3 {
+    margin: 0;
+  }
+
+  .note-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .note-item {
+    border: 1px solid var(--pico-muted-border-color, hsla(0, 0%, 100%, 0.1));
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    display: grid;
+    gap: 0.5rem;
+    background: var(--pico-card-background-color, rgba(255, 255, 255, 0.03));
+  }
+
+  .note-item__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .note-item__timestamp {
+    font-size: 0.85rem;
+    color: var(--pico-muted-color);
+  }
+
+  .note-item__body {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+
 </style>
 
 <script type="module" lang="ts">
   const STORAGE_NAMESPACE = "improv-toolbox:notes";
-  const STORAGE_VERSION = 1;
+  const STORAGE_VERSION = 2;
   const storageSupported = (() => {
     if (typeof window === "undefined" || !("localStorage" in window)) {
       return false;
@@ -144,10 +195,25 @@ const noteKey = `${contentType}:${contentId}`;
     const exportButton = /** @type {HTMLButtonElement | null} */ (
       panel.querySelector("[data-note-export]")
     );
+    const clearButton = /** @type {HTMLButtonElement | null} */ (
+      panel.querySelector("[data-note-clear]")
+    );
     const meta = /** @type {HTMLParagraphElement | null} */ (
       panel.querySelector("[data-note-meta]")
     );
-    if (!textarea || !preview || !status || !exportButton || !saveButton || !meta) {
+    const list = /** @type {HTMLUListElement | null} */ (
+      panel.querySelector("[data-note-list]")
+    );
+    if (
+      !textarea ||
+      !preview ||
+      !status ||
+      !exportButton ||
+      !saveButton ||
+      !meta ||
+      !list ||
+      !clearButton
+    ) {
       return;
     }
 
@@ -164,7 +230,60 @@ const noteKey = `${contentType}:${contentId}`;
      * @returns {NotesPayload}
      */
     function emptyNotesPayload() {
-      return { version: STORAGE_VERSION, notes: {} };
+      return { version: STORAGE_VERSION, notes: {}, drafts: {} };
+    }
+
+    /**
+     * @param {Partial<NotesPayloadLegacy>} payload
+     * @returns {NotesPayload}
+     */
+    function migratePayload(payload) {
+      if (
+        !payload ||
+        typeof payload !== "object" ||
+        typeof payload.notes !== "object" ||
+        payload.notes === null
+      ) {
+        return emptyNotesPayload();
+      }
+
+      if (payload.version === STORAGE_VERSION && "drafts" in payload) {
+        return /** @type {NotesPayload} */ (payload);
+      }
+
+      const migrated = emptyNotesPayload();
+      migrated.version = STORAGE_VERSION;
+
+      for (const [key, value] of Object.entries(payload.notes)) {
+        if (!value || typeof value !== "object") continue;
+        const items = [];
+        const content = typeof value.content === "string" ? value.content : "";
+        const updatedAt =
+          typeof value.updatedAt === "string"
+            ? value.updatedAt
+            : new Date().toISOString();
+        if (content.trim()) {
+          items.push({
+            id: `${key}:${updatedAt}`,
+            content,
+            savedAt: updatedAt,
+          });
+        } else if (content) {
+          migrated.drafts[key] = {
+            content,
+            updatedAt,
+          };
+        }
+        migrated.notes[key] = {
+          id: key,
+          type: typeof value.type === "string" ? value.type : "content",
+          title: typeof value.title === "string" ? value.title : "",
+          items,
+          updatedAt,
+        };
+      }
+
+      return migrated;
     }
 
     /**
@@ -178,15 +297,14 @@ const noteKey = `${contentType}:${contentId}`;
           return emptyNotesPayload();
         }
         const parsed = JSON.parse(raw);
-        if (
-          typeof parsed !== "object" ||
-          parsed === null ||
-          typeof parsed.version !== "number" ||
-          typeof parsed.notes !== "object"
-        ) {
-          return emptyNotesPayload();
+        const migrated = migratePayload(
+          /** @type {Partial<NotesPayloadLegacy>} */ (parsed)
+        );
+        if (migrated.version !== STORAGE_VERSION) {
+          migrated.version = STORAGE_VERSION;
+          persistAllNotes(migrated);
         }
-        return /** @type {NotesPayload} */ (parsed);
+        return migrated;
       } catch (error) {
         console.warn("Notes storage unavailable", error);
         storageReady = false;
@@ -207,42 +325,72 @@ const noteKey = `${contentType}:${contentId}`;
         setStatus("Saving failed: storage is unavailable.");
         textarea.setAttribute("readonly", "true");
         textarea.classList.add("note-field--readonly");
+        exportButton.setAttribute("disabled", "true");
+        saveButton.setAttribute("disabled", "true");
+        clearButton.setAttribute("disabled", "true");
       }
     }
 
-    /**
-     * @returns {NoteEntry}
-     */
-    function loadCurrentNote() {
+    function ensurePayload() {
       if (!notesPayload) {
         notesPayload = loadAllNotes();
       }
-      const existing = notesPayload.notes[noteKey];
-      if (existing) return existing;
-      return {
+      return notesPayload;
+    }
+
+    /**
+     * @returns {NoteCollection}
+     */
+    function loadCollection() {
+      const payload = ensurePayload();
+      const existing = payload.notes[noteKey];
+      if (existing) {
+        return existing;
+      }
+      const collection = {
         id: noteKey,
         type: noteType,
         title: noteTitle,
-        content: "",
+        items: [],
         updatedAt: new Date().toISOString(),
       };
+      payload.notes[noteKey] = collection;
+      return collection;
+    }
+
+    /**
+     * @returns {DraftEntry | null}
+     */
+    function loadDraft() {
+      const payload = ensurePayload();
+      return payload.drafts[noteKey] ?? null;
     }
 
     /**
      * @param {string} content
      */
-    function saveCurrentNote(content) {
-      if (!notesPayload) {
-        notesPayload = loadAllNotes();
+    function saveDraft(content) {
+      const payload = ensurePayload();
+      if (!content) {
+        delete payload.drafts[noteKey];
+      } else {
+        payload.drafts[noteKey] = {
+          content,
+          updatedAt: new Date().toISOString(),
+        };
       }
-      notesPayload.notes[noteKey] = {
-        id: noteKey,
-        type: noteType,
-        title: noteTitle,
-        content,
-        updatedAt: new Date().toISOString(),
-      };
-      persistAllNotes(notesPayload);
+      persistAllNotes(payload);
+    }
+
+    function clearDraft(shouldPersist = true) {
+      const payload = ensurePayload();
+      if (payload.drafts[noteKey]) {
+        delete payload.drafts[noteKey];
+        if (shouldPersist) {
+          persistAllNotes(payload);
+        }
+      }
+      return payload;
     }
 
     /**
@@ -291,28 +439,88 @@ const noteKey = `${contentType}:${contentId}`;
     }
 
     /**
-     * @param {NoteEntry | null} note
+     * @param {NoteCollection} collection
      */
-    function updateMeta(note) {
-      if (!note || !note.content.trim()) {
-        setMeta("No saved note yet.");
+    function renderNoteList(collection) {
+      list.innerHTML = "";
+      if (!collection || collection.items.length === 0) {
+        const empty = document.createElement("li");
+        empty.className = "note-item";
+        const body = document.createElement("p");
+        body.className = "note-item__body";
+        body.textContent = "No saved notes yet.";
+        empty.appendChild(body);
+        list.appendChild(empty);
         return;
       }
-      const formatted = formatTimestamp(note.updatedAt);
-      setMeta(formatted ? `Saved ${formatted}` : "Saved locally.");
+
+      const fragment = document.createDocumentFragment();
+      collection.items
+        .slice()
+        .sort((a, b) => (a.savedAt < b.savedAt ? 1 : -1))
+        .forEach((item) => {
+          const li = document.createElement("li");
+          li.className = "note-item";
+
+          const header = document.createElement("div");
+          header.className = "note-item__header";
+
+          const timestamp = document.createElement("time");
+          timestamp.className = "note-item__timestamp";
+          timestamp.dateTime = item.savedAt;
+          const formatted = formatTimestamp(item.savedAt);
+          timestamp.textContent = formatted
+            ? `Saved ${formatted}`
+            : "Saved locally";
+
+          header.appendChild(timestamp);
+
+          const body = document.createElement("p");
+          body.className = "note-item__body";
+          body.textContent = item.content;
+
+          li.appendChild(header);
+          li.appendChild(body);
+
+          fragment.appendChild(li);
+        });
+
+      list.appendChild(fragment);
+    }
+
+    /**
+     * @param {NoteCollection} collection
+     */
+    function updateMeta(collection) {
+      if (!collection || collection.items.length === 0) {
+        setMeta("No saved notes yet.");
+        return;
+      }
+      const formatted = formatTimestamp(collection.updatedAt);
+      const count = collection.items.length;
+      setMeta(
+        formatted
+          ? `${count} saved ${count === 1 ? "note" : "notes"}. Latest ${formatted}.`
+          : `${count} saved ${count === 1 ? "note" : "notes"}.`
+      );
     }
 
     function refreshFromStorage() {
-      const note = loadCurrentNote();
-      textarea.value = note.content;
-      updatePreview(note.content);
-      dirty = false;
-      updateMeta(note);
+      const collection = loadCollection();
+      const draft = loadDraft();
+      const draftContent = draft?.content ?? "";
+      textarea.value = draftContent;
+      updatePreview(draftContent);
+      dirty = Boolean(draftContent.trim());
+      renderNoteList(collection);
+      updateMeta(collection);
       setStatus(
         storageReady
-          ? note.content
-            ? "Note loaded from local storage."
-            : "Start writing to create a local note, then save."
+          ? draftContent
+            ? "Draft restored. Save to add it to your notes or clear it."
+            : collection.items.length
+            ? "Notes loaded from local storage."
+            : "Start a note and it'll stay here until you save."
           : "Local storage is unavailable; notes stay on this page only."
       );
 
@@ -321,6 +529,7 @@ const noteKey = `${contentType}:${contentId}`;
         textarea.classList.add("note-field--readonly");
         exportButton.setAttribute("disabled", "true");
         saveButton.setAttribute("disabled", "true");
+        clearButton.setAttribute("disabled", "true");
       }
     }
 
@@ -331,8 +540,13 @@ const noteKey = `${contentType}:${contentId}`;
         setStatus("Storage unavailable; notes won't persist.");
         return;
       }
-      dirty = true;
-      setStatus("Unsaved changes. Remember to save.");
+      dirty = Boolean(value.trim());
+      saveDraft(value);
+      setStatus(
+        value.trim()
+          ? "Draft saved locally. Click save to add it to your notes."
+          : "Draft cleared."
+      );
     });
 
     saveButton.addEventListener("click", () => {
@@ -340,18 +554,40 @@ const noteKey = `${contentType}:${contentId}`;
         setStatus("Cannot save: storage unavailable.");
         return;
       }
-      if (!dirty) {
-        setStatus("Nothing new to save.");
+      const value = textarea.value.trim();
+      if (!value) {
+        setStatus("Write something before saving.");
         return;
       }
-      const value = textarea.value;
-      saveCurrentNote(value);
-      const note = loadCurrentNote();
+      const payload = ensurePayload();
+      const collection = loadCollection();
+      const savedAt = new Date().toISOString();
+      const entry = {
+        id: `${noteKey}:${savedAt}`,
+        content: value,
+        savedAt,
+      };
+      collection.items.unshift(entry);
+      collection.updatedAt = savedAt;
+      payload.notes[noteKey] = collection;
+      clearDraft(false);
+      textarea.value = "";
+      updatePreview("");
       dirty = false;
-      updateMeta(note);
-      setStatus(
-        value.trim().length ? "Note saved locally." : "Cleared note."
-      );
+      renderNoteList(collection);
+      updateMeta(collection);
+      persistAllNotes(payload);
+      setStatus("Note saved locally.");
+    });
+
+    clearButton.addEventListener("click", () => {
+      textarea.value = "";
+      updatePreview("");
+      dirty = false;
+      if (storageReady) {
+        clearDraft();
+      }
+      setStatus("Draft cleared.");
     });
 
     exportButton.addEventListener("click", () => {
@@ -396,8 +632,21 @@ const noteKey = `${contentType}:${contentId}`;
   /**
    * @typedef {Object} NoteEntry
    * @property {string} id
+   * @property {string} content
+   * @property {string} savedAt
+   */
+
+  /**
+   * @typedef {Object} NoteCollection
+   * @property {string} id
    * @property {string} type
    * @property {string} title
+   * @property {NoteEntry[]} items
+   * @property {string} updatedAt
+   */
+
+  /**
+   * @typedef {Object} DraftEntry
    * @property {string} content
    * @property {string} updatedAt
    */
@@ -405,6 +654,22 @@ const noteKey = `${contentType}:${contentId}`;
   /**
    * @typedef {Object} NotesPayload
    * @property {number} version
-   * @property {Record<string, NoteEntry>} notes
+   * @property {Record<string, NoteCollection>} notes
+   * @property {Record<string, DraftEntry>} drafts
+   */
+
+  /**
+   * @typedef {Object} NotesPayloadLegacy
+   * @property {number} version
+   * @property {Record<string, NoteLegacyEntry>} notes
+   */
+
+  /**
+   * @typedef {Object} NoteLegacyEntry
+   * @property {string} id
+   * @property {string} type
+   * @property {string} title
+   * @property {string} content
+   * @property {string} updatedAt
    */
 </script>
