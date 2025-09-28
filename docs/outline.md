@@ -20,6 +20,10 @@ Later features could include creating lesson plans, keeping notes on sessions an
 - forms
 - tools
 
+### navigation
+
+Primary destinations (Home, Exercises, Forms, Warmups, Tools) sit in a mobile-first bottom navigation bar with icon + label pairings. The sticky top app bar hosts the title, quick timer shortcut, and a standard hamburger trigger that anchors the modal drawer. A persistent "Menu" action in the bottom bar opens the same drawer so overflow items stay reachable even after long scrolls.
+
 For the content sections the user should be able to list, filter and view detail pages for each element. A user should be able to favourite elements and be able to filter by favourites in the list page.
 
 When on a detail page, if there is a matching tool, it should be possible to run the tool directly from the page. For example, for an exercise with a thirty second stare start and then a one minute scene, there should be a timer that has a thirty second and then one minute timers. For an excersise about playing emotions, there should be a suggestion component, pre filtered to only select from a collection of emotions, same for whatever, like the seven deadly sins, only the seven sins should be possible suggestions. For a form like Gauss form, there should be a Gauss timer.
