@@ -402,42 +402,57 @@ const noteKey = `${contentType}:${contentId}`;
 
   .note-item__actions {
     display: flex;
-    gap: 0.4rem;
+    gap: 0.3rem;
     flex-wrap: wrap;
     position: relative;
     z-index: 1;
   }
 
   .note-icon-button {
-    width: 2.35rem;
-    height: 2.35rem;
+    --note-icon-size: 1.1rem;
+    width: 2rem;
+    height: 2rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    background: color-mix(in srgb, var(--surface-raised, #1f1521) 70%, black 30%);
-    color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 85%, white 15%);
-    box-shadow: 0 14px 30px rgba(8, 4, 12, 0.4);
-    transition: transform 0.2s ease, box-shadow 0.2s ease,
-      background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: color-mix(in srgb, var(--surface-glass, #241521) 75%, transparent);
+    color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 80%, white 20%);
+    box-shadow: 0 10px 20px rgba(8, 4, 12, 0.35);
+    transition: transform 0.18s ease, box-shadow 0.18s ease,
+      background 0.18s ease, border-color 0.18s ease, color 0.18s ease,
+      filter 0.18s ease;
     cursor: pointer;
+    backdrop-filter: blur(6px) saturate(140%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .note-icon-button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    pointer-events: none;
   }
 
   .note-icon-button:hover,
   .note-icon-button:focus-visible {
-    transform: translateY(-2px);
+    transform: translateY(-1px) scale(1.05);
     outline: none;
-    box-shadow: 0 18px 38px rgba(12, 5, 16, 0.48);
+    box-shadow: 0 14px 28px rgba(12, 5, 16, 0.45);
+    filter: drop-shadow(0 0 6px rgba(255, 71, 97, 0.35));
   }
 
   .note-icon-button svg {
-    width: 1.15rem;
-    height: 1.15rem;
+    width: var(--note-icon-size);
+    height: var(--note-icon-size);
   }
 
   .note-icon-button--edit {
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 28%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 24%, transparent);
     color: var(--color-accent-soft, #ff536c);
   }
 
@@ -445,35 +460,36 @@ const noteKey = `${contentType}:${contentId}`;
   .note-icon-button--edit:focus-visible {
     background: color-mix(
       in srgb,
-      var(--color-accent, #ff2f55) 18%,
-      var(--surface-raised, #1f1521) 82%
+      var(--color-accent, #ff2f55) 20%,
+      var(--surface-glass, #241521) 80%
     );
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 55%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 60%, transparent);
     color: #140408;
   }
 
   .note-icon-button--delete {
-    border-color: rgba(255, 94, 94, 0.18);
-    color: color-mix(in srgb, var(--color-warning, #ffb3b3) 60%, white 40%);
+    border-color: rgba(255, 94, 94, 0.2);
+    color: color-mix(in srgb, var(--color-warning, #ffb3b3) 55%, white 45%);
     background: color-mix(
       in srgb,
-      var(--surface-color, #161018) 75%,
+      var(--surface-color, #161018) 70%,
       rgba(255, 41, 62, 0.08)
     );
   }
 
   .note-icon-button--delete:hover,
   .note-icon-button--delete:focus-visible {
-    background: color-mix(in srgb, var(--color-accent, #ff2f55) 26%, #1a0d12 74%);
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 60%, transparent);
+    background: color-mix(in srgb, var(--color-accent, #ff2f55) 28%, #1a0d12 72%);
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 62%, transparent);
     color: #140408;
   }
 
   .note-icon-button:disabled {
-    opacity: 0.45;
+    opacity: 0.4;
     pointer-events: none;
     transform: none;
     box-shadow: none;
+    filter: none;
   }
 
   .visually-hidden {
