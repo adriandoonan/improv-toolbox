@@ -114,11 +114,9 @@ const femaleNameList = femaleNames;
             <table class="jammer-table">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Role</th>
-                  <th>Prefers first half</th>
-                  <th>Assigned group</th>
-                  <th></th>
+                  <th>Jammer</th>
+                  <th class="jammer-table__group">Group</th>
+                  <th class="jammer-table__actions">Actions</th>
                 </tr>
               </thead>
               <tbody id="jammerTableBody"></tbody>
@@ -395,19 +393,68 @@ const femaleNameList = femaleNames;
 
     function renderJammerTable() {
       const jammers = currentJam.jammers || [];
+      const groups = computeAssignedGroups();
       jammerTableBody.innerHTML = "";
       jammers.forEach((jammer) => {
         const tr = document.createElement("tr");
-        const nameTd = document.createElement("td");
-        nameTd.textContent = jammer.name;
-        const roleTd = document.createElement("td");
-        roleTd.textContent = formatRole(jammer.role);
-        const halfTd = document.createElement("td");
-        halfTd.textContent = jammer.prefersFirstHalf ? "Yes" : "No";
+
+        const infoTd = document.createElement("td");
+        infoTd.className = "jammer-cell jammer-cell--info";
+
+        const nameRow = document.createElement("div");
+        nameRow.className = "jammer-name-row";
+        const nameEl = document.createElement(jammer.role === "host" ? "strong" : "span");
+        nameEl.textContent = jammer.name;
+        nameRow.appendChild(nameEl);
+
+        if (jammer.role === "first-timer") {
+          const marker = document.createElement("span");
+          marker.className = "jammer-name-marker";
+          marker.textContent = "*";
+          marker.title = "First-timer";
+          marker.setAttribute("aria-hidden", "true");
+          nameRow.appendChild(marker);
+        }
+
+        infoTd.appendChild(nameRow);
+
+        const meta = document.createElement("div");
+        meta.className = "jammer-meta";
+
+        const roleBadgeLabel = getRoleBadgeLabel(jammer.role);
+        if (roleBadgeLabel) {
+          const roleFlag = document.createElement("span");
+          roleFlag.className = "jammer-flag";
+          roleFlag.textContent = roleBadgeLabel;
+          roleFlag.title = formatRole(jammer.role);
+          meta.appendChild(roleFlag);
+        }
+
+        if (jammer.prefersFirstHalf) {
+          const firstFlag = document.createElement("span");
+          firstFlag.className = "jammer-flag jammer-flag--first";
+          firstFlag.textContent = "1st half";
+          firstFlag.title = "Prefers first half";
+          meta.appendChild(firstFlag);
+        }
+
+        if (meta.children.length) {
+          infoTd.appendChild(meta);
+        }
+
+        const descriptors = [];
+        const roleDescription = formatRole(jammer.role);
+        if (roleDescription) descriptors.push(roleDescription);
+        if (jammer.prefersFirstHalf) descriptors.push("Prefers first half");
+        if (descriptors.length) {
+          infoTd.title = descriptors.join(" • ");
+        }
+
         const groupTd = document.createElement("td");
+        groupTd.className = "jammer-cell jammer-cell--group";
         const groupSelect = document.createElement("select");
+        groupSelect.className = "jammer-group-select";
         groupSelect.dataset.jammerId = jammer.id;
-        const groups = computeAssignedGroups();
         addGroupOptions(groupSelect, groups.length);
         groupSelect.value = jammer.assignedGroup != null ? String(jammer.assignedGroup) : "";
         groupSelect.addEventListener("change", () => {
@@ -419,17 +466,19 @@ const femaleNameList = femaleNames;
         groupTd.appendChild(groupSelect);
 
         const actionsTd = document.createElement("td");
+        actionsTd.className = "jammer-cell jammer-cell--actions";
         const removeBtn = document.createElement("button");
         removeBtn.type = "button";
-        removeBtn.className = "ghost";
+        removeBtn.className = "ghost jammer-remove";
         removeBtn.textContent = "Remove";
+        removeBtn.setAttribute("aria-label", `Remove ${jammer.name}`);
         removeBtn.addEventListener("click", () => {
           currentJam.jammers = currentJam.jammers.filter((j) => j.id !== jammer.id);
           renderWorkspace();
         });
         actionsTd.appendChild(removeBtn);
 
-        tr.append(nameTd, roleTd, halfTd, groupTd, actionsTd);
+        tr.append(infoTd, groupTd, actionsTd);
         jammerTableBody.appendChild(tr);
       });
       jammerCountLabel.textContent = `${jammers.length} jammers`;
@@ -529,6 +578,15 @@ const femaleNameList = femaleNames;
           return "Old-timer";
         default:
           return "Jammer";
+      }
+    }
+
+    function getRoleBadgeLabel(role) {
+      switch (role) {
+        case "old-timer":
+          return "OT";
+        default:
+          return "";
       }
     }
 
@@ -935,6 +993,79 @@ const femaleNameList = femaleNames;
       border-bottom: 1px solid var(--muted-border-color);
       padding: 0.75rem;
       text-align: left;
+    }
+    .jammer-table__group,
+    .jammer-cell--group {
+      white-space: nowrap;
+    }
+    .jammer-table__actions,
+    .jammer-cell--actions {
+      width: 1%;
+      white-space: nowrap;
+      text-align: right;
+    }
+    .jammer-cell {
+      vertical-align: top;
+    }
+    .jammer-cell--info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .jammer-name-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .jammer-name-row strong {
+      font-weight: 700;
+    }
+    .jammer-name-marker {
+      font-size: 0.75rem;
+      color: var(--muted-color, rgba(0, 0, 0, 0.6));
+    }
+    .jammer-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      color: var(--muted-color, rgba(0, 0, 0, 0.6));
+      font-size: 0.75rem;
+    }
+    .jammer-flag {
+      background: var(--surface-3, var(--surface-2));
+      border-radius: 999px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .jammer-flag--first {
+      background: #e0f2ff;
+      color: #0f4c81;
+    }
+    .jammer-group-select {
+      min-width: 6rem;
+      width: 100%;
+    }
+    .jammer-cell--actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+    .jammer-remove {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      white-space: nowrap;
+    }
+    @media (max-width: 700px) {
+      .jammer-table th,
+      .jammer-table td {
+        padding: 0.5rem;
+      }
+      .jammer-group-select {
+        min-width: 0;
+      }
     }
     .group-section {
       display: flex;
