@@ -46,16 +46,18 @@ const isActive = (href: string) =>
     <meta name="mobile-web-app-capable" content="yes" />
   </head>
   <body>
-    <Drawer title="Navigate" links={navLinks}>
-      <p class="app-tagline">Plan, teach, and play on the fly.</p>
-    </Drawer>
     <header class="app-bar" role="banner">
       <div class="app-bar__inner">
         <div class="app-bar__brand">
           <a class="app-logo" href="/">Improv Toolbox</a>
           <span class="app-tagline">Warmups · Forms · Tools</span>
         </div>
-        <a class="app-cta" href="/tools/timer">Quick timer</a>
+        <div class="app-bar__actions">
+          <Drawer title="Navigate" links={navLinks}>
+            <p class="app-tagline">Plan, teach, and play on the fly.</p>
+          </Drawer>
+          <a class="app-cta" href="/tools/timer">Quick timer</a>
+        </div>
       </div>
       <nav class="tab-nav" aria-label="Primary navigation">
         {
