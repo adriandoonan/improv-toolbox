@@ -13,31 +13,58 @@ const toolPages = Object.values(
   title="Tools"
   description="Handy improv tools for shows and classes."
 >
-  <section class="center" style="max-width:28rem;margin-top:2rem;">
-    <h1 class="mar-0">Tools</h1>
-    <p class="mute">Choose a tool below:</p>
-    <div class="stack" style="margin-top:2rem;">
+  <section class="collection page-section">
+    <div class="stack" style="gap:0.75rem;">
+      <h1 class="section-title">Tools</h1>
+      <p class="section-subtitle">
+        Launch rehearsal helpers built for phones. Tap a card to open timers,
+        suggestion engines, and more.
+      </p>
+    </div>
+    <div class="tool-grid">
       {
         toolPages.map((tool) => (
-          <a
-            href={tool.tool.href}
-            class="card contrast"
-            style="padding:2em 1em;text-align:center;display:block;font-size:1.2em;"
-          >
-            <strong>
-              {tool.tool.icon} {tool.tool.name}
-            </strong>
-            <div class="mute" style="font-size:0.95em;margin-top:0.5em;">
-              {tool.tool.description}
+          <a href={tool.tool.href} class="resource-card tool-card">
+            <div class="tool-card__header">
+              <span class="tool-card__icon">{tool.tool.icon}</span>
+              <h2 class="resource-card__title">{tool.tool.name}</h2>
             </div>
+            <p class="resource-card__summary">{tool.tool.description}</p>
             {tool.tool.creator && (
-              <div style="font-size:0.85em;margin-top:0.5em;">
-                By {tool.tool.creator}
-              </div>
+              <span class="meta-badge">Built by {tool.tool.creator}</span>
             )}
           </a>
         ))
       }
     </div>
   </section>
+  <style>
+    .tool-grid {
+      display: grid;
+      gap: clamp(1.25rem, 4vw, 1.75rem);
+    }
+    @media (min-width: 640px) {
+      .tool-grid {
+        grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+      }
+    }
+    .tool-card {
+      text-decoration: none;
+      padding: clamp(1.5rem, 4vw, 2rem);
+      background: color-mix(in srgb, var(--surface-panel) 92%, transparent);
+      border: 1px solid color-mix(
+        in srgb,
+        var(--color-accent) 16%,
+        rgba(255, 255, 255, 0.08)
+      );
+    }
+    .tool-card__header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .tool-card__icon {
+      font-size: 1.9rem;
+    }
+  </style>
 </BaseLayout>

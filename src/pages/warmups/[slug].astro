@@ -12,24 +12,40 @@ const warmup = await getEntry("warmups", slug);
 ---
 
 <BaseLayout>
-  <Breadcrumbs
-    items={[
-      { label: "Warmups", href: "/warmups" },
-      { label: warmup?.data.name },
-    ]}
-  />
-  <h1>{warmup?.data.name}</h1>
-  <p>{warmup?.data.shortDescription}</p>
-  <ul>
-    <li><strong>Minimum People:</strong> {warmup?.data.minimumPeople}</li>
-    <li><strong>Focus:</strong> {warmup?.data.focus}</li>
-  </ul>
-  <article>
-    <p>{warmup?.data.description}</p>
-  </article>
-  <NotesPanel
-    contentId={warmup?.slug ?? ""}
-    contentType="warmup"
-    contentTitle={warmup?.data.name ?? "Warmup"}
-  />
+  <section class="page-section stack">
+    <Breadcrumbs
+      items={[
+        { label: "Warmups", href: "/warmups" },
+        { label: warmup?.data.name },
+      ]}
+    />
+    <article class="content-card">
+      <header class="stack" style="gap:0.75rem;">
+        <h1 class="section-title">{warmup?.data.name}</h1>
+        <p class="content-lead">{warmup?.data.shortDescription}</p>
+        <ul class="content-meta">
+          {warmup?.data.minimumPeople != null && (
+            <li>
+              <strong>Minimum people</strong>
+              <span>{warmup?.data.minimumPeople}</span>
+            </li>
+          )}
+          {warmup?.data.focus && (
+            <li>
+              <strong>Focus</strong>
+              <span>{warmup?.data.focus}</span>
+            </li>
+          )}
+        </ul>
+      </header>
+      <div class="content-body">
+        <p>{warmup?.data.description}</p>
+      </div>
+    </article>
+    <NotesPanel
+      contentId={warmup?.slug ?? ""}
+      contentType="warmup"
+      contentTitle={warmup?.data.name ?? "Warmup"}
+    />
+  </section>
 </BaseLayout>

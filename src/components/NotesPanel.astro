@@ -54,16 +54,31 @@ const noteKey = `${contentType}:${contentId}`;
 
 <style>
   .notes-panel {
-    margin-top: 3rem;
-    border-top: 1px solid var(--pico-muted-border-color, hsla(0, 0%, 100%, 0.1));
-    padding-top: 2rem;
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+    background: color-mix(in srgb, var(--surface-panel, #221721) 92%, transparent);
+    border-radius: var(--radius-lg, 28px);
+    padding: clamp(1.75rem, 5vw, 3rem);
+    border: 1px solid color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 16%,
+      rgba(255, 255, 255, 0.08)
+    );
+    box-shadow: var(
+      --shadow-soft,
+      0 18px 42px rgba(5, 2, 8, 0.45)
+    );
     display: grid;
-    gap: 1rem;
+    gap: 1.25rem;
+  }
+
+  .notes-panel h2 {
+    margin: 0;
+    font-size: clamp(1.4rem, 3vw, 1.6rem);
   }
 
   .note-helper {
     margin: 0;
-    color: var(--pico-muted-color);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
     font-size: 0.95rem;
   }
 
@@ -75,6 +90,7 @@ const noteKey = `${contentType}:${contentId}`;
   .note-field textarea {
     width: 100%;
     resize: vertical;
+    min-height: 10rem;
   }
 
   .note-field textarea.note-field--readonly {
@@ -85,7 +101,7 @@ const noteKey = `${contentType}:${contentId}`;
   .note-meta {
     margin: 0;
     font-size: 0.9rem;
-    color: var(--pico-muted-color);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 80%, black 20%);
   }
 
   .note-toolbar {
@@ -95,10 +111,36 @@ const noteKey = `${contentType}:${contentId}`;
     align-items: center;
   }
 
+  .note-toolbar .primary {
+    background: linear-gradient(135deg, var(--color-accent, #ff2f55), #ff6b82);
+    border: none;
+    color: #140408;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.65rem 1.25rem;
+    border-radius: 999px;
+    box-shadow: 0 16px 36px rgba(255, 63, 94, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .note-toolbar .primary:hover,
+  .note-toolbar .primary:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 42px rgba(255, 63, 94, 0.45);
+  }
+
+  .note-toolbar .secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--color-muted, #cbbfca);
+    padding: 0.6rem 1.1rem;
+    border-radius: 999px;
+  }
+
   .note-status {
     min-height: 1.5rem;
     font-size: 0.9rem;
-    color: var(--pico-muted-color);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
   }
 
   .note-preview summary {
@@ -113,11 +155,11 @@ const noteKey = `${contentType}:${contentId}`;
 
   .note-preview div :is(pre, code) {
     font-family: var(
-      --pico-font-family-monospace,
+      --font-mono,
+      "JetBrains Mono",
+      "Fira Code",
       ui-monospace,
       SFMono-Regular,
-      SFMono,
-      "Roboto Mono",
       Menlo,
       Monaco,
       Consolas,
@@ -145,12 +187,12 @@ const noteKey = `${contentType}:${contentId}`;
   }
 
   .note-item {
-    border: 1px solid var(--pico-muted-border-color, hsla(0, 0%, 100%, 0.1));
-    border-radius: 0.5rem;
-    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1rem;
+    padding: 0.85rem 1.1rem;
     display: grid;
     gap: 0.5rem;
-    background: var(--pico-card-background-color, rgba(255, 255, 255, 0.03));
+    background: rgba(255, 255, 255, 0.04);
   }
 
   .note-item__header {
@@ -169,12 +211,12 @@ const noteKey = `${contentType}:${contentId}`;
 
   .note-item__timestamp {
     font-size: 0.85rem;
-    color: var(--pico-muted-color);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 75%, black 25%);
   }
 
   .note-item__updated {
     font-size: 0.8rem;
-    color: var(--pico-muted-color);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 70%, black 30%);
   }
 
   .note-item__actions {
@@ -185,20 +227,20 @@ const noteKey = `${contentType}:${contentId}`;
 
   .note-item__actions button {
     font-size: 0.85rem;
-    padding: 0.25rem 0.75rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-muted, #cbbfca);
   }
 
   .note-item--editing {
-    border-color: var(
-      --pico-primary-border-color,
-      hsla(262, 83%, 58%, 0.6)
-    );
-    box-shadow: 0 0 0 1px
-      var(--pico-primary-border-color, hsla(262, 83%, 58%, 0.35));
+    border-color: rgba(255, 83, 108, 0.45);
+    box-shadow: 0 0 0 1px rgba(255, 83, 108, 0.35);
   }
 
   .note-item--editing .note-item__timestamp {
-    color: var(--pico-primary, #8b5cf6);
+    color: var(--color-accent-soft, #ff536c);
   }
 
   .note-item__body {
@@ -216,10 +258,7 @@ const noteKey = `${contentType}:${contentId}`;
   .note-item__body pre {
     padding: 0.75rem;
     border-radius: 0.35rem;
-    background: var(
-      --pico-muted-border-color,
-      rgba(255, 255, 255, 0.05)
-    );
+    background: rgba(255, 255, 255, 0.06);
   }
 
   .note-preview div :is(ul, ol),
@@ -234,7 +273,7 @@ const noteKey = `${contentType}:${contentId}`;
   .note-item__body blockquote {
     margin: 0;
     padding-left: 1rem;
-    border-left: 3px solid var(--pico-muted-border-color, hsla(0, 0%, 100%, 0.2));
+    border-left: 3px solid rgba(255, 255, 255, 0.12);
   }
 
   .note-preview div img,

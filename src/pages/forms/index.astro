@@ -15,37 +15,47 @@ const types = Array.from(
 ---
 
 <BaseLayout>
-  <Breadcrumbs items={[{ label: "Forms" }]} />
-  <div style="margin-bottom: 1rem;">
-    <FilterDrawer
-      fields={[
-        { name: "name", label: "Name", type: "select", options: names },
-        types.length
-          ? { name: "type", label: "Type", type: "select", options: types }
-          : null,
-      ].filter(Boolean)}
-    />
-  </div>
-  <ul id="formList" class="no-bullets">
-    {
-      forms.map((form) => (
-        <li
-          class="no-bullets-li"
-          data-name={form.data.name}
-          data-type={form.data.type ?? ""}
-        >
-          <article>
-            <header>
-              <h2 style="margin-bottom:0.5rem;">
-                <a href={`/forms/${form.slug}`}>{form.data.name}</a>
-              </h2>
-            </header>
-            <p>{form.data.shortDescription}</p>
-          </article>
-        </li>
-      ))
-    }
-  </ul>
+  <section class="collection page-section">
+    <header class="collection__header">
+      <Breadcrumbs items={[{ label: "Forms" }]} />
+      <div class="stack" style="gap:0.5rem;">
+        <h1 class="section-title">Forms</h1>
+        <p class="section-subtitle">
+          Map beats, build arcs, and bring signature structures to your troupe&apos;s
+          next show.
+        </p>
+      </div>
+      <div class="collection__controls">
+        <FilterDrawer
+          fields={[
+            { name: "name", label: "Name", type: "select", options: names },
+            types.length
+              ? { name: "type", label: "Type", type: "select", options: types }
+              : null,
+          ].filter(Boolean)}
+        />
+      </div>
+    </header>
+    <ul id="formList" class="resource-list">
+      {
+        forms.map((form) => (
+          <li
+            class="resource-card"
+            data-name={form.data.name}
+            data-type={form.data.type ?? ""}
+          >
+            <h2 class="resource-card__title">
+              <a href={`/forms/${form.slug}`}>{form.data.name}</a>
+            </h2>
+            <p class="resource-card__summary">{form.data.shortDescription}</p>
+            <div class="meta-badges">
+              {form.data.type && <span class="meta-badge">Type · {form.data.type}</span>}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
   <script>
     const form = document.querySelector(".filter-form");
     const list = document.getElementById("formList");
@@ -64,14 +74,12 @@ const types = Array.from(
       });
   </script>
   <style>
-    .no-bullets {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .resource-card__title a {
+      color: inherit;
     }
-    .no-bullets-li {
-      list-style: none;
-      padding-left: 0;
+    .resource-card__title a:hover,
+    .resource-card__title a:focus-visible {
+      color: var(--color-accent, #ff2f55);
     }
   </style>
 </BaseLayout>
