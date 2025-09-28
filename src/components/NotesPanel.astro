@@ -17,7 +17,13 @@ const noteKey = `${contentType}:${contentId}`;
 >
   <h2>Your notes</h2>
   <div class="note-history" data-note-history hidden>
-    <h3>Saved notes</h3>
+    <div class="note-history__header">
+      <h3>Saved notes</h3>
+      <p class="note-history__helper">
+        Reopen anything you've captured for this piece. Updating a note keeps the
+        original saved time so you can see when you first captured it.
+      </p>
+    </div>
     <ul class="note-list" data-note-list></ul>
   </div>
   <p class="note-helper">
@@ -33,13 +39,29 @@ const noteKey = `${contentType}:${contentId}`;
   </label>
   <p class="note-meta" data-note-meta></p>
   <div class="note-toolbar">
-    <button type="button" class="primary" data-note-save> Save note </button>
-    <button type="button" class="secondary" data-note-clear>
-      Clear draft
-    </button>
-    <button type="button" class="secondary" data-note-export>
-      Export all notes
-    </button>
+    <div class="note-toolbar__actions">
+      <button
+        type="button"
+        class="note-button note-button--primary"
+        data-note-save
+      >
+        Save note
+      </button>
+      <button
+        type="button"
+        class="note-button note-button--ghost"
+        data-note-clear
+      >
+        Clear draft
+      </button>
+      <button
+        type="button"
+        class="note-button note-button--outline"
+        data-note-export
+      >
+        Export all notes
+      </button>
+    </div>
     <span
       id={`note-status-${noteKey}`}
       role="status"
@@ -87,10 +109,32 @@ const noteKey = `${contentType}:${contentId}`;
     gap: 0.5rem;
   }
 
+  .note-field__label {
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 70%, white 30%);
+  }
+
   .note-field textarea {
     width: 100%;
     resize: vertical;
     min-height: 10rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 1rem 1.1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    background: color-mix(in srgb, var(--surface-color, #161018) 82%, black 18%);
+    color: var(--color-text, #f9f6f8);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .note-field textarea:focus-visible {
+    outline: none;
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 55%, transparent);
+    box-shadow: 0 0 0 2px rgba(255, 71, 97, 0.3);
   }
 
   .note-field textarea.note-field--readonly {
@@ -105,36 +149,98 @@ const noteKey = `${contentType}:${contentId}`;
   }
 
   .note-toolbar {
+    display: grid;
+    gap: 0.65rem;
+    align-items: start;
+  }
+
+  .note-toolbar__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.65rem;
+  }
+
+  .note-button {
+    display: inline-flex;
     align-items: center;
-  }
-
-  .note-toolbar .primary {
-    background: linear-gradient(135deg, var(--color-accent, #ff2f55), #ff6b82);
-    border: none;
-    color: #140408;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    padding: 0.65rem 1.25rem;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.6rem 1.2rem;
     border-radius: 999px;
-    box-shadow: 0 16px 36px rgba(255, 63, 94, 0.35);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid transparent;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
+      border-color 0.2s ease, color 0.2s ease;
+    background: color-mix(in srgb, var(--surface-raised, #1f1521) 68%, black 32%);
+    color: var(--color-heading, #fff5f7);
+    box-shadow: 0 10px 24px rgba(10, 4, 12, 0.35);
   }
 
-  .note-toolbar .primary:hover,
-  .note-toolbar .primary:focus-visible {
+  .note-button:hover,
+  .note-button:focus-visible {
     transform: translateY(-2px);
-    box-shadow: 0 20px 42px rgba(255, 63, 94, 0.45);
+    box-shadow: 0 14px 32px rgba(15, 6, 18, 0.45);
   }
 
-  .note-toolbar .secondary {
+  .note-button:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .note-button--primary {
+    background: linear-gradient(135deg, var(--color-accent, #ff2f55) 0%, #ff6b82 100%);
+    color: #140408;
+    border: none;
+    box-shadow: 0 18px 38px rgba(255, 63, 94, 0.45);
+  }
+
+  .note-button--primary:hover,
+  .note-button--primary:focus-visible {
+    box-shadow: 0 22px 46px rgba(255, 63, 94, 0.55);
+  }
+
+  .note-button--ghost {
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: var(--color-muted, #cbbfca);
-    padding: 0.6rem 1.1rem;
-    border-radius: 999px;
+    border-color: rgba(255, 255, 255, 0.12);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 90%, white 10%);
+  }
+
+  .note-button--outline {
+    background: color-mix(in srgb, var(--surface-color, #161018) 75%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+    color: var(--color-accent-soft, #ff536c);
+  }
+
+  .note-button--outline:hover,
+  .note-button--outline:focus-visible {
+    background: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 18%,
+      var(--surface-raised, #1f1521) 82%
+    );
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 55%, transparent);
+  }
+
+  .note-button--danger {
+    background: color-mix(in srgb, var(--color-accent, #ff2f55) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+    color: var(--color-accent-soft, #ff536c);
+  }
+
+  .note-button--danger:hover,
+  .note-button--danger:focus-visible {
+    background: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 26%,
+      var(--surface-raised, #1f1521) 74%
+    );
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 60%, transparent);
+    color: #140408;
   }
 
   .note-status {
@@ -143,12 +249,47 @@ const noteKey = `${contentType}:${contentId}`;
     color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
   }
 
+  @media (min-width: 720px) {
+    .note-toolbar {
+      grid-template-columns: auto 1fr;
+      align-items: center;
+    }
+
+    .note-status {
+      text-align: right;
+    }
+  }
+
+  .note-preview {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    background: color-mix(in srgb, var(--surface-raised, #1f1521) 84%, black 16%);
+    box-shadow: 0 12px 28px rgba(6, 2, 10, 0.4);
+  }
+
   .note-preview summary {
     cursor: pointer;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted-strong, #f1d5dc);
+  }
+
+  .note-preview summary::marker {
+    display: none;
+  }
+
+  .note-preview summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .note-preview[open] summary {
+    color: var(--color-heading, #fff5f7);
   }
 
   .note-preview div {
-    padding: 0.5rem 0;
+    padding: 0.75rem 0 0;
     display: grid;
     gap: 0.75rem;
   }
@@ -171,11 +312,25 @@ const noteKey = `${contentType}:${contentId}`;
 
   .note-history {
     display: grid;
-    gap: 0.75rem;
+    gap: 1.1rem;
   }
 
-  .note-history h3 {
+  .note-history__header {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .note-history__header h3 {
     margin: 0;
+    font-size: clamp(1.1rem, 2.8vw, 1.3rem);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .note-history__helper {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
+    font-size: 0.9rem;
   }
 
   .note-list {
@@ -183,16 +338,37 @@ const noteKey = `${contentType}:${contentId}`;
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 1rem;
+    gap: 1.15rem;
   }
 
   .note-item {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 1rem;
-    padding: 0.85rem 1.1rem;
+    position: relative;
+    border-radius: 1.1rem;
+    padding: 1rem 1.15rem;
     display: grid;
-    gap: 0.5rem;
-    background: rgba(255, 255, 255, 0.04);
+    gap: 0.65rem;
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--surface-raised, #1f1521) 90%, black 10%) 0%,
+        color-mix(in srgb, var(--surface-panel, #221721) 85%, black 15%) 100%
+      );
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 42px rgba(8, 4, 12, 0.45);
+    overflow: hidden;
+  }
+
+  .note-item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      160% 160% at 0% 0%,
+      rgba(255, 71, 97, 0.18),
+      transparent 70%
+    );
+    opacity: 0.65;
   }
 
   .note-item__header {
@@ -200,6 +376,11 @@ const noteKey = `${contentType}:${contentId}`;
     justify-content: space-between;
     align-items: baseline;
     gap: 0.5rem;
+  }
+
+  .note-item__header > * {
+    position: relative;
+    z-index: 1;
   }
 
   .note-item__info {
@@ -225,18 +406,25 @@ const noteKey = `${contentType}:${contentId}`;
     flex-wrap: wrap;
   }
 
-  .note-item__actions button {
+  .note-item__actions .note-button {
     font-size: 0.85rem;
-    padding: 0.35rem 0.85rem;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--color-muted, #cbbfca);
+    padding: 0.4rem 0.95rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
   }
 
   .note-item--editing {
     border-color: rgba(255, 83, 108, 0.45);
-    box-shadow: 0 0 0 1px rgba(255, 83, 108, 0.35);
+    box-shadow: 0 0 0 1px rgba(255, 83, 108, 0.35), 0 24px 48px rgba(255, 71, 97, 0.35);
+  }
+
+  .note-item--editing::before {
+    opacity: 0.9;
+    background: radial-gradient(
+      140% 120% at 10% 0%,
+      rgba(255, 83, 108, 0.35),
+      transparent 68%
+    );
   }
 
   .note-item--editing .note-item__timestamp {
@@ -247,6 +435,8 @@ const noteKey = `${contentType}:${contentId}`;
     margin: 0;
     display: grid;
     gap: 0.5rem;
+    position: relative;
+    z-index: 1;
   }
 
   .note-preview div p,
@@ -1054,7 +1244,7 @@ const noteKey = `${contentType}:${contentId}`;
 
           const editButton = document.createElement("button");
           editButton.type = "button";
-          editButton.className = "secondary";
+          editButton.className = "note-button note-button--ghost";
           editButton.textContent = "Edit";
           editButton.addEventListener("click", () => {
             beginEdit(item);
@@ -1062,7 +1252,7 @@ const noteKey = `${contentType}:${contentId}`;
 
           const deleteButton = document.createElement("button");
           deleteButton.type = "button";
-          deleteButton.className = "secondary";
+          deleteButton.className = "note-button note-button--danger";
           deleteButton.textContent = "Delete";
           deleteButton.addEventListener("click", () => {
             deleteNote(item.id);
