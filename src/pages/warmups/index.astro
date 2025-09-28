@@ -3,14 +3,20 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import { getCollection } from "astro:content";
-const warmups = await getCollection("warmups");
-const names = Array.from(new Set(warmups.map((w) => w.data.name)));
+const warmups = (await getCollection("warmups")).sort((a, b) =>
+  a.data.name.localeCompare(b.data.name)
+);
+const names = Array.from(new Set(warmups.map((w) => w.data.name))).sort(
+  (a, b) => a.localeCompare(b)
+);
 const focuses = Array.from(
   new Set(warmups.map((w) => w.data.focus).filter(Boolean))
-);
+).sort((a, b) => a.localeCompare(b));
 const minPeople = Array.from(
-  new Set(warmups.map((w) => w.data.minimumPeople).filter(Boolean))
-);
+  new Set(warmups.map((w) => w.data.minimumPeople).filter((value) =>
+    value != null
+  ))
+).sort((a, b) => a - b);
 ---
 
 <BaseLayout>
