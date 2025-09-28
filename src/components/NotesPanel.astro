@@ -107,7 +107,11 @@ const noteKey = `${contentType}:${contentId}`;
 
   .note-preview div {
     padding: 0.5rem 0;
-    white-space: pre-wrap;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .note-preview div :is(pre, code) {
     font-family: var(
       --pico-font-family-monospace,
       ui-monospace,
@@ -163,7 +167,44 @@ const noteKey = `${contentType}:${contentId}`;
 
   .note-item__body {
     margin: 0;
-    white-space: pre-wrap;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .note-preview div p,
+  .note-item__body p {
+    margin: 0;
+  }
+
+  .note-preview div pre,
+  .note-item__body pre {
+    padding: 0.75rem;
+    border-radius: 0.35rem;
+    background: var(
+      --pico-muted-border-color,
+      rgba(255, 255, 255, 0.05)
+    );
+  }
+
+  .note-preview div :is(ul, ol),
+  .note-item__body :is(ul, ol) {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .note-preview div blockquote,
+  .note-item__body blockquote {
+    margin: 0;
+    padding-left: 1rem;
+    border-left: 3px solid var(--pico-muted-border-color, hsla(0, 0%, 100%, 0.2));
+  }
+
+  .note-preview div img,
+  .note-item__body img {
+    max-width: 100%;
+    height: auto;
   }
 </style>
 
@@ -423,8 +464,9 @@ const noteKey = `${contentType}:${contentId}`;
 
     /**
      * @param {string} value
+     * @returns {string}
      */
-    function sanitizeForPreview(value) {
+    function escapeHtml(value) {
       const temp = document.createElement("div");
       temp.textContent = value;
       return temp.innerHTML;
@@ -432,10 +474,332 @@ const noteKey = `${contentType}:${contentId}`;
 
     /**
      * @param {string} value
+     * @returns {string}
+     */
+    function escapeAttribute(value) {
+      return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    /**
+     * @param {string} value
+     * @returns {string}
+     */
+    function renderInlineMarkdown(value) {
+      let result = "";
+      let buffer = "";
+
+      /**
+       * @param {string} chunk
+       */
+      function flushText(chunk) {
+        if (!chunk) return;
+        result += escapeHtml(chunk);
+      }
+
+      /**
+       * @param {string} content
+       */
+      function appendFormatted(content) {
+        result += content;
+      }
+
+      /**
+       * @param {string} chunk
+       */
+      function flushBuffer(chunk) {
+        if (!chunk) return;
+        flushText(chunk);
+      }
+
+      /**
+       * @param {string} text
+       * @returns {string}
+       */
+      function recurse(text) {
+        return renderInlineMarkdown(text);
+      }
+
+      for (let index = 0; index < value.length; ) {
+        const char = value[index];
+
+        if (char === "`") {
+          const closing = value.indexOf("`", index + 1);
+          if (closing !== -1) {
+            flushBuffer(buffer);
+            buffer = "";
+            const codeContent = value.slice(index + 1, closing);
+            appendFormatted(`<code>${escapeHtml(codeContent)}</code>`);
+            index = closing + 1;
+            continue;
+          }
+        }
+
+        if (
+          (char === "*" && value[index + 1] === "*") ||
+          (char === "_" && value[index + 1] === "_")
+        ) {
+          const marker = value.slice(index, index + 2);
+          const closing = value.indexOf(marker, index + 2);
+          if (closing !== -1) {
+            flushBuffer(buffer);
+            buffer = "";
+            const inner = value.slice(index + 2, closing);
+            appendFormatted(`<strong>${recurse(inner)}</strong>`);
+            index = closing + 2;
+            continue;
+          }
+        }
+
+        if (char === "~" && value[index + 1] === "~") {
+          const closing = value.indexOf("~~", index + 2);
+          if (closing !== -1) {
+            flushBuffer(buffer);
+            buffer = "";
+            const inner = value.slice(index + 2, closing);
+            appendFormatted(`<del>${recurse(inner)}</del>`);
+            index = closing + 2;
+            continue;
+          }
+        }
+
+        if (char === "*" || char === "_") {
+          const closing = value.indexOf(char, index + 1);
+          if (closing !== -1) {
+            const inner = value.slice(index + 1, closing);
+            if (inner.trim()) {
+              flushBuffer(buffer);
+              buffer = "";
+              appendFormatted(`<em>${recurse(inner)}</em>`);
+              index = closing + 1;
+              continue;
+            }
+          }
+        }
+
+        if (char === "[") {
+          const closingText = value.indexOf("]", index + 1);
+          if (closingText !== -1 && value[closingText + 1] === "(") {
+            const closingUrl = value.indexOf(")", closingText + 2);
+            if (closingUrl !== -1) {
+              const text = value.slice(index + 1, closingText);
+              const href = value.slice(closingText + 2, closingUrl).trim();
+              if (/^https?:\/\//i.test(href)) {
+                flushBuffer(buffer);
+                buffer = "";
+                appendFormatted(
+                  `<a href="${escapeAttribute(href)}" rel="noreferrer noopener">${recurse(
+                    text
+                  )}</a>`
+                );
+                index = closingUrl + 1;
+                continue;
+              }
+            }
+          }
+        }
+
+        if (char === "!" && value[index + 1] === "[") {
+          const closingAlt = value.indexOf("]", index + 2);
+          if (closingAlt !== -1 && value[closingAlt + 1] === "(") {
+            const closingUrl = value.indexOf(")", closingAlt + 2);
+            if (closingUrl !== -1) {
+              const alt = value.slice(index + 2, closingAlt);
+              const src = value.slice(closingAlt + 2, closingUrl).trim();
+              if (/^https?:\/\//i.test(src)) {
+                flushBuffer(buffer);
+                buffer = "";
+                appendFormatted(
+                  `<img src="${escapeAttribute(src)}" alt="${escapeAttribute(
+                    alt
+                  )}" loading="lazy" />`
+                );
+                index = closingUrl + 1;
+                continue;
+              }
+            }
+          }
+        }
+
+        buffer += char;
+        index += 1;
+      }
+
+      flushBuffer(buffer);
+
+      return result;
+    }
+
+    /**
+     * @param {string} value
      */
     function updatePreview(value) {
-      const sanitized = sanitizeForPreview(value);
-      preview.innerHTML = sanitized;
+      preview.innerHTML = renderMarkdown(value);
+    }
+
+    /**
+     * @param {string} value
+     * @returns {string}
+     */
+    function renderMarkdown(value) {
+      if (!value) {
+        return "";
+      }
+
+      const lines = value.replace(/\r\n?/g, "\n").split("\n");
+      const root = document.createElement("div");
+      let listElement = null;
+      /** @type {"ul" | "ol" | ""} */
+      let listType = "";
+      let paragraphBuffer = [];
+      let blockquoteBuffer = [];
+      let inCodeBlock = false;
+      let codeLanguage = "";
+      /** @type {string[]} */
+      const codeLines = [];
+
+      function ensureList(type) {
+        if (!listElement || listType !== type) {
+          closeList();
+          listElement = document.createElement(type);
+          listType = type;
+          root.appendChild(listElement);
+        }
+        return listElement;
+      }
+
+      function closeList() {
+        listElement = null;
+        listType = "";
+      }
+
+      function flushParagraph() {
+        if (paragraphBuffer.length === 0) return;
+        const paragraph = document.createElement("p");
+        paragraph.innerHTML = paragraphBuffer
+          .map((line) => renderInlineMarkdown(line))
+          .join("<br>");
+        root.appendChild(paragraph);
+        paragraphBuffer = [];
+      }
+
+      function flushBlockquote() {
+        if (blockquoteBuffer.length === 0) return;
+        const blockquote = document.createElement("blockquote");
+        blockquote.innerHTML = blockquoteBuffer
+          .map((line) => renderInlineMarkdown(line))
+          .join("<br>");
+        root.appendChild(blockquote);
+        blockquoteBuffer = [];
+      }
+
+      function flushCodeBlock() {
+        const pre = document.createElement("pre");
+        const code = document.createElement("code");
+        if (codeLanguage) {
+          const safeLanguage = codeLanguage
+            .toLowerCase()
+            .replace(/[^a-z0-9+_-]+/g, "")
+            .replace(/\s+/g, "");
+          if (safeLanguage) {
+            code.className = `language-${safeLanguage}`;
+          }
+        }
+        code.textContent = codeLines.join("\n");
+        pre.appendChild(code);
+        root.appendChild(pre);
+        codeLines.length = 0;
+        codeLanguage = "";
+      }
+
+      for (const rawLine of lines) {
+        const trimmed = rawLine.trim();
+
+        if (inCodeBlock) {
+          if (trimmed.startsWith("```")) {
+            flushCodeBlock();
+            inCodeBlock = false;
+            continue;
+          }
+          codeLines.push(rawLine);
+          continue;
+        }
+
+        if (trimmed.startsWith("```")) {
+          flushParagraph();
+          flushBlockquote();
+          closeList();
+          inCodeBlock = true;
+          codeLanguage = trimmed.slice(3).trim();
+          continue;
+        }
+
+        if (!trimmed) {
+          flushParagraph();
+          flushBlockquote();
+          closeList();
+          continue;
+        }
+
+        const headingMatch = trimmed.match(/^(#{1,6})\s+(.*)$/);
+        if (headingMatch) {
+          flushParagraph();
+          flushBlockquote();
+          closeList();
+          const level = Math.min(6, headingMatch[1].length);
+          const heading = document.createElement(`h${level}`);
+          heading.innerHTML = renderInlineMarkdown(headingMatch[2].trim());
+          root.appendChild(heading);
+          continue;
+        }
+
+        const blockquoteMatch = rawLine.match(/^\s*>\s?(.*)$/);
+        if (blockquoteMatch) {
+          flushParagraph();
+          closeList();
+          blockquoteBuffer.push(blockquoteMatch[1]);
+          continue;
+        }
+        flushBlockquote();
+
+        const unorderedMatch = rawLine.match(/^\s*([-*+])\s+(.*)$/);
+        if (unorderedMatch) {
+          flushParagraph();
+          flushBlockquote();
+          const list = ensureList("ul");
+          const item = document.createElement("li");
+          item.innerHTML = renderInlineMarkdown(unorderedMatch[2]);
+          list.appendChild(item);
+          continue;
+        }
+
+        const orderedMatch = rawLine.match(/^\s*(\d+)\.\s+(.*)$/);
+        if (orderedMatch) {
+          flushParagraph();
+          flushBlockquote();
+          const list = ensureList("ol");
+          const item = document.createElement("li");
+          item.innerHTML = renderInlineMarkdown(orderedMatch[2]);
+          list.appendChild(item);
+          continue;
+        }
+
+        paragraphBuffer.push(rawLine);
+      }
+
+      if (inCodeBlock) {
+        flushCodeBlock();
+      }
+
+      flushParagraph();
+      flushBlockquote();
+      closeList();
+
+      return root.innerHTML;
     }
 
     /**
@@ -484,9 +848,9 @@ const noteKey = `${contentType}:${contentId}`;
 
           header.appendChild(timestamp);
 
-          const body = document.createElement("p");
+          const body = document.createElement("div");
           body.className = "note-item__body";
-          body.textContent = item.content;
+          body.innerHTML = renderMarkdown(item.content);
 
           li.appendChild(header);
           li.appendChild(body);
