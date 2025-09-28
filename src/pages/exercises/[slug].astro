@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import NotesPanel from "../../components/NotesPanel.astro";
 import { getCollection, getEntry } from "astro:content";
 export async function getStaticPaths() {
   const exercises = await getCollection("exercises");
@@ -28,4 +29,9 @@ const exercise = await getEntry("exercises", slug as string);
   <article>
     <p>{exercise?.data.description}</p>
   </article>
+  <NotesPanel
+    contentId={exercise?.slug ?? ""}
+    contentType="exercise"
+    contentTitle={exercise?.data.name ?? "Exercise"}
+  />
 </BaseLayout>
