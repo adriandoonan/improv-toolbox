@@ -122,7 +122,6 @@ const icons = {
     justify-content: center;
     width: 2.75rem;
     height: 2.75rem;
-    margin-right: 0.5rem;
     border-radius: var(--radius-lg);
     background: radial-gradient(circle at 30% 30%, #ff758a, #ff2f55 70%);
     color: #0c0205;
@@ -141,6 +140,15 @@ const icons = {
   }
   .drawer-toggle.open svg {
     transform: rotate(45deg);
+  }
+  @media (max-width: 779px) {
+    .drawer-toggle {
+      position: fixed;
+      left: clamp(1rem, 6vw, 2.25rem);
+      bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+      margin: 0;
+      z-index: 952;
+    }
   }
   @media (min-width: 768px) {
     .drawer {
