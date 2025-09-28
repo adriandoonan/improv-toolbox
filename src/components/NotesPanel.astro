@@ -21,21 +21,19 @@ const noteKey = `${contentType}:${contentId}`;
     <ul class="note-list" data-note-list></ul>
   </div>
   <p class="note-helper">
-    Notes live on your device first. We'll keep them ready for optional sync later.
+    Notes live on your device first. We'll keep them ready for optional sync
+    later.
   </p>
   <label class="note-field">
     <span class="note-field__label">Markdown-friendly note</span>
     <textarea
       rows="8"
       placeholder="Capture how you adapt this content to your troupe..."
-      aria-describedby={`note-status-${noteKey}`}
-    ></textarea>
+      aria-describedby={`note-status-${noteKey}`}></textarea>
   </label>
   <p class="note-meta" data-note-meta></p>
   <div class="note-toolbar">
-    <button type="button" class="primary" data-note-save>
-      Save note
-    </button>
+    <button type="button" class="primary" data-note-save> Save note </button>
     <button type="button" class="secondary" data-note-clear>
       Clear draft
     </button>
@@ -46,8 +44,7 @@ const noteKey = `${contentType}:${contentId}`;
       id={`note-status-${noteKey}`}
       role="status"
       class="note-status"
-      aria-live="polite"
-    ></span>
+      aria-live="polite"></span>
   </div>
   <details class="note-preview">
     <summary>Preview</summary>
@@ -111,7 +108,19 @@ const noteKey = `${contentType}:${contentId}`;
   .note-preview div {
     padding: 0.5rem 0;
     white-space: pre-wrap;
-    font-family: var(--pico-font-family-monospace, ui-monospace, SFMono-Regular, SFMono, "Roboto Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-family: var(
+      --pico-font-family-monospace,
+      ui-monospace,
+      SFMono-Regular,
+      SFMono,
+      "Roboto Mono",
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      "Courier New",
+      monospace
+    );
   }
 
   .note-history {
@@ -156,7 +165,6 @@ const noteKey = `${contentType}:${contentId}`;
     margin: 0;
     white-space: pre-wrap;
   }
-
 </style>
 
 <script type="module" lang="ts">
@@ -520,8 +528,8 @@ const noteKey = `${contentType}:${contentId}`;
           ? draftContent
             ? "Draft restored. Save to add it to your notes or clear it."
             : collection.items.length
-            ? "Notes loaded from local storage."
-            : "Start a note and it'll stay here until you save."
+              ? "Notes loaded from local storage."
+              : "Start a note and it'll stay here until you save."
           : "Local storage is unavailable; notes stay on this page only."
       );
 
