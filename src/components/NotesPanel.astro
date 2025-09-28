@@ -126,21 +126,27 @@ const noteKey = `${contentType}:${contentId}`;
     }
   })();
 
-  const panels = Array.from(
-    document.querySelectorAll<HTMLElement>("[data-note-root]")
-  );
+  const panels = Array.from(document.querySelectorAll("[data-note-root]"));
 
   panels.forEach((panel) => {
-    const textarea = panel.querySelector<HTMLTextAreaElement>("textarea");
-    const preview = panel.querySelector<HTMLDivElement>("[data-note-preview]");
-    const status = panel.querySelector<HTMLSpanElement>(".note-status");
-    const saveButton = panel.querySelector<HTMLButtonElement>(
-      "[data-note-save]"
+    const textarea = /** @type {HTMLTextAreaElement | null} */ (
+      panel.querySelector("textarea")
     );
-    const exportButton = panel.querySelector<HTMLButtonElement>(
-      "[data-note-export]"
+    const preview = /** @type {HTMLDivElement | null} */ (
+      panel.querySelector("[data-note-preview]")
     );
-    const meta = panel.querySelector<HTMLParagraphElement>("[data-note-meta]");
+    const status = /** @type {HTMLSpanElement | null} */ (
+      panel.querySelector(".note-status")
+    );
+    const saveButton = /** @type {HTMLButtonElement | null} */ (
+      panel.querySelector("[data-note-save]")
+    );
+    const exportButton = /** @type {HTMLButtonElement | null} */ (
+      panel.querySelector("[data-note-export]")
+    );
+    const meta = /** @type {HTMLParagraphElement | null} */ (
+      panel.querySelector("[data-note-meta]")
+    );
     if (!textarea || !preview || !status || !exportButton || !saveButton || !meta) {
       return;
     }
@@ -150,14 +156,21 @@ const noteKey = `${contentType}:${contentId}`;
     const noteType = panel.dataset.noteType ?? "content";
 
     let storageReady = storageSupported;
-    let notesPayload: NotesPayload | null = null;
+    /** @type {NotesPayload | null} */
+    let notesPayload = null;
     let dirty = false;
 
-    function emptyNotesPayload(): NotesPayload {
+    /**
+     * @returns {NotesPayload}
+     */
+    function emptyNotesPayload() {
       return { version: STORAGE_VERSION, notes: {} };
     }
 
-    function loadAllNotes(): NotesPayload {
+    /**
+     * @returns {NotesPayload}
+     */
+    function loadAllNotes() {
       if (!storageReady) return emptyNotesPayload();
       try {
         const raw = localStorage.getItem(STORAGE_NAMESPACE);
@@ -173,7 +186,7 @@ const noteKey = `${contentType}:${contentId}`;
         ) {
           return emptyNotesPayload();
         }
-        return parsed as NotesPayload;
+        return /** @type {NotesPayload} */ (parsed);
       } catch (error) {
         console.warn("Notes storage unavailable", error);
         storageReady = false;
@@ -181,7 +194,10 @@ const noteKey = `${contentType}:${contentId}`;
       }
     }
 
-    function persistAllNotes(payload: NotesPayload) {
+    /**
+     * @param {NotesPayload} payload
+     */
+    function persistAllNotes(payload) {
       if (!storageReady) return;
       try {
         localStorage.setItem(STORAGE_NAMESPACE, JSON.stringify(payload));
@@ -194,7 +210,10 @@ const noteKey = `${contentType}:${contentId}`;
       }
     }
 
-    function loadCurrentNote(): NoteEntry {
+    /**
+     * @returns {NoteEntry}
+     */
+    function loadCurrentNote() {
       if (!notesPayload) {
         notesPayload = loadAllNotes();
       }
@@ -209,7 +228,10 @@ const noteKey = `${contentType}:${contentId}`;
       };
     }
 
-    function saveCurrentNote(content: string) {
+    /**
+     * @param {string} content
+     */
+    function saveCurrentNote(content) {
       if (!notesPayload) {
         notesPayload = loadAllNotes();
       }
@@ -223,26 +245,41 @@ const noteKey = `${contentType}:${contentId}`;
       persistAllNotes(notesPayload);
     }
 
-    function setStatus(message: string) {
+    /**
+     * @param {string} message
+     */
+    function setStatus(message) {
       status.textContent = message;
     }
 
-    function setMeta(message: string) {
+    /**
+     * @param {string} message
+     */
+    function setMeta(message) {
       meta.textContent = message;
     }
 
-    function sanitizeForPreview(value: string) {
+    /**
+     * @param {string} value
+     */
+    function sanitizeForPreview(value) {
       const temp = document.createElement("div");
       temp.textContent = value;
       return temp.innerHTML;
     }
 
-    function updatePreview(value: string) {
+    /**
+     * @param {string} value
+     */
+    function updatePreview(value) {
       const sanitized = sanitizeForPreview(value);
       preview.innerHTML = sanitized;
     }
 
-    function formatTimestamp(iso: string) {
+    /**
+     * @param {string} iso
+     */
+    function formatTimestamp(iso) {
       const date = new Date(iso);
       if (Number.isNaN(date.getTime())) {
         return "";
@@ -253,7 +290,10 @@ const noteKey = `${contentType}:${contentId}`;
       });
     }
 
-    function updateMeta(note: NoteEntry | null) {
+    /**
+     * @param {NoteEntry | null} note
+     */
+    function updateMeta(note) {
       if (!note || !note.content.trim()) {
         setMeta("No saved note yet.");
         return;
@@ -336,18 +376,35 @@ const noteKey = `${contentType}:${contentId}`;
     });
 
     refreshFromStorage();
+
+    window.addEventListener("pageshow", () => {
+      if (storageReady) {
+        notesPayload = null;
+        refreshFromStorage();
+      }
+    });
+
+    window.addEventListener("storage", (event) => {
+      if (event.key === STORAGE_NAMESPACE) {
+        notesPayload = null;
+        refreshFromStorage();
+        setStatus("Note updated from another tab.");
+      }
+    });
   });
 
-  interface NoteEntry {
-    id: string;
-    type: string;
-    title: string;
-    content: string;
-    updatedAt: string;
-  }
+  /**
+   * @typedef {Object} NoteEntry
+   * @property {string} id
+   * @property {string} type
+   * @property {string} title
+   * @property {string} content
+   * @property {string} updatedAt
+   */
 
-  interface NotesPayload {
-    version: number;
-    notes: Record<string, NoteEntry>;
-  }
+  /**
+   * @typedef {Object} NotesPayload
+   * @property {number} version
+   * @property {Record<string, NoteEntry>} notes
+   */
 </script>
