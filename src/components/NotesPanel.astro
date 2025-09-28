@@ -160,9 +160,45 @@ const noteKey = `${contentType}:${contentId}`;
     gap: 0.5rem;
   }
 
+  .note-item__info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: baseline;
+  }
+
   .note-item__timestamp {
     font-size: 0.85rem;
     color: var(--pico-muted-color);
+  }
+
+  .note-item__updated {
+    font-size: 0.8rem;
+    color: var(--pico-muted-color);
+  }
+
+  .note-item__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .note-item__actions button {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.75rem;
+  }
+
+  .note-item--editing {
+    border-color: var(
+      --pico-primary-border-color,
+      hsla(262, 83%, 58%, 0.6)
+    );
+    box-shadow: 0 0 0 1px
+      var(--pico-primary-border-color, hsla(262, 83%, 58%, 0.35));
+  }
+
+  .note-item--editing .note-item__timestamp {
+    color: var(--pico-primary, #8b5cf6);
   }
 
   .note-item__body {
@@ -277,8 +313,42 @@ const noteKey = `${contentType}:${contentId}`;
     let storageReady = storageSupported;
     /** @type {NotesPayload | null} */
     let notesPayload = null;
+    const defaultSaveLabel = saveButton.textContent.trim() || "Save note";
+    saveButton.textContent = defaultSaveLabel;
+    /** @type {string | null} */
+    let editingNoteId = null;
+    /** @type {string | null} */
+    let draftBeforeEdit = null;
+
+    function updateSaveButtonLabel() {
+      saveButton.textContent = editingNoteId
+        ? "Update note"
+        : defaultSaveLabel;
+    }
+
     function updateSaveButtonState(value) {
       saveButton.disabled = !storageReady || !value.trim();
+    }
+
+    function restoreDraftAfterEdit() {
+      const draftContent = draftBeforeEdit ?? "";
+      draftBeforeEdit = null;
+      textarea.value = draftContent;
+      updatePreview(draftContent);
+      updateSaveButtonState(draftContent);
+    }
+
+    function highlightEditingItem() {
+      const nodes = Array.from(list.querySelectorAll(".note-item"));
+      for (const node of nodes) {
+        const element = /** @type {HTMLLIElement} */ (node);
+        const currentId = element.dataset.noteId ?? "";
+        if (editingNoteId && currentId === editingNoteId) {
+          element.classList.add("note-item--editing");
+        } else {
+          element.classList.remove("note-item--editing");
+        }
+      }
     }
 
     /**
@@ -322,6 +392,7 @@ const noteKey = `${contentType}:${contentId}`;
             id: `${key}:${updatedAt}`,
             content,
             savedAt: updatedAt,
+            updatedAt,
           });
         } else if (content) {
           migrated.drafts[key] = {
@@ -446,6 +517,78 @@ const noteKey = `${contentType}:${contentId}`;
         }
       }
       return payload;
+    }
+
+    /**
+     * @param {NoteEntry} entry
+     */
+    function beginEdit(entry) {
+      if (!storageReady) {
+        setStatus("Cannot edit: storage unavailable.");
+        return;
+      }
+      if (draftBeforeEdit === null) {
+        const draft = loadDraft();
+        if (draft && typeof draft.content === "string") {
+          draftBeforeEdit = draft.content;
+        } else {
+          draftBeforeEdit = textarea.value;
+        }
+      }
+      editingNoteId = entry.id;
+      updateSaveButtonLabel();
+      textarea.value = entry.content;
+      updatePreview(entry.content);
+      updateSaveButtonState(entry.content);
+      setStatus("Editing existing note. Click save to update it.");
+      textarea.focus();
+      highlightEditingItem();
+    }
+
+    function cancelEdit(restoreDraft = true) {
+      if (!editingNoteId) {
+        return;
+      }
+      editingNoteId = null;
+      updateSaveButtonLabel();
+      if (restoreDraft) {
+        restoreDraftAfterEdit();
+      } else {
+        draftBeforeEdit = null;
+        updatePreview(textarea.value);
+        updateSaveButtonState(textarea.value);
+      }
+      highlightEditingItem();
+    }
+
+    function deleteNote(noteId) {
+      if (!storageReady) {
+        setStatus("Cannot delete: storage unavailable.");
+        return;
+      }
+      if (!window.confirm("Delete this note?")) {
+        return;
+      }
+      const payload = ensurePayload();
+      const collection = loadCollection();
+      const index = collection.items.findIndex((item) => item.id === noteId);
+      if (index === -1) {
+        setStatus("Note already removed.");
+        renderNoteList(collection);
+        highlightEditingItem();
+        return;
+      }
+      collection.items.splice(index, 1);
+      const timestamp = new Date().toISOString();
+      collection.updatedAt = timestamp;
+      payload.notes[noteKey] = collection;
+      if (editingNoteId === noteId) {
+        cancelEdit();
+      }
+      renderNoteList(collection);
+      updateMeta(collection);
+      persistAllNotes(payload);
+      setStatus("Note deleted.");
     }
 
     /**
@@ -834,9 +977,16 @@ const noteKey = `${contentType}:${contentId}`;
         .forEach((item) => {
           const li = document.createElement("li");
           li.className = "note-item";
+          li.dataset.noteId = item.id;
+          if (editingNoteId === item.id) {
+            li.classList.add("note-item--editing");
+          }
 
           const header = document.createElement("div");
           header.className = "note-item__header";
+
+          const info = document.createElement("div");
+          info.className = "note-item__info";
 
           const timestamp = document.createElement("time");
           timestamp.className = "note-item__timestamp";
@@ -846,7 +996,43 @@ const noteKey = `${contentType}:${contentId}`;
             ? `Saved ${formatted}`
             : "Saved locally";
 
-          header.appendChild(timestamp);
+          info.appendChild(timestamp);
+
+          if (item.updatedAt && item.updatedAt !== item.savedAt) {
+            const updated = document.createElement("span");
+            updated.className = "note-item__updated";
+            const updatedFormatted = formatTimestamp(item.updatedAt);
+            updated.textContent = updatedFormatted
+              ? `Updated ${updatedFormatted}`
+              : "Updated locally";
+            info.appendChild(updated);
+          }
+
+          header.appendChild(info);
+
+          const actions = document.createElement("div");
+          actions.className = "note-item__actions";
+
+          const editButton = document.createElement("button");
+          editButton.type = "button";
+          editButton.className = "secondary";
+          editButton.textContent = "Edit";
+          editButton.addEventListener("click", () => {
+            beginEdit(item);
+          });
+
+          const deleteButton = document.createElement("button");
+          deleteButton.type = "button";
+          deleteButton.className = "secondary";
+          deleteButton.textContent = "Delete";
+          deleteButton.addEventListener("click", () => {
+            deleteNote(item.id);
+          });
+
+          actions.appendChild(editButton);
+          actions.appendChild(deleteButton);
+
+          header.appendChild(actions);
 
           const body = document.createElement("div");
           body.className = "note-item__body";
@@ -882,20 +1068,42 @@ const noteKey = `${contentType}:${contentId}`;
       const collection = loadCollection();
       const draft = loadDraft();
       const draftContent = draft?.content ?? "";
-      textarea.value = draftContent;
-      updatePreview(draftContent);
-      updateSaveButtonState(draftContent);
+      const isEditing = Boolean(editingNoteId);
+
+      if (isEditing) {
+        const exists = collection.items.some((item) => item.id === editingNoteId);
+        if (!exists) {
+          cancelEdit();
+        }
+      }
+
+      if (!editingNoteId) {
+        if (!isEditing) {
+          textarea.value = draftContent;
+        }
+      }
+
+      updatePreview(textarea.value);
+      updateSaveButtonState(textarea.value);
       renderNoteList(collection);
       updateMeta(collection);
-      setStatus(
-        storageReady
-          ? draftContent
-            ? "Draft restored. Save to add it to your notes or clear it."
-            : collection.items.length
-              ? "Notes loaded from local storage."
-              : "Start a note and it'll stay here until you save."
-          : "Local storage is unavailable; notes stay on this page only."
-      );
+      updateSaveButtonLabel();
+      highlightEditingItem();
+
+      let statusMessage = "";
+      if (!storageReady) {
+        statusMessage = "Local storage is unavailable; notes stay on this page only.";
+      } else if (editingNoteId) {
+        statusMessage = "Editing existing note. Click save to update it.";
+      } else if (draftContent) {
+        statusMessage = "Draft restored. Save to add it to your notes or clear it.";
+      } else if (collection.items.length) {
+        statusMessage = "Notes loaded from local storage.";
+      } else {
+        statusMessage = "Start a note and it'll stay here until you save.";
+      }
+
+      setStatus(statusMessage);
 
       if (!storageReady) {
         textarea.setAttribute("readonly", "true");
@@ -912,6 +1120,10 @@ const noteKey = `${contentType}:${contentId}`;
       updateSaveButtonState(value);
       if (!storageReady) {
         setStatus("Storage unavailable; notes won't persist.");
+        return;
+      }
+      if (editingNoteId) {
+        setStatus("Editing note. Click save to update it.");
         return;
       }
       saveDraft(value);
@@ -935,10 +1147,35 @@ const noteKey = `${contentType}:${contentId}`;
       const payload = ensurePayload();
       const collection = loadCollection();
       const savedAt = new Date().toISOString();
+
+      if (editingNoteId) {
+        const index = collection.items.findIndex((item) => item.id === editingNoteId);
+        if (index === -1) {
+          cancelEdit();
+          setStatus("The note you were editing is no longer available.");
+          return;
+        }
+        const existing = collection.items[index];
+        collection.items[index] = {
+          ...existing,
+          content: value,
+          updatedAt: savedAt,
+        };
+        collection.updatedAt = savedAt;
+        payload.notes[noteKey] = collection;
+        renderNoteList(collection);
+        updateMeta(collection);
+        cancelEdit();
+        persistAllNotes(payload);
+        setStatus("Note updated locally.");
+        return;
+      }
+
       const entry = {
         id: `${noteKey}:${savedAt}`,
         content: value,
         savedAt,
+        updatedAt: savedAt,
       };
       collection.items.unshift(entry);
       collection.updatedAt = savedAt;
@@ -965,6 +1202,11 @@ const noteKey = `${contentType}:${contentId}`;
     });
 
     clearButton.addEventListener("click", () => {
+      if (editingNoteId) {
+        cancelEdit();
+        setStatus("Editing canceled. Draft restored.");
+        return;
+      }
       textarea.value = "";
       updatePreview("");
       updateSaveButtonState("");
@@ -1018,6 +1260,7 @@ const noteKey = `${contentType}:${contentId}`;
    * @property {string} id
    * @property {string} content
    * @property {string} savedAt
+   * @property {string} [updatedAt]
    */
 
   /**
