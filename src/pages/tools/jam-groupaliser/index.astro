@@ -1,0 +1,999 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { femaleNames } from "./female-names";
+
+export const tool = {
+  name: "Jam Groupaliser",
+  description: "Build balanced jam line-ups with a few taps.",
+  icon: "🎤",
+  creator: "Improv Toolbox",
+  href: "/tools/jam-groupaliser",
+};
+
+const femaleNameList = femaleNames;
+---
+
+<BaseLayout
+  title="Jam Groupaliser"
+  description="Create balanced jam teams and keep past sets handy."
+>
+  <section class="jam-tool">
+    <div class="jam-layout">
+      <aside class="jam-sidebar">
+        <header class="jam-sidebar__header">
+          <h1>Jam runs</h1>
+          <button id="newJamBtn" class="contrast">New jam</button>
+        </header>
+        <div id="jamListEmpty" class="mute" style="display:none;">
+          No jams yet. Create one to get started.
+        </div>
+        <ul id="jamList" class="jam-list"></ul>
+      </aside>
+      <div class="jam-main">
+        <div id="jamEmptyState" class="jam-empty">
+          <p>Select an existing jam or create a new one to begin grouping.</p>
+        </div>
+        <div id="jamWorkspace" class="jam-workspace" hidden>
+          <header class="workspace-header">
+            <div>
+              <label class="workspace-title">
+                <span class="mute small">Jam name</span>
+                <input id="jamNameInput" type="text" placeholder="Evening Jam" />
+              </label>
+            </div>
+            <div class="workspace-actions">
+              <button id="groupaliseBtn" class="contrast">Groupalise</button>
+              <button id="saveJamBtn" class="secondary">Save jam</button>
+            </div>
+          </header>
+
+          <section class="jam-config">
+            <form id="addJammerForm" class="jammer-form">
+              <div class="form-grid">
+                <label>
+                  <span class="mute small">Name</span>
+                  <input
+                    id="jammerName"
+                    name="name"
+                    type="text"
+                    required
+                    placeholder="Jammer name"
+                    list="knownJammersList"
+                    autocomplete="off"
+                  />
+                </label>
+                <label>
+                  <span class="mute small">Role</span>
+                  <select id="jammerRole" name="role">
+                    <option value="host">Host</option>
+                    <option value="first-timer">First-timer</option>
+                    <option value="old-timer">Old-timer</option>
+                    <option value="jammer" selected>Jammer</option>
+                  </select>
+                </label>
+                <label class="checkbox-row">
+                  <input id="jammerFirstHalf" name="firstHalf" type="checkbox" />
+                  <span>Prefers first half</span>
+                </label>
+                <label id="jammerGroupWrapper" style="display:none;">
+                  <span class="mute small">Assign to group</span>
+                  <select id="jammerGroupSelect"></select>
+                </label>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="contrast">Add jammer</button>
+              </div>
+            </form>
+
+            <div class="jam-controls">
+              <div class="control-block">
+                <label>
+                  <span class="mute small">Desired groups</span>
+                  <input
+                    id="groupCountInput"
+                    type="number"
+                    min="1"
+                    max="12"
+                    step="1"
+                    placeholder="e.g. 6"
+                  />
+                </label>
+                <button id="applyGroupCountBtn" class="secondary">Apply</button>
+              </div>
+              <div class="control-block">
+                <button id="clearAssignmentsBtn" class="ghost">Clear assignments</button>
+              </div>
+            </div>
+          </section>
+
+          <section id="jammerTableSection" class="jammer-table-section">
+            <header class="section-header">
+              <h2>Jammers</h2>
+              <span id="jammerCountLabel" class="mute"></span>
+            </header>
+            <table class="jammer-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Prefers first half</th>
+                  <th>Assigned group</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="jammerTableBody"></tbody>
+            </table>
+          </section>
+
+          <section id="groupResultsSection" class="group-section" hidden>
+            <header class="section-header">
+              <h2>Groups</h2>
+              <span id="groupSummary" class="mute"></span>
+            </header>
+            <div id="groupList" class="group-grid"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+  <datalist id="knownJammersList"></datalist>
+  <script define:vars={{ FEMALE_NAMES: femaleNameList }}>
+    const femaleNameSet = new Set(FEMALE_NAMES.map((name) => name.toLowerCase()));
+    const DB_NAME = "improv-toolbox-jams";
+    const DB_VERSION = 1;
+    const STORE_NAME = "jams";
+
+    const newJamBtn = document.getElementById("newJamBtn");
+    const jamListEl = document.getElementById("jamList");
+    const jamListEmpty = document.getElementById("jamListEmpty");
+    const jamEmptyState = document.getElementById("jamEmptyState");
+    const jamWorkspace = document.getElementById("jamWorkspace");
+    const jamNameInput = document.getElementById("jamNameInput");
+    const addJammerForm = document.getElementById("addJammerForm");
+    const jammerTableBody = document.getElementById("jammerTableBody");
+    const jammerCountLabel = document.getElementById("jammerCountLabel");
+    const groupaliseBtn = document.getElementById("groupaliseBtn");
+    const saveJamBtn = document.getElementById("saveJamBtn");
+    const groupListEl = document.getElementById("groupList");
+    const groupResultsSection = document.getElementById("groupResultsSection");
+    const groupSummaryEl = document.getElementById("groupSummary");
+    const groupCountInput = document.getElementById("groupCountInput");
+    const applyGroupCountBtn = document.getElementById("applyGroupCountBtn");
+    const clearAssignmentsBtn = document.getElementById("clearAssignmentsBtn");
+    const jammerGroupWrapper = document.getElementById("jammerGroupWrapper");
+    const jammerGroupSelect = document.getElementById("jammerGroupSelect");
+    const jammerRole = document.getElementById("jammerRole");
+    const jammerFirstHalf = document.getElementById("jammerFirstHalf");
+    const jammerName = document.getElementById("jammerName");
+    const knownNamesListEl = document.getElementById("knownJammersList");
+
+    let dbPromise = null;
+    let jams = [];
+    let currentJam = null;
+    let knownNames = new Map();
+
+    function generateId(prefix = "jam") {
+      return `${prefix}-${Math.random().toString(36).slice(2, 9)}-${Date.now().toString(36)}`;
+    }
+
+    function normaliseValue(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function openDb() {
+      if (!("indexedDB" in window)) {
+        return Promise.reject(new Error("IndexedDB not supported"));
+      }
+      if (dbPromise) return dbPromise;
+      dbPromise = new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = () => reject(request.error);
+        request.onupgradeneeded = () => {
+          const db = request.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME, { keyPath: "id" });
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+      });
+      return dbPromise;
+    }
+
+    async function withStore(mode, work) {
+      const db = await openDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, mode);
+        const store = tx.objectStore(STORE_NAME);
+        const result = work(store);
+        tx.oncomplete = () => resolve(result);
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    async function loadJams() {
+      return withStore("readonly", (store) => {
+        return new Promise((resolve, reject) => {
+          const jams = [];
+          const request = store.openCursor(null, "prev");
+          request.onerror = () => reject(request.error);
+          request.onsuccess = () => {
+            const cursor = request.result;
+            if (cursor) {
+              jams.push(cursor.value);
+              cursor.continue();
+            } else {
+              resolve(jams);
+            }
+          };
+        });
+      });
+    }
+
+    async function saveJam(jam) {
+      jam.updatedAt = Date.now();
+      await withStore("readwrite", (store) => store.put(jam));
+      jams = await loadJams();
+      collectKnownNamesFromJams();
+      renderKnownNames();
+      persistKnownNames();
+      renderJamList();
+    }
+
+    async function deleteJam(id) {
+      await withStore("readwrite", (store) => store.delete(id));
+      if (currentJam && currentJam.id === id) {
+        currentJam = null;
+      }
+      jams = await loadJams();
+      collectKnownNamesFromJams();
+      renderKnownNames();
+      persistKnownNames();
+      renderJamList();
+      renderWorkspace();
+    }
+
+    function selectJam(jamId) {
+      currentJam = jams.find((jam) => jam.id === jamId) || null;
+      renderJamList();
+      renderWorkspace();
+    }
+
+    function createNewJam(name = "New Jam") {
+      const now = Date.now();
+      const jam = {
+        id: generateId(),
+        name,
+        createdAt: now,
+        updatedAt: now,
+        jammers: [],
+        desiredGroupCount: null,
+      };
+      jams.unshift(jam);
+      currentJam = jam;
+      renderJamList();
+      renderWorkspace();
+    }
+
+    function renderJamList() {
+      jamListEl.innerHTML = "";
+      if (!jams.length) {
+        jamListEmpty.style.display = "block";
+        return;
+      }
+      jamListEmpty.style.display = "none";
+      jams.forEach((jam) => {
+        const li = document.createElement("li");
+        li.className = `jam-list__item${currentJam && currentJam.id === jam.id ? " is-active" : ""}`;
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = jam.name || "Untitled";
+        button.addEventListener("click", () => selectJam(jam.id));
+        li.appendChild(button);
+
+        const meta = document.createElement("div");
+        meta.className = "jam-list__meta";
+        const total = jam.jammers?.length || 0;
+        meta.textContent = `${total} people • updated ${new Date(jam.updatedAt || jam.createdAt).toLocaleDateString()}`;
+        li.appendChild(meta);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "jam-list__delete";
+        deleteBtn.textContent = "Delete";
+        deleteBtn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (confirm("Delete this jam?")) {
+            deleteJam(jam.id);
+          }
+        });
+        li.appendChild(deleteBtn);
+
+        jamListEl.appendChild(li);
+      });
+    }
+
+    function renderWorkspace() {
+      renderKnownNames();
+      if (!currentJam) {
+        jamWorkspace.hidden = true;
+        jamEmptyState.style.display = "flex";
+        return;
+      }
+      jamWorkspace.hidden = false;
+      jamEmptyState.style.display = "none";
+      jamNameInput.value = currentJam.name || "";
+      groupCountInput.value = currentJam.desiredGroupCount || "";
+
+      renderJammerTable();
+      renderGroups();
+      updateJammerAssignSelect();
+    }
+
+    function addKnownName(name) {
+      const trimmed = String(name || "").trim();
+      const normalised = normaliseValue(trimmed);
+      if (!normalised) return;
+      knownNames.set(normalised, trimmed);
+    }
+
+    function loadKnownNames() {
+      try {
+        const raw = localStorage.getItem("jam-known-names");
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          parsed.forEach((name) => addKnownName(name));
+        }
+      } catch (error) {
+        console.warn("Unable to load known jam names", error);
+      }
+    }
+
+    function persistKnownNames() {
+      try {
+        localStorage.setItem(
+          "jam-known-names",
+          JSON.stringify(Array.from(knownNames.values()))
+        );
+      } catch (error) {
+        console.warn("Unable to persist known jam names", error);
+      }
+    }
+
+    function collectKnownNamesFromJams() {
+      jams.forEach((jam) => {
+        jam.jammers?.forEach((jammer) => addKnownName(jammer.name));
+      });
+    }
+
+    function renderKnownNames() {
+      if (!knownNamesListEl) return;
+      const seen = new Set();
+      const values = [];
+      const register = (name) => {
+        const normalised = normaliseValue(name);
+        if (!normalised || seen.has(normalised)) return;
+        seen.add(normalised);
+        values.push(name);
+      };
+      knownNames.forEach((value) => register(value));
+      currentJam?.jammers?.forEach((jammer) => register(jammer.name));
+      values.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+      knownNamesListEl.innerHTML = values
+        .map((name) => `<option value="${escapeHtml(name)}"></option>`)
+        .join("");
+    }
+
+    function renderJammerTable() {
+      const jammers = currentJam.jammers || [];
+      jammerTableBody.innerHTML = "";
+      jammers.forEach((jammer) => {
+        const tr = document.createElement("tr");
+        const nameTd = document.createElement("td");
+        nameTd.textContent = jammer.name;
+        const roleTd = document.createElement("td");
+        roleTd.textContent = formatRole(jammer.role);
+        const halfTd = document.createElement("td");
+        halfTd.textContent = jammer.prefersFirstHalf ? "Yes" : "No";
+        const groupTd = document.createElement("td");
+        const groupSelect = document.createElement("select");
+        groupSelect.dataset.jammerId = jammer.id;
+        const groups = computeAssignedGroups();
+        addGroupOptions(groupSelect, groups.length);
+        groupSelect.value = jammer.assignedGroup != null ? String(jammer.assignedGroup) : "";
+        groupSelect.addEventListener("change", () => {
+          const value = groupSelect.value === "" ? null : Number(groupSelect.value);
+          jammer.assignedGroup = value;
+          renderGroups();
+          currentJam.updatedAt = Date.now();
+        });
+        groupTd.appendChild(groupSelect);
+
+        const actionsTd = document.createElement("td");
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "ghost";
+        removeBtn.textContent = "Remove";
+        removeBtn.addEventListener("click", () => {
+          currentJam.jammers = currentJam.jammers.filter((j) => j.id !== jammer.id);
+          renderWorkspace();
+        });
+        actionsTd.appendChild(removeBtn);
+
+        tr.append(nameTd, roleTd, halfTd, groupTd, actionsTd);
+        jammerTableBody.appendChild(tr);
+      });
+      jammerCountLabel.textContent = `${jammers.length} jammers`;
+    }
+
+    function updateJammerAssignSelect() {
+      const groups = computeAssignedGroups();
+      if (!groups.length) {
+        jammerGroupWrapper.style.display = "none";
+        jammerGroupSelect.innerHTML = "";
+      } else {
+        jammerGroupWrapper.style.display = "block";
+        jammerGroupSelect.innerHTML = "";
+        addGroupOptions(jammerGroupSelect, groups.length, true);
+      }
+    }
+
+    function addGroupOptions(selectEl, count, includeUnassigned = false) {
+      if (includeUnassigned) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "No group";
+        selectEl.appendChild(opt);
+      }
+      for (let i = 0; i < count; i++) {
+        const opt = document.createElement("option");
+        opt.value = String(i);
+        opt.textContent = `Group ${i + 1}`;
+        selectEl.appendChild(opt);
+      }
+    }
+
+    function computeAssignedGroups() {
+      if (!currentJam?.jammers?.length) return [];
+      const maxIndex = currentJam.jammers.reduce((acc, jammer) => {
+        if (jammer.assignedGroup != null) {
+          return Math.max(acc, jammer.assignedGroup);
+        }
+        return acc;
+      }, -1);
+      const groupCount = currentJam.desiredGroupCount || (maxIndex + 1);
+      if (!groupCount) return [];
+      const groups = Array.from({ length: groupCount }, () => []);
+      currentJam.jammers.forEach((jammer) => {
+        if (jammer.assignedGroup != null && groups[jammer.assignedGroup]) {
+          groups[jammer.assignedGroup].push(jammer);
+        }
+      });
+      return groups;
+    }
+
+    function renderGroups() {
+      const groups = computeAssignedGroups();
+      if (!groups.length) {
+        groupResultsSection.hidden = true;
+        groupListEl.innerHTML = "";
+        groupSummaryEl.textContent = "";
+        return;
+      }
+      groupResultsSection.hidden = false;
+      groupListEl.innerHTML = "";
+      const summaryParts = [];
+      groups.forEach((group, idx) => {
+        const card = document.createElement("article");
+        card.className = "group-card";
+        const header = document.createElement("header");
+        header.className = "group-card__header";
+        const title = document.createElement("h3");
+        title.textContent = `Group ${idx + 1}`;
+        const count = document.createElement("span");
+        count.className = "mute";
+        count.textContent = `${group.length} players`;
+        header.append(title, count);
+        card.appendChild(header);
+
+        const list = document.createElement("ul");
+        list.className = "group-card__list";
+        group.forEach((jammer) => {
+          const li = document.createElement("li");
+          li.innerHTML = `<strong>${jammer.name}</strong><span class="tag">${formatRole(jammer.role)}</span>${jammer.prefersFirstHalf ? "<span class=\"tag tag--first\">First-half</span>" : ""}`;
+          list.appendChild(li);
+        });
+        card.appendChild(list);
+        groupListEl.appendChild(card);
+        summaryParts.push(`${group.length}`);
+      });
+      groupSummaryEl.textContent = `${groups.length} groups • sizes: ${summaryParts.join(", ")}`;
+    }
+
+    function formatRole(role) {
+      switch (role) {
+        case "host":
+          return "Host";
+        case "first-timer":
+          return "First-timer";
+        case "old-timer":
+          return "Old-timer";
+        default:
+          return "Jammer";
+      }
+    }
+
+    function isLikelyFemale(name) {
+      if (!name) return false;
+      const first = name.trim().split(/\s+/)[0].toLowerCase();
+      return femaleNameSet.has(first);
+    }
+
+    function deriveGroupCount(jammers, requestedCount) {
+      const total = jammers.length;
+      if (!total) return 0;
+      if (requestedCount && requestedCount > 0) {
+        return Math.min(Math.max(Math.floor(requestedCount), 1), Math.max(total, 1));
+      }
+      const approx = Math.max(Math.round(total / 8), 2);
+      return Math.min(Math.max(approx, 2), 8);
+    }
+
+    function distributeJammers(jammers, desiredGroupCount) {
+      const total = jammers.length;
+      const groupCount = Math.max(1, desiredGroupCount || deriveGroupCount(jammers, desiredGroupCount));
+      const groups = Array.from({ length: groupCount }, () => []);
+      const femaleCounts = Array(groupCount).fill(0);
+      const hostPresence = Array(groupCount).fill(0);
+
+      const buckets = {
+        host: [],
+        "first-timer": [],
+        "old-timer": [],
+        jammer: [],
+      };
+
+      jammers.forEach((jammer) => {
+        const clone = { ...jammer, assignedGroup: null };
+        buckets[jammer.role]?.push(clone) || buckets.jammer.push(clone);
+      });
+
+      const firstHalfGroups = Array.from({ length: Math.min(2, groupCount) }, (_, idx) => idx);
+
+      function assign(jammer, preferredIndices = null, ensureHost = false) {
+        const candidates = (preferredIndices && preferredIndices.length ? preferredIndices : groups.map((_, idx) => idx)).slice();
+        candidates.sort((a, b) => a - b);
+        let bestIndex = candidates[0];
+        let bestScore = Infinity;
+        const female = isLikelyFemale(jammer.name);
+        const needHost = ensureHost;
+        candidates.forEach((idx) => {
+          if (needHost && hostPresence[idx] > 0) {
+            return;
+          }
+          const group = groups[idx];
+          const sizeScore = group.length;
+          const femaleScore = female ? femaleCounts[idx] : group.length - femaleCounts[idx];
+          const positionScore = idx * 0.5;
+          const overallScore = sizeScore * 10 + femaleScore + positionScore;
+          if (overallScore < bestScore) {
+            bestScore = overallScore;
+            bestIndex = idx;
+          }
+        });
+        if (needHost && hostPresence[bestIndex] > 0) {
+          // all groups already have a host, allow placement anyway with general scoring
+          return assign(jammer, preferredIndices, false);
+        }
+        place(jammer, bestIndex);
+      }
+
+      function place(jammer, idx) {
+        jammer.assignedGroup = idx;
+        groups[idx].push(jammer);
+        if (isLikelyFemale(jammer.name)) femaleCounts[idx]++;
+        if (jammer.role === "host") hostPresence[idx]++;
+      }
+
+      function spread(list, options = {}) {
+        const items = list.slice();
+        items.sort((a, b) => {
+          const af = isLikelyFemale(a.name) ? 0 : 1;
+          const bf = isLikelyFemale(b.name) ? 0 : 1;
+          return af - bf || a.name.localeCompare(b.name);
+        });
+        items.forEach((jammer) => {
+          const preferred = jammer.prefersFirstHalf ? firstHalfGroups : null;
+          assign(jammer, preferred, options.ensureHost);
+        });
+      }
+
+      spread(buckets.host, { ensureHost: true });
+      spread(buckets["first-timer"]);
+      spread(buckets["old-timer"]);
+      spread(buckets.jammer);
+
+      // balance by moving overflow from later groups to earlier groups if needed
+      balanceGroupSizes(groups, femaleCounts, hostPresence);
+
+      const result = groups.flat();
+      return result;
+    }
+
+    function balanceGroupSizes(groups, femaleCounts, hostPresence) {
+      if (!groups.length) return;
+      const targetSize = Math.max(...groups.map((g) => g.length));
+      for (let i = 0; i < groups.length; i++) {
+        for (let j = groups.length - 1; j > i; j--) {
+          const groupA = groups[i];
+          const groupB = groups[j];
+          while (groupA.length + 1 <= groupB.length) {
+            const moverIndex = pickMoverIndex(groupB, j, hostPresence);
+            if (moverIndex === -1) break;
+            const [mover] = groupB.splice(moverIndex, 1);
+            updateCountsAfterRemoval(mover, j, femaleCounts, hostPresence);
+            mover.assignedGroup = i;
+            groupA.push(mover);
+            updateCountsAfterAddition(mover, i, femaleCounts, hostPresence);
+            if (groupA.length >= targetSize) break;
+          }
+        }
+      }
+    }
+
+    function pickMoverIndex(group, groupIndex, hostPresence) {
+      if (!group.length) return -1;
+      const hasHost = hostPresence[groupIndex] > 0;
+      for (let idx = group.length - 1; idx >= 0; idx--) {
+        const candidate = group[idx];
+        if (candidate.role === "host" && hasHost && hostPresence[groupIndex] <= 1) {
+          continue;
+        }
+        return idx;
+      }
+      if (hasHost && hostPresence[groupIndex] <= 1) {
+        return -1;
+      }
+      return group.length - 1;
+    }
+
+    function updateCountsAfterRemoval(jammer, groupIndex, femaleCounts, hostPresence) {
+      if (isLikelyFemale(jammer.name)) femaleCounts[groupIndex] = Math.max(0, femaleCounts[groupIndex] - 1);
+      if (jammer.role === "host" && hostPresence[groupIndex] > 0) hostPresence[groupIndex]--;
+    }
+
+    function updateCountsAfterAddition(jammer, groupIndex, femaleCounts, hostPresence) {
+      if (isLikelyFemale(jammer.name)) femaleCounts[groupIndex]++;
+      if (jammer.role === "host") hostPresence[groupIndex]++;
+    }
+
+    function handleGroupalise(forceCount = null) {
+      if (!currentJam || !currentJam.jammers.length) return;
+      const desired = forceCount != null ? forceCount : Number(groupCountInput.value) || currentJam.desiredGroupCount;
+      const assigned = distributeJammers(currentJam.jammers, desired);
+      assigned.forEach((jammer) => {
+        const original = currentJam.jammers.find((j) => j.id === jammer.id);
+        if (original) {
+          original.assignedGroup = jammer.assignedGroup;
+        }
+      });
+      const maxGroup = assigned.reduce((acc, jammer) => Math.max(acc, jammer.assignedGroup ?? -1), -1);
+      currentJam.desiredGroupCount = maxGroup + 1;
+      renderWorkspace();
+    }
+
+    function handleApplyGroupCount() {
+      if (!currentJam || !currentJam.jammers.length) return;
+      const value = Number(groupCountInput.value);
+      if (!value || value < 1) return;
+      handleGroupalise(value);
+    }
+
+    function handleAddJammer(event) {
+      event.preventDefault();
+      if (!currentJam) return;
+      const name = jammerName.value.trim();
+      if (!name) {
+        jammerName.focus();
+        return;
+      }
+      const jammer = {
+        id: generateId("jammer"),
+        name,
+        role: jammerRole.value || "jammer",
+        prefersFirstHalf: jammerFirstHalf.checked,
+        assignedGroup: jammerGroupSelect.value ? Number(jammerGroupSelect.value) : null,
+      };
+      currentJam.jammers.push(jammer);
+      addKnownName(name);
+      persistKnownNames();
+      addJammerForm.reset();
+      jammerName.focus();
+      renderWorkspace();
+    }
+
+    function handleSaveJam() {
+      if (!currentJam) return;
+      currentJam.name = jamNameInput.value.trim() || currentJam.name || "Jam";
+      saveJam(currentJam);
+    }
+
+    function handleClearAssignments() {
+      if (!currentJam) return;
+      currentJam.jammers.forEach((jammer) => {
+        jammer.assignedGroup = null;
+      });
+      currentJam.desiredGroupCount = null;
+      renderWorkspace();
+    }
+
+    function initEvents() {
+      newJamBtn.addEventListener("click", () => {
+        const name = prompt("Name for this jam?", `Jam ${new Date().toLocaleDateString()}`) || "Untitled Jam";
+        createNewJam(name);
+      });
+      jamNameInput.addEventListener("input", () => {
+        if (!currentJam) return;
+        currentJam.name = jamNameInput.value;
+      });
+      addJammerForm.addEventListener("submit", handleAddJammer);
+      groupaliseBtn.addEventListener("click", () => handleGroupalise());
+      applyGroupCountBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        handleApplyGroupCount();
+      });
+      clearAssignmentsBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        handleClearAssignments();
+      });
+      saveJamBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        handleSaveJam();
+      });
+    }
+
+    async function init() {
+      initEvents();
+      loadKnownNames();
+      jams = await loadJams();
+      collectKnownNamesFromJams();
+      renderKnownNames();
+      renderJamList();
+      renderWorkspace();
+    }
+
+    init().catch((error) => {
+      console.error("Failed to initialise Jam Groupaliser", error);
+    });
+  </script>
+  <style>
+    .jam-tool {
+      margin-top: 2rem;
+    }
+    .jam-layout {
+      display: grid;
+      grid-template-columns: minmax(220px, 260px) 1fr;
+      gap: 1.5rem;
+    }
+    .jam-sidebar {
+      background: var(--surface-1);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 12px 24px #00000010;
+    }
+    .jam-sidebar__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .jam-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .jam-list__item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      background: var(--surface-2);
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      position: relative;
+    }
+    .jam-list__item button {
+      all: unset;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .jam-list__item.is-active {
+      box-shadow: 0 0 0 2px var(--contrast);
+    }
+    .jam-list__meta {
+      font-size: 0.8rem;
+      color: var(--muted-color);
+    }
+    .jam-list__delete {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--muted-border-color);
+      background: transparent;
+      cursor: pointer;
+    }
+    .jam-main {
+      background: var(--surface-1);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      min-height: 540px;
+      box-shadow: 0 12px 24px #00000010;
+    }
+    .jam-empty {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted-color);
+    }
+    .workspace-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .workspace-title input {
+      font-size: 1.4rem;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      border-bottom: 1px solid var(--muted-border-color);
+      padding: 0.3rem 0;
+      width: clamp(180px, 40vw, 320px);
+    }
+    .workspace-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .jam-config {
+      background: var(--surface-2);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .jammer-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .form-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      align-items: flex-end;
+    }
+    .form-grid label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .checkbox-row {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .jam-controls {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    .control-block {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .control-block label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .jammer-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .jammer-table th,
+    .jammer-table td {
+      border-bottom: 1px solid var(--muted-border-color);
+      padding: 0.75rem;
+      text-align: left;
+    }
+    .group-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .group-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .group-card {
+      background: var(--surface-2);
+      border-radius: 1rem;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      box-shadow: inset 0 0 0 1px var(--muted-border-color);
+    }
+    .group-card__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .group-card__list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .group-card__list li {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      font-size: 0.95rem;
+    }
+    .tag {
+      background: var(--surface-3);
+      border-radius: 999px;
+      padding: 0.1rem 0.6rem;
+      font-size: 0.75rem;
+    }
+    .tag--first {
+      background: #e0f2ff;
+      color: #0f4c81;
+    }
+    .small {
+      font-size: 0.75rem;
+    }
+    @media (max-width: 900px) {
+      .jam-layout {
+        grid-template-columns: 1fr;
+      }
+      .jam-sidebar {
+        flex-direction: column;
+      }
+    }
+  </style>
+</BaseLayout>

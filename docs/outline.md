@@ -45,6 +45,34 @@ A user should be able to get suggestions for their sets. The default should be a
 
 Collaborators to the app should be able to add new word lists easily.
 
+### Jam groupaliser
+
+The jam groupaliser allows the user to run a jam set. Data is stored completely locally using indexedDB and never sent to the cloud.
+
+We expect around 50 people to attend a jam, so this would create two groups of 9 people and four of 8. If 42 people were to attend, we would have 6 groups of seven people.
+
+If a user has previous jams in their local storage, they will be presented with the list of jams and the option at the top to create a new jam.
+
+To start the user selects 'new jam'.
+The user can then start adding people to the jam.
+New Jammers can be: first-timers, old-timers, hosts, jammers
+New jammers can express a preference for the first half of a show
+Once all jammers have been added the user can select 'groupalise'
+The system will then try to create as even as possible groups of all jammers using the following algorithm.
+Ideally there are 5-6 groups and 8-10 people in each group as a maximum. For smaller or larger numbers these are not rules.
+Hosts should be distributed to try and get at least one host in each group.
+First timers should be distributed evenly.
+Old timers should be distributed evenly
+Jammers should be distributed evenly.
+In each case, the tool checks against a list of common known female names taken from firstnames.com and tries to keep a gender balance.
+In each case, jammers who have expressed a preference to be in the first half should be ideally in the first two groups.
+The app should prefer the groups at the start to be larger if there is an uneven distribution to cater for the case of a new jammer being added later.
+The user should be able to edit groups by swapping jammers between groups.
+The user can also select to reduce the number of jam teams, for example if six groups of 7 had been suggested by the app and the user selects to use only five groups, the groups are recalculated to have five groups, two of nine and three of eight.
+When the user is happy, they can save the jam list.
+The user should be able to see a summary of the created groups, eg. 6 groups of 8 people, 5 groups of 7 and 8 people.
+A new Jammer can be added after a jam has been set up using the new jammer modal. In this case the jammer will be assigned a group by the user when they are added.
+
 ## warmups
 
 A warmup is an activity that be done at the start of a practice, before a show, or at any time and has a name, short & long descriptions minimum number of participants, a focus and a step by step.
