@@ -255,14 +255,18 @@ button,
 
 .app-bar__inner {
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: clamp(0.75rem, 3vw, 1.5rem);
+  row-gap: 0.5rem;
 }
 
 .app-bar__brand {
   display: flex;
   align-items: baseline;
   gap: 0.75rem;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .app-logo {
@@ -282,7 +286,8 @@ button,
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin-left: auto;
+  align-self: flex-end;
+  flex-shrink: 0;
   padding: 0.45rem 0.9rem;
   border-radius: var(--radius-lg);
   background: color-mix(in srgb, var(--color-accent) 26%, transparent);
@@ -296,8 +301,9 @@ button,
 .tab-nav {
   display: flex;
   gap: 0.75rem;
-  padding: 0.5rem 0 0.25rem;
-  margin: 0 calc(-1 * clamp(1rem, 4vw, 2.25rem));
+  margin: clamp(0.25rem, 1.5vw, 0.5rem)
+    calc(-1 * clamp(1rem, 4vw, 2.25rem)) 0;
+  padding: clamp(0.35rem, 1.5vw, 0.6rem) 0 0.25rem;
   padding-inline: clamp(1rem, 4vw, 2.25rem);
   overflow-x: auto;
   scroll-snap-type: x proximity;
@@ -586,8 +592,8 @@ button,
 
 @media (min-width: 780px) {
   .app-bar__inner {
-    flex-direction: row;
-    align-items: center;
+    flex-wrap: nowrap;
+    row-gap: 0;
   }
   .tab-nav {
     margin-bottom: -0.5rem;
