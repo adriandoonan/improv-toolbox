@@ -20,50 +20,69 @@ const minPeople = Array.from(
 ---
 
 <BaseLayout>
-  <Breadcrumbs items={[{ label: "Warmups" }]} />
-  <div style="margin-bottom: 1rem;">
-    <FilterDrawer
-      fields={[
-        { name: "name", label: "Name", type: "select", options: names },
-        focuses.length
-          ? { name: "focus", label: "Focus", type: "select", options: focuses }
-          : null,
-        minPeople.length
-          ? {
-              name: "minimumPeople",
-              label: "Minimum People",
-              type: "select",
-              options: minPeople.map(String),
+  <section class="collection page-section">
+    <header class="collection__header">
+      <Breadcrumbs items={[{ label: "Warmups" }]} />
+      <div class="stack" style="gap:0.5rem;">
+        <h1 class="section-title">Warmups</h1>
+        <p class="section-subtitle">
+          Ignite energy, sync the group mind, and prime performers before the show.
+        </p>
+      </div>
+      <div class="collection__controls">
+        <FilterDrawer
+          fields={[
+            { name: "name", label: "Name", type: "select", options: names },
+            focuses.length
+              ? {
+                  name: "focus",
+                  label: "Focus",
+                  type: "select",
+                  options: focuses,
+                }
+              : null,
+            minPeople.length
+              ? {
+                  name: "minimumPeople",
+                  label: "Minimum People",
+                  type: "select",
+                  options: minPeople.map(String),
+                }
+              : null,
+          ].filter(Boolean)}
+        />
+      </div>
+    </header>
+    <ul id="warmupList" class="resource-list">
+      {
+        warmups.map((warmup) => (
+          <li
+            class="resource-card"
+            data-name={warmup.data.name}
+            data-focus={warmup.data.focus ?? ""}
+            data-minimum-people={
+              warmup.data.minimumPeople != null
+                ? String(warmup.data.minimumPeople)
+                : ""
             }
-          : null,
-      ].filter(Boolean)}
-    />
-  </div>
-  <ul id="warmupList" class="no-bullets">
-    {
-      warmups.map((warmup) => (
-        <li
-          class="no-bullets-li"
-          data-name={warmup.data.name}
-          data-focus={warmup.data.focus ?? ""}
-          data-minimum-people={
-            warmup.data.minimumPeople != null
-              ? String(warmup.data.minimumPeople)
-              : ""
-          }
-        >
-          <article>
-            <header>
-              <h2 style="margin-bottom:0.5rem;">
-                <a href={`/warmups/${warmup.slug}`}>{warmup.data.name}</a>
-              </h2>
-            </header>
-            <p>{warmup.data.shortDescription}</p>
-          </article>
-        </li>
-      ))
-    }
-  </ul>
+          >
+            <h2 class="resource-card__title">
+              <a href={`/warmups/${warmup.slug}`}>{warmup.data.name}</a>
+            </h2>
+            <p class="resource-card__summary">{warmup.data.shortDescription}</p>
+            <div class="meta-badges">
+              {warmup.data.focus && <span class="meta-badge">Focus · {warmup.data.focus}</span>}
+              {warmup.data.minimumPeople != null && (
+                <span class="meta-badge">
+                  Min · {warmup.data.minimumPeople}
+                </span>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
   <script>
     const form = document.querySelector(".filter-form");
     const list = document.getElementById("warmupList");
@@ -87,14 +106,12 @@ const minPeople = Array.from(
       });
   </script>
   <style>
-    .no-bullets {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .resource-card__title a {
+      color: inherit;
     }
-    .no-bullets-li {
-      list-style: none;
-      padding-left: 0;
+    .resource-card__title a:hover,
+    .resource-card__title a:focus-visible {
+      color: var(--color-accent, #ff2f55);
     }
   </style>
 </BaseLayout>

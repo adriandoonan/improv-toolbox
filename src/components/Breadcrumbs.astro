@@ -1,35 +1,64 @@
 ---
-// props: items = [{ label: string, href: string }]
 const { items = [] } = Astro.props;
 ---
 
 <nav aria-label="Breadcrumb" class="breadcrumbs">
-  <ul
-    style="display: flex; gap: 0.5em; list-style: none; padding: 0; margin: 0;"
-  >
+  <ol class="breadcrumbs__list">
     {
       items.map((item, idx) => (
-        <li>
-          {idx > 0 && <span aria-hidden="true">/</span>}
+        <li class="breadcrumbs__item">
+          {idx > 0 && <span class="breadcrumbs__divider" aria-hidden="true">›</span>}
           {item.href ? (
-            <a href={item.href}>{item.label}</a>
+            <a class="breadcrumbs__link" href={item.href}>{item.label}</a>
           ) : (
-            <span>{item.label}</span>
+            <span class="breadcrumbs__current">{item.label}</span>
           )}
         </li>
       ))
     }
-  </ul>
+  </ol>
 </nav>
+
 <style>
   .breadcrumbs {
-    margin-right: 64px;
+    display: block;
   }
-  .breadcrumbs a {
-    text-decoration: none;
-    color: var(--primary, #0366d6);
+  .breadcrumbs__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 220, 229, 0.7);
   }
-  .breadcrumbs span {
-    color: #888;
+  .breadcrumbs__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .breadcrumbs__link {
+    color: inherit;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .breadcrumbs__link:hover,
+  .breadcrumbs__link:focus-visible {
+    background: rgba(255, 71, 97, 0.2);
+    color: var(--color-heading, #fff5f7);
+  }
+  .breadcrumbs__divider {
+    color: rgba(255, 255, 255, 0.35);
+  }
+  .breadcrumbs__current {
+    color: var(--color-muted, #cbbfca);
+    padding: 0.3rem 0.65rem;
   }
 </style>

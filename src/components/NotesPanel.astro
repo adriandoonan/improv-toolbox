@@ -17,7 +17,13 @@ const noteKey = `${contentType}:${contentId}`;
 >
   <h2>Your notes</h2>
   <div class="note-history" data-note-history hidden>
-    <h3>Saved notes</h3>
+    <div class="note-history__header">
+      <h3>Saved notes</h3>
+      <p class="note-history__helper">
+        Reopen anything you've captured for this piece. Updating a note keeps the
+        original saved time so you can see when you first captured it.
+      </p>
+    </div>
     <ul class="note-list" data-note-list></ul>
   </div>
   <p class="note-helper">
@@ -33,13 +39,29 @@ const noteKey = `${contentType}:${contentId}`;
   </label>
   <p class="note-meta" data-note-meta></p>
   <div class="note-toolbar">
-    <button type="button" class="primary" data-note-save> Save note </button>
-    <button type="button" class="secondary" data-note-clear>
-      Clear draft
-    </button>
-    <button type="button" class="secondary" data-note-export>
-      Export all notes
-    </button>
+    <div class="note-toolbar__actions">
+      <button
+        type="button"
+        class="note-button note-button--primary"
+        data-note-save
+      >
+        Save note
+      </button>
+      <button
+        type="button"
+        class="note-button note-button--ghost"
+        data-note-clear
+      >
+        Clear draft
+      </button>
+      <button
+        type="button"
+        class="note-button note-button--outline"
+        data-note-export
+      >
+        Export all notes
+      </button>
+    </div>
     <span
       id={`note-status-${noteKey}`}
       role="status"
@@ -54,16 +76,31 @@ const noteKey = `${contentType}:${contentId}`;
 
 <style>
   .notes-panel {
-    margin-top: 3rem;
-    border-top: 1px solid var(--pico-muted-border-color, hsla(0, 0%, 100%, 0.1));
-    padding-top: 2rem;
+    margin-top: clamp(2.5rem, 6vw, 3.5rem);
+    background: color-mix(in srgb, var(--surface-panel, #221721) 92%, transparent);
+    border-radius: var(--radius-lg, 28px);
+    padding: clamp(1.75rem, 5vw, 3rem);
+    border: 1px solid color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 16%,
+      rgba(255, 255, 255, 0.08)
+    );
+    box-shadow: var(
+      --shadow-soft,
+      0 18px 42px rgba(5, 2, 8, 0.45)
+    );
     display: grid;
-    gap: 1rem;
+    gap: 1.25rem;
+  }
+
+  .notes-panel h2 {
+    margin: 0;
+    font-size: clamp(1.4rem, 3vw, 1.6rem);
   }
 
   .note-helper {
     margin: 0;
-    color: var(--pico-muted-color);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
     font-size: 0.95rem;
   }
 
@@ -72,9 +109,32 @@ const noteKey = `${contentType}:${contentId}`;
     gap: 0.5rem;
   }
 
+  .note-field__label {
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 70%, white 30%);
+  }
+
   .note-field textarea {
     width: 100%;
     resize: vertical;
+    min-height: 10rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 1rem 1.1rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    background: color-mix(in srgb, var(--surface-color, #161018) 82%, black 18%);
+    color: var(--color-text, #f9f6f8);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .note-field textarea:focus-visible {
+    outline: none;
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 55%, transparent);
+    box-shadow: 0 0 0 2px rgba(255, 71, 97, 0.3);
   }
 
   .note-field textarea.note-field--readonly {
@@ -85,39 +145,162 @@ const noteKey = `${contentType}:${contentId}`;
   .note-meta {
     margin: 0;
     font-size: 0.9rem;
-    color: var(--pico-muted-color);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 80%, black 20%);
   }
 
   .note-toolbar {
+    display: grid;
+    gap: 0.65rem;
+    align-items: start;
+  }
+
+  .note-toolbar__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.65rem;
+  }
+
+  .note-button {
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
+      border-color 0.2s ease, color 0.2s ease;
+    background: color-mix(in srgb, var(--surface-raised, #1f1521) 68%, black 32%);
+    color: var(--color-heading, #fff5f7);
+    box-shadow: 0 10px 24px rgba(10, 4, 12, 0.35);
+  }
+
+  .note-button:hover,
+  .note-button:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(15, 6, 18, 0.45);
+  }
+
+  .note-button:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    box-shadow: none;
+    transform: none;
+  }
+
+  .note-button--primary {
+    background: linear-gradient(135deg, var(--color-accent, #ff2f55) 0%, #ff6b82 100%);
+    color: #140408;
+    border: none;
+    box-shadow: 0 18px 38px rgba(255, 63, 94, 0.45);
+  }
+
+  .note-button--primary:hover,
+  .note-button--primary:focus-visible {
+    box-shadow: 0 22px 46px rgba(255, 63, 94, 0.55);
+  }
+
+  .note-button--ghost {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 90%, white 10%);
+  }
+
+  .note-button--outline {
+    background: color-mix(in srgb, var(--surface-color, #161018) 75%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+    color: var(--color-accent-soft, #ff536c);
+  }
+
+  .note-button--outline:hover,
+  .note-button--outline:focus-visible {
+    background: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 18%,
+      var(--surface-raised, #1f1521) 82%
+    );
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 55%, transparent);
+  }
+
+  .note-button--danger {
+    background: color-mix(in srgb, var(--color-accent, #ff2f55) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+    color: var(--color-accent-soft, #ff536c);
+  }
+
+  .note-button--danger:hover,
+  .note-button--danger:focus-visible {
+    background: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 26%,
+      var(--surface-raised, #1f1521) 74%
+    );
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 60%, transparent);
+    color: #140408;
   }
 
   .note-status {
     min-height: 1.5rem;
     font-size: 0.9rem;
-    color: var(--pico-muted-color);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
+  }
+
+  @media (min-width: 720px) {
+    .note-toolbar {
+      grid-template-columns: auto 1fr;
+      align-items: center;
+    }
+
+    .note-status {
+      text-align: right;
+    }
+  }
+
+  .note-preview {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    background: color-mix(in srgb, var(--surface-raised, #1f1521) 84%, black 16%);
+    box-shadow: 0 12px 28px rgba(6, 2, 10, 0.4);
   }
 
   .note-preview summary {
     cursor: pointer;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted-strong, #f1d5dc);
+  }
+
+  .note-preview summary::marker {
+    display: none;
+  }
+
+  .note-preview summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .note-preview[open] summary {
+    color: var(--color-heading, #fff5f7);
   }
 
   .note-preview div {
-    padding: 0.5rem 0;
+    padding: 0.75rem 0 0;
     display: grid;
     gap: 0.75rem;
   }
 
   .note-preview div :is(pre, code) {
     font-family: var(
-      --pico-font-family-monospace,
+      --font-mono,
+      "JetBrains Mono",
+      "Fira Code",
       ui-monospace,
       SFMono-Regular,
-      SFMono,
-      "Roboto Mono",
       Menlo,
       Monaco,
       Consolas,
@@ -129,11 +312,25 @@ const noteKey = `${contentType}:${contentId}`;
 
   .note-history {
     display: grid;
-    gap: 0.75rem;
+    gap: 1.1rem;
   }
 
-  .note-history h3 {
+  .note-history__header {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .note-history__header h3 {
     margin: 0;
+    font-size: clamp(1.1rem, 2.8vw, 1.3rem);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .note-history__helper {
+    margin: 0;
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
+    font-size: 0.9rem;
   }
 
   .note-list {
@@ -141,16 +338,37 @@ const noteKey = `${contentType}:${contentId}`;
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 1rem;
+    gap: 1.15rem;
   }
 
   .note-item {
-    border: 1px solid var(--pico-muted-border-color, hsla(0, 0%, 100%, 0.1));
-    border-radius: 0.5rem;
-    padding: 0.75rem 1rem;
+    position: relative;
+    border-radius: 1.1rem;
+    padding: 1rem 1.15rem;
     display: grid;
-    gap: 0.5rem;
-    background: var(--pico-card-background-color, rgba(255, 255, 255, 0.03));
+    gap: 0.65rem;
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--surface-raised, #1f1521) 90%, black 10%) 0%,
+        color-mix(in srgb, var(--surface-panel, #221721) 85%, black 15%) 100%
+      );
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 42px rgba(8, 4, 12, 0.45);
+    overflow: hidden;
+  }
+
+  .note-item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      160% 160% at 0% 0%,
+      rgba(255, 71, 97, 0.18),
+      transparent 70%
+    );
+    opacity: 0.65;
   }
 
   .note-item__header {
@@ -158,6 +376,11 @@ const noteKey = `${contentType}:${contentId}`;
     justify-content: space-between;
     align-items: baseline;
     gap: 0.5rem;
+  }
+
+  .note-item__header > * {
+    position: relative;
+    z-index: 1;
   }
 
   .note-item__info {
@@ -169,42 +392,142 @@ const noteKey = `${contentType}:${contentId}`;
 
   .note-item__timestamp {
     font-size: 0.85rem;
-    color: var(--pico-muted-color);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 75%, black 25%);
   }
 
   .note-item__updated {
     font-size: 0.8rem;
-    color: var(--pico-muted-color);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 70%, black 30%);
   }
 
   .note-item__actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.3rem;
     flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
   }
 
-  .note-item__actions button {
-    font-size: 0.85rem;
-    padding: 0.25rem 0.75rem;
+  .note-icon-button {
+    --note-icon-size: 1.1rem;
+    width: 2rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: color-mix(in srgb, var(--surface-glass, #241521) 75%, transparent);
+    color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 80%, white 20%);
+    box-shadow: 0 10px 20px rgba(8, 4, 12, 0.35);
+    transition: transform 0.18s ease, box-shadow 0.18s ease,
+      background 0.18s ease, border-color 0.18s ease, color 0.18s ease,
+      filter 0.18s ease;
+    cursor: pointer;
+    backdrop-filter: blur(6px) saturate(140%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .note-icon-button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+  }
+
+  .note-icon-button:hover,
+  .note-icon-button:focus-visible {
+    transform: translateY(-1px) scale(1.05);
+    outline: none;
+    box-shadow: 0 14px 28px rgba(12, 5, 16, 0.45);
+    filter: drop-shadow(0 0 6px rgba(255, 71, 97, 0.35));
+  }
+
+  .note-icon-button svg {
+    width: var(--note-icon-size);
+    height: var(--note-icon-size);
+  }
+
+  .note-icon-button--edit {
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 24%, transparent);
+    color: var(--color-accent-soft, #ff536c);
+  }
+
+  .note-icon-button--edit:hover,
+  .note-icon-button--edit:focus-visible {
+    background: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 20%,
+      var(--surface-glass, #241521) 80%
+    );
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 60%, transparent);
+    color: #140408;
+  }
+
+  .note-icon-button--delete {
+    border-color: rgba(255, 94, 94, 0.2);
+    color: color-mix(in srgb, var(--color-warning, #ffb3b3) 55%, white 45%);
+    background: color-mix(
+      in srgb,
+      var(--surface-color, #161018) 70%,
+      rgba(255, 41, 62, 0.08)
+    );
+  }
+
+  .note-icon-button--delete:hover,
+  .note-icon-button--delete:focus-visible {
+    background: color-mix(in srgb, var(--color-accent, #ff2f55) 28%, #1a0d12 72%);
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 62%, transparent);
+    color: #140408;
+  }
+
+  .note-icon-button:disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    transform: none;
+    box-shadow: none;
+    filter: none;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .note-item--editing {
-    border-color: var(
-      --pico-primary-border-color,
-      hsla(262, 83%, 58%, 0.6)
+    border-color: rgba(255, 83, 108, 0.45);
+    box-shadow: 0 0 0 1px rgba(255, 83, 108, 0.35), 0 24px 48px rgba(255, 71, 97, 0.35);
+  }
+
+  .note-item--editing::before {
+    opacity: 0.9;
+    background: radial-gradient(
+      140% 120% at 10% 0%,
+      rgba(255, 83, 108, 0.35),
+      transparent 68%
     );
-    box-shadow: 0 0 0 1px
-      var(--pico-primary-border-color, hsla(262, 83%, 58%, 0.35));
   }
 
   .note-item--editing .note-item__timestamp {
-    color: var(--pico-primary, #8b5cf6);
+    color: var(--color-accent-soft, #ff536c);
   }
 
   .note-item__body {
     margin: 0;
     display: grid;
     gap: 0.5rem;
+    position: relative;
+    z-index: 1;
   }
 
   .note-preview div p,
@@ -216,10 +539,7 @@ const noteKey = `${contentType}:${contentId}`;
   .note-item__body pre {
     padding: 0.75rem;
     border-radius: 0.35rem;
-    background: var(
-      --pico-muted-border-color,
-      rgba(255, 255, 255, 0.05)
-    );
+    background: rgba(255, 255, 255, 0.06);
   }
 
   .note-preview div :is(ul, ol),
@@ -234,7 +554,7 @@ const noteKey = `${contentType}:${contentId}`;
   .note-item__body blockquote {
     margin: 0;
     padding-left: 1rem;
-    border-left: 3px solid var(--pico-muted-border-color, hsla(0, 0%, 100%, 0.2));
+    border-left: 3px solid rgba(255, 255, 255, 0.12);
   }
 
   .note-preview div img,
@@ -962,6 +1282,20 @@ const noteKey = `${contentType}:${contentId}`;
     /**
      * @param {NoteCollection} collection
      */
+    function createIconButton(label, variant, pathD) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `note-icon-button note-icon-button--${variant}`;
+      button.setAttribute("aria-label", label);
+      button.innerHTML = `
+        <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+          <path d="${pathD}" fill="currentColor" />
+        </svg>
+        <span class="visually-hidden">${label}</span>
+      `.trim();
+      return button;
+    }
+
     function renderNoteList(collection) {
       list.innerHTML = "";
       if (!collection || collection.items.length === 0) {
@@ -1013,18 +1347,20 @@ const noteKey = `${contentType}:${contentId}`;
           const actions = document.createElement("div");
           actions.className = "note-item__actions";
 
-          const editButton = document.createElement("button");
-          editButton.type = "button";
-          editButton.className = "secondary";
-          editButton.textContent = "Edit";
+          const editButton = createIconButton(
+            "Edit note",
+            "edit",
+            "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92 1.33-1.42-1.42 9.9-9.9 1.41 1.42-9.89 9.9zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+          );
           editButton.addEventListener("click", () => {
             beginEdit(item);
           });
 
-          const deleteButton = document.createElement("button");
-          deleteButton.type = "button";
-          deleteButton.className = "secondary";
-          deleteButton.textContent = "Delete";
+          const deleteButton = createIconButton(
+            "Delete note",
+            "delete",
+            "M6 7h12v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7zm12-2h-3.5l-.71-.71A1 1 0 0 0 13.59 4h-3.18a1 1 0 0 0-.71.29L9 5H5a1 1 0 0 0 0 2h14a1 1 0 0 0 0-2zm-7 5a1 1 0 0 0-1 1v7a1 1 0 0 0 2 0v-7a1 1 0 0 0-1-1zm4 0a1 1 0 0 0-1 1v7a1 1 0 0 0 2 0v-7a1 1 0 0 0-1-1z"
+          );
           deleteButton.addEventListener("click", () => {
             deleteNote(item.id);
           });

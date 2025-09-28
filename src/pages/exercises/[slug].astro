@@ -14,24 +14,40 @@ const exercise = await getEntry("exercises", slug as string);
 ---
 
 <BaseLayout>
-  <Breadcrumbs
-    items={[
-      { label: "Exercises", href: "/exercises" },
-      { label: exercise?.data.name },
-    ]}
-  />
-  <h1>{exercise?.data.name}</h1>
-  <p>{exercise?.data.shortDescription}</p>
-  <ul>
-    <li><strong>Minimum People:</strong> {exercise?.data.minimumPeople}</li>
-    <li><strong>Focus:</strong> {exercise?.data.focus}</li>
-  </ul>
-  <article>
-    <p>{exercise?.data.description}</p>
-  </article>
-  <NotesPanel
-    contentId={exercise?.slug ?? ""}
-    contentType="exercise"
-    contentTitle={exercise?.data.name ?? "Exercise"}
-  />
+  <section class="page-section stack">
+    <Breadcrumbs
+      items={[
+        { label: "Exercises", href: "/exercises" },
+        { label: exercise?.data.name },
+      ]}
+    />
+    <article class="content-card">
+      <header class="stack" style="gap:0.75rem;">
+        <h1 class="section-title">{exercise?.data.name}</h1>
+        <p class="content-lead">{exercise?.data.shortDescription}</p>
+        <ul class="content-meta">
+          {exercise?.data.minimumPeople != null && (
+            <li>
+              <strong>Minimum people</strong>
+              <span>{exercise?.data.minimumPeople}</span>
+            </li>
+          )}
+          {exercise?.data.focus && (
+            <li>
+              <strong>Focus</strong>
+              <span>{exercise?.data.focus}</span>
+            </li>
+          )}
+        </ul>
+      </header>
+      <div class="content-body">
+        <p>{exercise?.data.description}</p>
+      </div>
+    </article>
+    <NotesPanel
+      contentId={exercise?.slug ?? ""}
+      contentType="exercise"
+      contentTitle={exercise?.data.name ?? "Exercise"}
+    />
+  </section>
 </BaseLayout>

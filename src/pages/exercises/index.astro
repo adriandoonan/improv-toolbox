@@ -20,50 +20,70 @@ const minPeople = Array.from(
 ---
 
 <BaseLayout>
-  <Breadcrumbs items={[{ label: "Exercises" }]} />
-  <div style="margin-bottom: 1rem;">
-    <FilterDrawer
-      fields={[
-        { name: "name", label: "Name", type: "select", options: names },
-        focuses.length
-          ? { name: "focus", label: "Focus", type: "select", options: focuses }
-          : null,
-        minPeople.length
-          ? {
-              name: "minimumPeople",
-              label: "Minimum People",
-              type: "select",
-              options: minPeople.map(String),
+  <section class="collection page-section">
+    <header class="collection__header">
+      <Breadcrumbs items={[{ label: "Exercises" }]} />
+      <div class="stack" style="gap:0.5rem;">
+        <h1 class="section-title">Exercises</h1>
+        <p class="section-subtitle">
+          Drill skills, sharpen instincts, and guide your team through purpose-built
+          reps.
+        </p>
+      </div>
+      <div class="collection__controls">
+        <FilterDrawer
+          fields={[
+            { name: "name", label: "Name", type: "select", options: names },
+            focuses.length
+              ? {
+                  name: "focus",
+                  label: "Focus",
+                  type: "select",
+                  options: focuses,
+                }
+              : null,
+            minPeople.length
+              ? {
+                  name: "minimumPeople",
+                  label: "Minimum People",
+                  type: "select",
+                  options: minPeople.map(String),
+                }
+              : null,
+          ].filter(Boolean)}
+        />
+      </div>
+    </header>
+    <ul id="exerciseList" class="resource-list">
+      {
+        exercises.map((exercise) => (
+          <li
+            class="resource-card"
+            data-name={exercise.data.name}
+            data-focus={exercise.data.focus ?? ""}
+            data-minimum-people={
+              exercise.data.minimumPeople != null
+                ? String(exercise.data.minimumPeople)
+                : ""
             }
-          : null,
-      ].filter(Boolean)}
-    />
-  </div>
-  <ul id="exerciseList" class="no-bullets">
-    {
-      exercises.map((exercise) => (
-        <li
-          class="no-bullets-li"
-          data-name={exercise.data.name}
-          data-focus={exercise.data.focus ?? ""}
-          data-minimum-people={
-            exercise.data.minimumPeople != null
-              ? String(exercise.data.minimumPeople)
-              : ""
-          }
-        >
-          <article>
-            <header>
-              <h2 style="margin-bottom:0.5rem;">
-                <a href={`/exercises/${exercise.slug}`}>{exercise.data.name}</a>
-              </h2>
-            </header>
-            <p>{exercise.data.shortDescription}</p>
-          </article>
-        </li>
-      ))
-    }
-  </ul>
+          >
+            <h2 class="resource-card__title">
+              <a href={`/exercises/${exercise.slug}`}>{exercise.data.name}</a>
+            </h2>
+            <p class="resource-card__summary">{exercise.data.shortDescription}</p>
+            <div class="meta-badges">
+              {exercise.data.focus && <span class="meta-badge">Focus · {exercise.data.focus}</span>}
+              {exercise.data.minimumPeople != null && (
+                <span class="meta-badge">
+                  Min · {exercise.data.minimumPeople}
+                </span>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
   <script>
     const form = document.querySelector(".filter-form");
     const list = document.getElementById("exerciseList");
@@ -87,14 +107,12 @@ const minPeople = Array.from(
       });
   </script>
   <style>
-    .no-bullets {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    .resource-card__title a {
+      color: inherit;
     }
-    .no-bullets-li {
-      list-style: none;
-      padding-left: 0;
+    .resource-card__title a:hover,
+    .resource-card__title a:focus-visible {
+      color: var(--color-accent, #ff2f55);
     }
   </style>
 </BaseLayout>

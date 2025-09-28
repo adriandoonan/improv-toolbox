@@ -12,18 +12,30 @@ const form = await getEntry("forms", slug);
 ---
 
 <BaseLayout>
-  <Breadcrumbs
-    items={[{ label: "Forms", href: "/forms" }, { label: form?.data.name }]}
-  />
-  <h1>{form?.data.name}</h1>
-  <p>{form?.data.shortDescription}</p>
-  <article>
-    <p>{form?.data.description}</p>
-  </article>
-  <p><a href={form?.data.source} target="_blank">Source</a></p>
-  <NotesPanel
-    contentId={form?.slug ?? ""}
-    contentType="form"
-    contentTitle={form?.data.name ?? "Form"}
-  />
+  <section class="page-section stack">
+    <Breadcrumbs
+      items={[{ label: "Forms", href: "/forms" }, { label: form?.data.name }]}
+    />
+    <article class="content-card">
+      <header class="stack" style="gap:0.75rem;">
+        <h1 class="section-title">{form?.data.name}</h1>
+        <p class="content-lead">{form?.data.shortDescription}</p>
+      </header>
+      <div class="content-body">
+        <p>{form?.data.description}</p>
+        {form?.data.source && (
+          <p>
+            <a href={form?.data.source} target="_blank" rel="noopener">
+              View original source
+            </a>
+          </p>
+        )}
+      </div>
+    </article>
+    <NotesPanel
+      contentId={form?.slug ?? ""}
+      contentType="form"
+      contentTitle={form?.data.name ?? "Form"}
+    />
+  </section>
 </BaseLayout>
