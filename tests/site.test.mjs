@@ -1,0 +1,111 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+
+const distRoot = new URL('../dist/', import.meta.url);
+
+async function readDist(relativePath) {
+  return readFile(new URL(relativePath, distRoot), 'utf8');
+}
+
+const [homeHtml, toolsHtml, exercisesHtml] = await Promise.all([
+  readDist('index.html'),
+  readDist('tools/index.html'),
+  readDist('exercises/index.html'),
+]);
+
+test('drawer navigation exposes primary sections', () => {
+  const navRegex = /<a href="([^"]+)"[^>]*>.*?<span style="margin-left:0.5em;"[^>]*>([^<]+)<\/span>\s*<\/a>/gs;
+  const navMatches = Array.from(homeHtml.matchAll(navRegex));
+  const navItems = navMatches.map(([, href, label]) => [href, label.trim()]);
+  assert.deepStrictEqual(navItems, [
+    ['/', 'Home'],
+    ['/exercises', 'Exercises'],
+    ['/forms', 'Forms'],
+    ['/warmups', 'Warmups'],
+    ['/tools', 'Tools'],
+  ]);
+});
+
+test('home page sets theme color meta', () => {
+  const themeMeta = homeHtml.match(/<meta name="theme-color" content="([^"]+)">/);
+  assert.ok(themeMeta, 'theme-color meta tag is missing');
+  assert.strictEqual(themeMeta[1], '#0f172a');
+});
+
+test('home page features category previews', () => {
+  const categoryRegex = /<a class="category-card" href="([^"]+)"[^>]*>.*?<h2[^>]*>([^<]+)<\/h2>.*?<p class="category-card__blurb"[^>]*>([^<]+)<\/p>.*?<p class="category-card__preview"[^>]*>([^<]+)<\/p>/gs;
+  const categories = Array.from(homeHtml.matchAll(categoryRegex)).map(([, href, label, blurb, preview]) => ({
+    href,
+    label: label.trim(),
+    blurb: blurb.trim(),
+    preview: preview.trim(),
+  }));
+  assert.strictEqual(categories.length, 4);
+  assert.deepStrictEqual(
+    categories.map((category) => category.label),
+    ['Exercises', 'Forms', 'Warmups', 'Tools']
+  );
+  const toolsCategory = categories.find((category) => category.label === 'Tools');
+  assert.ok(toolsCategory, 'Tools category card is missing');
+  assert.ok(
+    toolsCategory.preview.includes('Timer'),
+    'Tools preview should highlight available timers'
+  );
+});
+
+test('tools listing surfaces all published utilities', () => {
+  const cardRegex = /<a href="\/tools\/([^"]+)" class="card contrast"[^>]*>.*?<strong>\s*([^<]+?)\s*<\/strong>.*?<div class="mute"[^>]*>\s*([^<]+)\s*<\/div>/gs;
+  const toolCards = Array.from(toolsHtml.matchAll(cardRegex)).map(([, slug, label, description]) => ({
+    slug,
+    label: label.replace(/\s+/g, ' ').trim(),
+    description: description.trim(),
+  }));
+  assert.strictEqual(toolCards.length, 4, 'expected four tool cards');
+  const expectedNames = new Map([
+    ['gauss-timer', 'Gauss Timer'],
+    ['jam-groupaliser', 'Jam Groupaliser'],
+    ['suggestions', 'Suggestion Generator'],
+    ['timer', 'Timer'],
+  ]);
+  for (const card of toolCards) {
+    const expected = expectedNames.get(card.slug);
+    assert.ok(expected, `unexpected tool slug ${card.slug}`);
+    assert.ok(card.label.includes(expected), `label for ${card.slug} should include "${expected}"`);
+    assert.ok(card.description.length > 0, `tool ${card.slug} should have a description`);
+  }
+});
+
+test('exercises list exposes filters and dataset metadata', () => {
+  assert.ok(exercisesHtml.includes('id="filterDrawerToggle"'), 'filter toggle button missing');
+  const nameOptions = ['Character Circle', 'Word at a Time Story'];
+  for (const option of nameOptions) {
+    assert.ok(
+      exercisesHtml.includes(`value="${option}"`),
+      `expected exercise option ${option}`
+    );
+  }
+  const yesLetsTokens = [
+    'value="Yes, Let&#39;s!"',
+    'value="Yes, Let&apos;s!"',
+    'value="Yes, Let\'s!"',
+  ];
+  assert.ok(
+    yesLetsTokens.some((token) => exercisesHtml.includes(token)),
+    'expected "Yes, Let\'s!" option in filters'
+  );
+  assert.ok(
+    exercisesHtml.includes('value="Character, Energy, Group Play"'),
+    'focus filters should include combined focus tags'
+  );
+  assert.ok(
+    exercisesHtml.includes('value="4"'),
+    'minimum people filter should include numeric options'
+  );
+  const listCount = (exercisesHtml.match(/class="no-bullets-li"/g) || []).length;
+  assert.strictEqual(listCount, 12, 'expected 12 exercises in the listing');
+  assert.ok(
+    exercisesHtml.includes('data-focus="Character, Energy, Group Play"'),
+    'exercise cards should expose focus metadata'
+  );
+});
