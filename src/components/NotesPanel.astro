@@ -341,155 +341,228 @@ const noteKey = `${contentType}:${contentId}`;
     gap: 1.15rem;
   }
 
-  .note-item {
+  :global(.note-item) {
     position: relative;
-    border-radius: 1.1rem;
-    padding: 1rem 1.15rem;
+    border-radius: var(--radius-lg, 28px);
+    padding: 1.15rem 1.25rem 1.2rem;
     display: grid;
-    gap: 0.65rem;
-    background:
-      linear-gradient(
-        145deg,
-        color-mix(in srgb, var(--surface-raised, #1f1521) 90%, black 10%) 0%,
-        color-mix(in srgb, var(--surface-panel, #221721) 85%, black 15%) 100%
-      );
+    gap: 0.9rem;
+    background: color-mix(
+      in srgb,
+      var(--surface-panel, #221721) 88%,
+      transparent
+    );
     border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 20px 42px rgba(8, 4, 12, 0.45);
+    box-shadow: 0 20px 42px rgba(8, 4, 12, 0.4);
     overflow: hidden;
+    transition: transform 0.22s ease, box-shadow 0.22s ease,
+      border-color 0.22s ease;
   }
 
-  .note-item::before {
+  :global(.note-item)::before {
     content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
     background: radial-gradient(
       160% 160% at 0% 0%,
-      rgba(255, 71, 97, 0.18),
-      transparent 70%
+      rgba(255, 71, 97, 0.16),
+      transparent 68%
     );
-    opacity: 0.65;
+    opacity: 0.6;
   }
 
-  .note-item__header {
+  @media (hover: hover) {
+    :global(.note-item:hover) {
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 24%, transparent);
+      box-shadow: 0 24px 48px rgba(8, 4, 12, 0.48);
+    }
+  }
+
+  :global(.note-item__header) {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: baseline;
-    gap: 0.5rem;
-  }
-
-  .note-item__header > * {
+    gap: 0.75rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 999px;
+    background: color-mix(
+      in srgb,
+      var(--surface-glass, #241521) 78%,
+      transparent
+    );
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px) saturate(140%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
     position: relative;
     z-index: 1;
   }
 
-  .note-item__info {
+  :global(.note-item__meta) {
     display: flex;
+    align-items: center;
+    gap: 0.55rem;
     flex-wrap: wrap;
-    gap: 0.35rem;
-    align-items: baseline;
+    min-width: 0;
   }
 
-  .note-item__timestamp {
-    font-size: 0.85rem;
+  :global(.note-item__timestamp) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: color-mix(in srgb, var(--color-heading, #fff5f7) 85%, white 15%);
+    white-space: nowrap;
+    min-width: 0;
+  }
+
+  :global(.note-item__timestamp[data-label])::before {
+    content: attr(data-label);
+    font-size: 0.6rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 78%, black 22%);
+    opacity: 0.85;
+  }
+
+  :global(.note-item__updated) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: color-mix(
+      in srgb,
+      var(--surface-glass, #241521) 75%,
+      transparent
+    );
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 75%, white 25%);
+    white-space: nowrap;
+  }
+
+  :global(.note-item__updated[data-label])::before {
+    content: attr(data-label);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     color: color-mix(in srgb, var(--color-muted, #cbbfca) 75%, black 25%);
   }
 
-  .note-item__updated {
-    font-size: 0.8rem;
-    color: color-mix(in srgb, var(--color-muted, #cbbfca) 70%, black 30%);
+  @media (max-width: 520px) {
+    :global(.note-item__header) {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    :global(.note-item__timestamp) {
+      white-space: normal;
+    }
+
+    :global(.note-item__actions) {
+      width: 100%;
+      justify-content: flex-end;
+    }
   }
 
-  .note-item__actions {
-    display: flex;
-    gap: 0.3rem;
-    flex-wrap: wrap;
-    position: relative;
-    z-index: 1;
+  :global(.note-item__actions) {
+    display: inline-flex;
+    gap: 0.35rem;
+    flex-shrink: 0;
   }
 
-  .note-icon-button {
-    --note-icon-size: 1.1rem;
-    width: 2rem;
-    height: 2rem;
+  :global(.note-icon-button) {
+    --note-icon-size: 1rem;
+    width: 1.85rem;
+    height: 1.85rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-md);
+    border-radius: 999px;
     border: 1px solid rgba(255, 255, 255, 0.12);
-    background: color-mix(in srgb, var(--surface-glass, #241521) 75%, transparent);
-    color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 80%, white 20%);
-    box-shadow: 0 10px 20px rgba(8, 4, 12, 0.35);
+    background: color-mix(
+      in srgb,
+      var(--surface-glass, #241521) 72%,
+      transparent
+    );
+    color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 82%, white 18%);
+    box-shadow: 0 8px 18px rgba(8, 4, 12, 0.35);
     transition: transform 0.18s ease, box-shadow 0.18s ease,
-      background 0.18s ease, border-color 0.18s ease, color 0.18s ease,
-      filter 0.18s ease;
+      background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
     cursor: pointer;
-    backdrop-filter: blur(6px) saturate(140%);
+    backdrop-filter: blur(10px) saturate(160%);
     position: relative;
     overflow: hidden;
   }
 
-  .note-icon-button::after {
+  :global(.note-icon-button)::after {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
     pointer-events: none;
   }
 
-  .note-icon-button:hover,
-  .note-icon-button:focus-visible {
-    transform: translateY(-1px) scale(1.05);
+  :global(.note-icon-button:hover),
+  :global(.note-icon-button:focus-visible) {
+    transform: translateY(-1px) scale(1.04);
     outline: none;
-    box-shadow: 0 14px 28px rgba(12, 5, 16, 0.45);
-    filter: drop-shadow(0 0 6px rgba(255, 71, 97, 0.35));
+    box-shadow: 0 12px 26px rgba(12, 5, 16, 0.45);
   }
 
-  .note-icon-button svg {
+  :global(.note-icon-button) svg {
     width: var(--note-icon-size);
     height: var(--note-icon-size);
   }
 
-  .note-icon-button--edit {
+  :global(.note-icon-button--edit) {
     border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 24%, transparent);
-    color: var(--color-accent-soft, #ff536c);
+    color: color-mix(in srgb, var(--color-accent-soft, #ff536c) 80%, white 20%);
   }
 
-  .note-icon-button--edit:hover,
-  .note-icon-button--edit:focus-visible {
+  :global(.note-icon-button--edit:hover),
+  :global(.note-icon-button--edit:focus-visible) {
     background: color-mix(
       in srgb,
-      var(--color-accent, #ff2f55) 20%,
-      var(--surface-glass, #241521) 80%
+      var(--color-accent, #ff2f55) 16%,
+      var(--surface-glass, #241521) 84%
     );
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 60%, transparent);
-    color: #140408;
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 58%, transparent);
+    color: #1a050b;
   }
 
-  .note-icon-button--delete {
-    border-color: rgba(255, 94, 94, 0.2);
+  :global(.note-icon-button--delete) {
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 20%, transparent);
     color: color-mix(in srgb, var(--color-warning, #ffb3b3) 55%, white 45%);
     background: color-mix(
       in srgb,
-      var(--surface-color, #161018) 70%,
+      var(--surface-color, #161018) 78%,
       rgba(255, 41, 62, 0.08)
     );
   }
 
-  .note-icon-button--delete:hover,
-  .note-icon-button--delete:focus-visible {
-    background: color-mix(in srgb, var(--color-accent, #ff2f55) 28%, #1a0d12 72%);
+  :global(.note-icon-button--delete:hover),
+  :global(.note-icon-button--delete:focus-visible) {
+    background: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 24%,
+      #1a0d12 76%
+    );
     border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 62%, transparent);
-    color: #140408;
+    color: #1a050b;
   }
 
-  .note-icon-button:disabled {
+  :global(.note-icon-button:disabled) {
     opacity: 0.4;
     pointer-events: none;
     transform: none;
     box-shadow: none;
-    filter: none;
   }
 
   .visually-hidden {
@@ -504,12 +577,12 @@ const noteKey = `${contentType}:${contentId}`;
     border: 0;
   }
 
-  .note-item--editing {
+  :global(.note-item--editing) {
     border-color: rgba(255, 83, 108, 0.45);
     box-shadow: 0 0 0 1px rgba(255, 83, 108, 0.35), 0 24px 48px rgba(255, 71, 97, 0.35);
   }
 
-  .note-item--editing::before {
+  :global(.note-item--editing)::before {
     opacity: 0.9;
     background: radial-gradient(
       140% 120% at 10% 0%,
@@ -518,11 +591,21 @@ const noteKey = `${contentType}:${contentId}`;
     );
   }
 
-  .note-item--editing .note-item__timestamp {
+  :global(.note-item--editing .note-item__timestamp) {
     color: var(--color-accent-soft, #ff536c);
   }
 
-  .note-item__body {
+  :global(.note-item--editing .note-item__header) {
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  :global(.note-item--editing .note-item__updated) {
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 42%, transparent);
+    color: color-mix(in srgb, var(--color-heading, #fff5f7) 85%, white 15%);
+  }
+
+  :global(.note-item__body) {
     margin: 0;
     display: grid;
     gap: 0.5rem;
@@ -531,19 +614,19 @@ const noteKey = `${contentType}:${contentId}`;
   }
 
   .note-preview div p,
-  .note-item__body p {
+  :global(.note-item__body) p {
     margin: 0;
   }
 
   .note-preview div pre,
-  .note-item__body pre {
+  :global(.note-item__body) pre {
     padding: 0.75rem;
     border-radius: 0.35rem;
     background: rgba(255, 255, 255, 0.06);
   }
 
   .note-preview div :is(ul, ol),
-  .note-item__body :is(ul, ol) {
+  :global(.note-item__body) :is(ul, ol) {
     margin: 0;
     padding-left: 1.25rem;
     display: grid;
@@ -551,14 +634,14 @@ const noteKey = `${contentType}:${contentId}`;
   }
 
   .note-preview div blockquote,
-  .note-item__body blockquote {
+  :global(.note-item__body) blockquote {
     margin: 0;
     padding-left: 1rem;
     border-left: 3px solid rgba(255, 255, 255, 0.12);
   }
 
   .note-preview div img,
-  .note-item__body img {
+  :global(.note-item__body) img {
     max-width: 100%;
     height: auto;
   }
@@ -1319,30 +1402,35 @@ const noteKey = `${contentType}:${contentId}`;
           const header = document.createElement("div");
           header.className = "note-item__header";
 
-          const info = document.createElement("div");
-          info.className = "note-item__info";
+          const meta = document.createElement("div");
+          meta.className = "note-item__meta";
 
           const timestamp = document.createElement("time");
           timestamp.className = "note-item__timestamp";
           timestamp.dateTime = item.savedAt;
           const formatted = formatTimestamp(item.savedAt);
-          timestamp.textContent = formatted
-            ? `Saved ${formatted}`
-            : "Saved locally";
-
-          info.appendChild(timestamp);
-
-          if (item.updatedAt && item.updatedAt !== item.savedAt) {
-            const updated = document.createElement("span");
-            updated.className = "note-item__updated";
-            const updatedFormatted = formatTimestamp(item.updatedAt);
-            updated.textContent = updatedFormatted
-              ? `Updated ${updatedFormatted}`
-              : "Updated locally";
-            info.appendChild(updated);
+          timestamp.textContent = formatted || "Saved locally";
+          if (formatted) {
+            timestamp.dataset.label = "Saved";
+            timestamp.setAttribute("aria-label", `Saved on ${formatted}`);
           }
 
-          header.appendChild(info);
+          meta.appendChild(timestamp);
+
+          if (item.updatedAt && item.updatedAt !== item.savedAt) {
+            const updated = document.createElement("time");
+            updated.className = "note-item__updated";
+            updated.dateTime = item.updatedAt;
+            const updatedFormatted = formatTimestamp(item.updatedAt);
+            updated.textContent = updatedFormatted || "Edited locally";
+            if (updatedFormatted) {
+              updated.dataset.label = "Edited";
+              updated.setAttribute("aria-label", `Edited on ${updatedFormatted}`);
+            }
+            meta.appendChild(updated);
+          }
+
+          header.appendChild(meta);
 
           const actions = document.createElement("div");
           actions.className = "note-item__actions";
