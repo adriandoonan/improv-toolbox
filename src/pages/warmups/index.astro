@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import FavoriteToggle from "../../components/FavoriteToggle.astro";
+import warmupsListScript from "../../scripts/warmups-list.client.ts?url";
 import { getCollection } from "astro:content";
 const warmups = (await getCollection("warmups")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
@@ -92,18 +93,7 @@ const minPeople = Array.from(
       }
     </ul>
   </section>
-  <script type="module" lang="ts">
-    import { setupResourceListFiltering } from "../../utils/resourceFilters";
-
-    setupResourceListFiltering({
-      listSelector: "#warmupList",
-      equalityFilters: [
-        { field: "name" },
-        { field: "focus" },
-        { field: "minimumPeople" },
-      ],
-    });
-  </script>
+  <script type="module" src={warmupsListScript}></script>
   <style>
     .resource-card__title a {
       color: inherit;

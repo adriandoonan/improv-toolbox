@@ -38,6 +38,13 @@ const fallbackMessage = hasKey ? "" : "Favorites are unavailable for this entry.
   data-favorite-title={resolvedTitle}
   data-favorite-description={resolvedDescription}
   data-favorite-event={FAVORITES_EVENT}
+  data-favorite-add-label={addLabel}
+  data-favorite-remove-label={removeLabel}
+  data-favorite-sr-add-label={srAddLabel}
+  data-favorite-sr-remove-label={srRemoveLabel}
+  data-favorite-status-add={statusAdd}
+  data-favorite-status-remove={statusRemove}
+  data-favorite-fallback-message={fallbackMessage}
 >
   <button
     type="button"
@@ -80,163 +87,6 @@ const fallbackMessage = hasKey ? "" : "Favorites are unavailable for this entry.
     {fallbackMessage}
   </span>
 </div>
-
-<script
-  type="module"
-  lang="ts"
-  define:vars={{
-    key,
-    slugValue,
-    contentType,
-    resolvedTitle,
-    resolvedDescription,
-    addLabel,
-    removeLabel,
-    srAddLabel,
-    srRemoveLabel,
-    statusAdd,
-    statusRemove,
-    fallbackMessage,
-  }}
->
-  import {
-    loadFavorites,
-    toggleFavorite,
-    subscribeToFavorites,
-    isStorageReady,
-    FAVORITES_EVENT,
-  } from "../utils/favorites";
-  import type { FavoriteChangeDetail } from "../utils/favorites";
-
-  const root = document.currentScript?.parentElement;
-  if (!root) {
-    return;
-  }
-
-  root.dataset.favoriteEvent = FAVORITES_EVENT;
-
-  const button = root.querySelector<HTMLButtonElement>("[data-favorite-button]");
-  const srText = root.querySelector<HTMLElement>("[data-favorite-sr-text]");
-  const statusEl = root.querySelector<HTMLElement>("[data-favorite-status]");
-  const fallbackEl = root.querySelector<HTMLElement>("[data-favorite-fallback]");
-
-  const disableControl = (message: string) => {
-    if (button) {
-      button.disabled = true;
-      button.setAttribute("aria-pressed", "false");
-      button.setAttribute("aria-label", addLabel);
-    }
-    if (srText) {
-      srText.textContent = srAddLabel;
-    }
-    if (fallbackEl) {
-      if (message) {
-        fallbackEl.hidden = false;
-        fallbackEl.textContent = message;
-      } else {
-        fallbackEl.hidden = true;
-        fallbackEl.textContent = "";
-      }
-    }
-    if (statusEl && message) {
-      statusEl.textContent = message;
-    }
-  };
-
-  if (!key || !button) {
-    disableControl("Favorites are unavailable for this entry.");
-    return;
-  }
-
-  if (!isStorageReady()) {
-    disableControl("Favorites are unavailable right now.");
-    return;
-  }
-
-  const toggleText = (isFavorite: boolean) => {
-    button.setAttribute("aria-pressed", String(isFavorite));
-    button.setAttribute("aria-label", isFavorite ? removeLabel : addLabel);
-    if (srText) {
-      srText.textContent = isFavorite ? srRemoveLabel : srAddLabel;
-    }
-  };
-
-  const announce = (isFavorite: boolean) => {
-    if (!statusEl) return;
-    statusEl.textContent = isFavorite ? statusAdd : statusRemove;
-  };
-
-  const favoriteDetail = {
-    type: contentType,
-    slug: slugValue,
-    title: resolvedTitle,
-    description: resolvedDescription,
-  };
-
-  if (fallbackEl) {
-    fallbackEl.hidden = !fallbackMessage;
-    fallbackEl.textContent = fallbackMessage;
-  }
-
-  button.disabled = false;
-
-  const payload = loadFavorites();
-  toggleText(Boolean(payload.items[key]));
-
-  const clickController = new AbortController();
-  const handleClick = () => {
-    const detail = toggleFavorite(key, favoriteDetail);
-    if (!detail) return;
-    const isFavorite = Boolean(detail.isFavorite);
-    toggleText(isFavorite);
-    announce(isFavorite);
-  };
-
-  button.addEventListener("click", handleClick, { signal: clickController.signal });
-
-  const handleChange = (detail: FavoriteChangeDetail) => {
-    if (!detail || !detail.payload) return;
-    const isFavorite = Boolean(detail.payload.items[key]);
-    toggleText(isFavorite);
-    if (detail.key === key) {
-      announce(isFavorite);
-    }
-  };
-
-  const unsubscribe = subscribeToFavorites(handleChange);
-
-  let cleaned = false;
-  const cleanup = () => {
-    if (cleaned) return;
-    cleaned = true;
-    clickController.abort();
-    unsubscribe?.();
-    if (fallbackEl) {
-      fallbackEl.hidden = !fallbackMessage;
-      fallbackEl.textContent = fallbackMessage;
-    }
-  };
-
-  window.addEventListener("astro:before-swap", cleanup, { once: true });
-
-  const observer = new MutationObserver((mutations) => {
-    for (const mutation of mutations) {
-      for (const node of mutation.removedNodes) {
-        if (node === root || (node instanceof Element && node.contains(root))) {
-          observer.disconnect();
-          cleanup();
-          return;
-        }
-      }
-    }
-  });
-
-  if (root.parentElement) {
-    observer.observe(root.parentElement, { childList: true, subtree: true });
-  } else {
-    observer.observe(document.body, { childList: true, subtree: true });
-  }
-</script>
 
 <style>
   .favorite-toggle {
