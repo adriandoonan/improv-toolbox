@@ -709,9 +709,9 @@ const noteKey = `${contentType}:${contentId}`;
       return;
     }
 
-    const noteKey = panel.dataset.noteKey ?? "";
-    const noteTitle = panel.dataset.noteTitle ?? "";
-    const noteType = panel.dataset.noteType ?? "content";
+    let noteKey = panel.dataset.noteKey ?? "";
+    let noteTitle = panel.dataset.noteTitle ?? "";
+    let noteType = panel.dataset.noteType ?? "content";
 
     let storageReady = storageSupported;
     /** @type {NotesPayload | null} */
@@ -722,6 +722,43 @@ const noteKey = `${contentType}:${contentId}`;
     let editingNoteId = null;
     /** @type {string | null} */
     let draftBeforeEdit = null;
+
+    /**
+     * @param {{ key?: string; title?: string; type?: string } | undefined | null} context
+     */
+    function applyNoteContext(context) {
+      if (!context || typeof context !== "object") {
+        return;
+      }
+      const proposedKey =
+        typeof context.key === "string" ? context.key.trim() : "";
+      if (!proposedKey) {
+        return;
+      }
+      const proposedTitle =
+        typeof context.title === "string" ? context.title : noteTitle;
+      const proposedType =
+        typeof context.type === "string" && context.type
+          ? context.type
+          : noteType;
+
+      if (editingNoteId) {
+        cancelEdit(false);
+      } else {
+        draftBeforeEdit = null;
+      }
+
+      panel.dataset.noteKey = proposedKey;
+      panel.dataset.noteTitle = proposedTitle;
+      panel.dataset.noteType = proposedType;
+
+      noteKey = proposedKey;
+      noteTitle = proposedTitle;
+      noteType = proposedType;
+
+      notesPayload = null;
+      refreshFromStorage();
+    }
 
     function updateSaveButtonLabel() {
       saveButton.textContent = editingNoteId
@@ -1617,6 +1654,14 @@ const noteKey = `${contentType}:${contentId}`;
     saveButton.addEventListener("click", () => {
       saveNote();
     });
+
+    panel.addEventListener(
+      "note:context",
+      /** @param {CustomEvent<{ key?: string; title?: string; type?: string }>} event */
+      (event) => {
+        applyNoteContext(event?.detail);
+      }
+    );
 
     textarea.addEventListener("keydown", (event) => {
       if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {

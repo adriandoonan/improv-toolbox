@@ -1,0 +1,1471 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import NotesPanel from "../../../components/NotesPanel.astro";
+import { getCollection } from "astro:content";
+
+export const tool = {
+  name: "Lesson Planner",
+  description: "Stack warm-ups, exercises, and forms into reusable class plans.",
+  icon: "🗂️",
+  creator: "Improv Toolbox",
+  href: "/tools/lesson-plans",
+};
+
+const [warmups, exercises, forms] = await Promise.all([
+  getCollection("warmups"),
+  getCollection("exercises"),
+  getCollection("forms"),
+]);
+
+const mapEntries = (collection, type) =>
+  collection
+    .filter((entry) => entry?.data?.name)
+    .map((entry) => ({
+      slug: entry.slug,
+      name: entry.data.name,
+      summary: entry.data.shortDescription ?? "",
+      href: `/${type}/${entry.slug}`,
+    }));
+
+const lessonCatalog = {
+  warmup: mapEntries(warmups, "warmups"),
+  exercise: mapEntries(exercises, "exercises"),
+  form: mapEntries(forms, "forms"),
+};
+
+const categoryOptions = [
+  {
+    id: "warmup",
+    label: "Warm-up",
+    description: "Energy shakers to open class.",
+  },
+  {
+    id: "exercise",
+    label: "Exercise",
+    description: "Skill reps for focused drills.",
+  },
+  {
+    id: "form",
+    label: "Form",
+    description: "Show-ready structures to rehearse.",
+  },
+];
+---
+
+<BaseLayout
+  title="Lesson Planner"
+  description="Save and remix improv lesson plans built from curated warm-ups, exercises, and forms."
+>
+  <section class="lesson-tool">
+    <div class="lesson-layout">
+      <aside class="lesson-sidebar">
+        <header class="lesson-sidebar__header">
+          <div>
+            <h1>Lesson plans</h1>
+            <p class="lesson-sidebar__intro">
+              Save your go-to class lineups and remix them fast before rehearsal.
+            </p>
+          </div>
+          <button id="newPlanBtn" class="button button--accent" type="button">
+            New plan
+          </button>
+        </header>
+        <p id="planStorageWarning" class="lesson-warning" hidden>
+          Your browser can’t keep plans after this session. Export or copy them if you
+          need a backup.
+        </p>
+        <div id="planListEmpty" class="lesson-empty">
+          No lesson plans yet. Create one to start building your class flow.
+        </div>
+        <ul id="planList" class="plan-list"></ul>
+      </aside>
+      <div class="lesson-main">
+        <div id="planEmptyState" class="plan-empty">
+          <p>Select an existing plan or create a new one to assemble a schedule.</p>
+        </div>
+        <div id="planWorkspace" class="plan-workspace" hidden>
+          <header class="workspace-header">
+            <div class="workspace-title">
+              <label>
+                <span class="mute small">Plan name</span>
+                <input
+                  id="planNameInput"
+                  type="text"
+                  placeholder="Intro to longform"
+                  autocomplete="off"
+                />
+              </label>
+              <p id="planMetaLabel" class="workspace-meta mute small"></p>
+            </div>
+            <div class="workspace-actions">
+              <button id="addElementBtn" type="button" class="button button--surface">
+                Add item
+              </button>
+              <button id="savePlanBtn" type="button" class="button button--accent">
+                Save plan
+              </button>
+            </div>
+          </header>
+          <section class="schedule-section">
+            <ol id="scheduleList" class="schedule-list"></ol>
+            <p id="scheduleEmpty" class="schedule-empty mute">
+              No items yet. Add a warm-up, exercise, or form.
+            </p>
+          </section>
+          <footer class="workspace-footer">
+            <button id="deletePlanBtn" type="button" class="button button--ghost">
+              Delete plan
+            </button>
+          </footer>
+          <NotesPanel
+            contentType="lesson-plan"
+            contentId="lesson-plan-workspace"
+            contentTitle="Lesson plan"
+          />
+        </div>
+      </div>
+    </div>
+    <dialog id="elementPicker" class="plan-dialog">
+      <form method="dialog" class="plan-dialog__body">
+        <header class="plan-dialog__header">
+          <button
+            type="button"
+            class="plan-dialog__nav plan-dialog__nav--back"
+            id="pickerBackBtn"
+            hidden
+          >
+            Back
+          </button>
+          <h2 id="pickerTitle">Add schedule item</h2>
+          <button
+            type="button"
+            class="plan-dialog__nav plan-dialog__nav--close"
+            id="pickerCloseBtn"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </header>
+        <div id="categoryStep" class="plan-dialog__step">
+          <label class="plan-dialog__field">
+            <span class="plan-dialog__label">Choose a category</span>
+            <input
+              id="categorySearch"
+              type="search"
+              placeholder="Search categories"
+              autocomplete="off"
+            />
+          </label>
+          <ul id="categoryList" class="plan-dialog__list"></ul>
+        </div>
+        <div id="itemStep" class="plan-dialog__step" hidden>
+          <label class="plan-dialog__field">
+            <span class="plan-dialog__label" id="itemSearchLabel">Select an item</span>
+            <input
+              id="itemSearch"
+              type="search"
+              placeholder="Search items"
+              autocomplete="off"
+            />
+          </label>
+          <ul id="itemList" class="plan-dialog__list plan-dialog__list--items"></ul>
+        </div>
+      </form>
+    </dialog>
+  </section>
+  <script
+    type="module"
+    define:vars={{ LESSON_CATALOG: lessonCatalog, CATEGORY_OPTIONS: categoryOptions }}
+  >
+    const DB_NAME = "improv-toolbox-lesson-plans";
+    const DB_VERSION = 1;
+    const STORE_NAME = "plans";
+    const NOTE_TYPE = "lesson-plan";
+    const NOTE_PREFIX = "lesson-plan:";
+
+    const catalog = LESSON_CATALOG;
+    const categories = CATEGORY_OPTIONS;
+
+    /** @type {Record<string, Map<string, { slug: string; name: string; summary: string; href: string }>>} */
+    const itemLookup = Object.fromEntries(
+      Object.entries(catalog).map(([key, entries]) => [
+        key,
+        new Map(entries.map((entry) => [entry.slug, entry])),
+      ])
+    );
+
+    const categoryLookup = new Map(categories.map((category) => [category.id, category]));
+
+    const planListEl = document.getElementById("planList");
+    const planListEmpty = document.getElementById("planListEmpty");
+    const planStorageWarning = document.getElementById("planStorageWarning");
+    const planEmptyState = document.getElementById("planEmptyState");
+    const planWorkspace = document.getElementById("planWorkspace");
+    const planNameInput = document.getElementById("planNameInput");
+    const planMetaLabel = document.getElementById("planMetaLabel");
+    const scheduleList = document.getElementById("scheduleList");
+    const scheduleEmpty = document.getElementById("scheduleEmpty");
+    const newPlanBtn = document.getElementById("newPlanBtn");
+    const addElementBtn = document.getElementById("addElementBtn");
+    const savePlanBtn = document.getElementById("savePlanBtn");
+    const deletePlanBtn = document.getElementById("deletePlanBtn");
+    const elementDialog = document.getElementById("elementPicker");
+    const categorySearch = document.getElementById("categorySearch");
+    const categoryList = document.getElementById("categoryList");
+    const itemSearch = document.getElementById("itemSearch");
+    const itemSearchLabel = document.getElementById("itemSearchLabel");
+    const itemList = document.getElementById("itemList");
+    const pickerBackBtn = document.getElementById("pickerBackBtn");
+    const pickerCloseBtn = document.getElementById("pickerCloseBtn");
+    const categoryStep = document.getElementById("categoryStep");
+    const itemStep = document.getElementById("itemStep");
+    const pickerTitle = document.getElementById("pickerTitle");
+    const notesPanel = document.querySelector("[data-note-root]");
+
+    let storageSupported = typeof indexedDB !== "undefined";
+    let storageAvailable = storageSupported;
+    let dbPromise = null;
+
+    /** @type {Array<LessonPlanRecord>} */
+    let plans = [];
+    /** @type {LessonPlanRecord | null} */
+    let currentPlan = null;
+    let currentPlanPersisted = false;
+    let hasUnsavedChanges = false;
+
+    let pickerCategoryId = null;
+
+    if (!storageSupported && planStorageWarning) {
+      planStorageWarning.hidden = false;
+    }
+
+    /**
+     * @returns {Promise<IDBDatabase>}
+     */
+    async function openDb() {
+      if (!storageSupported) {
+        throw new Error("IndexedDB not supported");
+      }
+      if (dbPromise) return dbPromise;
+      dbPromise = new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = () => reject(request.error);
+        request.onupgradeneeded = () => {
+          const db = request.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME, { keyPath: "id" });
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+      }).catch((error) => {
+        storageAvailable = false;
+        if (planStorageWarning) {
+          planStorageWarning.hidden = false;
+        }
+        console.warn("Unable to open lesson plan storage", error);
+        throw error;
+      });
+      return dbPromise;
+    }
+
+    /**
+     * @template T
+     * @param {IDBTransactionMode} mode
+     * @param {(store: IDBObjectStore) => T} work
+     * @returns {Promise<T>}
+     */
+    async function withStore(mode, work) {
+      if (!storageAvailable) {
+        throw new Error("Storage unavailable");
+      }
+      const db = await openDb();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, mode);
+        const store = tx.objectStore(STORE_NAME);
+        let result;
+        try {
+          result = work(store);
+        } catch (error) {
+          tx.abort();
+          reject(error);
+          return;
+        }
+        tx.oncomplete = () => resolve(result);
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    /**
+     * @typedef {Object} LessonPlanRecord
+     * @property {string} id
+     * @property {string} name
+     * @property {string} createdAt
+     * @property {string} updatedAt
+     * @property {Array<LessonPlanItem>} schedule
+     * @property {boolean} persisted
+     */
+
+    /**
+     * @typedef {Object} LessonPlanItem
+     * @property {string} id
+     * @property {string} category
+     * @property {string} slug
+     */
+
+    /**
+     * @param {any} record
+     * @returns {LessonPlanRecord | null}
+     */
+    function normalisePlanRecord(record) {
+      if (!record || typeof record !== "object") {
+        return null;
+      }
+      const id = typeof record.id === "string" ? record.id : null;
+      if (!id) return null;
+      const name =
+        typeof record.name === "string" && record.name.trim()
+          ? record.name
+          : "Untitled plan";
+      const createdAt =
+        typeof record.createdAt === "string" ? record.createdAt : new Date().toISOString();
+      const updatedAt =
+        typeof record.updatedAt === "string" ? record.updatedAt : createdAt;
+      const schedule = Array.isArray(record.schedule)
+        ? record.schedule
+            .map((item) => {
+              if (!item || typeof item !== "object") return null;
+              const category = typeof item.category === "string" ? item.category : null;
+              const slug = typeof item.slug === "string" ? item.slug : null;
+              if (!category || !slug || !itemLookup[category]?.has(slug)) {
+                return null;
+              }
+              const itemId =
+                typeof item.id === "string" && item.id ? item.id : generateId("item");
+              return { id: itemId, category, slug };
+            })
+            .filter(Boolean)
+        : [];
+      return { id, name, createdAt, updatedAt, schedule, persisted: true };
+    }
+
+    /**
+     * @returns {LessonPlanRecord}
+     */
+    function createEmptyPlan() {
+      const timestamp = new Date().toISOString();
+      return {
+        id: generatePlanId("lesson-plan", timestamp),
+        name: "New lesson plan",
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        schedule: [],
+        persisted: false,
+      };
+    }
+
+    /**
+     * @param {LessonPlanRecord} plan
+     * @returns {LessonPlanRecord}
+     */
+    function clonePlan(plan) {
+      if (typeof structuredClone === "function") {
+        return structuredClone(plan);
+      }
+      return JSON.parse(JSON.stringify(plan));
+    }
+
+    /**
+     * @param {string} prefix
+     * @param {string} iso
+     */
+    function generatePlanId(prefix, iso) {
+      const slugPart = slugify(prefix);
+      const timePart = iso.replace(/[^0-9]/g, "").slice(0, 14);
+      return `${slugPart || "plan"}-${timePart}-${Math.random().toString(36).slice(2, 6)}`;
+    }
+
+    /**
+     * @param {string} scope
+     */
+    function generateId(scope) {
+      if (typeof crypto !== "undefined" && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+      return `${scope}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+    }
+
+    /**
+     * @param {string} value
+     */
+    function slugify(value) {
+      return String(value || "")
+        .toLowerCase()
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+    /**
+     * @param {string} iso
+     */
+    function formatTimestamp(iso) {
+      if (!iso) return "";
+      const date = new Date(iso);
+      if (Number.isNaN(date.getTime())) {
+        return "";
+      }
+      return date.toLocaleString(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+      });
+    }
+
+    function sortPlans() {
+      plans.sort((a, b) => {
+        const aTime = new Date(a.updatedAt || a.createdAt).getTime();
+        const bTime = new Date(b.updatedAt || b.createdAt).getTime();
+        return bTime - aTime;
+      });
+    }
+
+    function renderPlanList() {
+      planListEl.innerHTML = "";
+      if (!plans.length) {
+        planListEmpty.hidden = false;
+        return;
+      }
+      planListEmpty.hidden = true;
+      const fragment = document.createDocumentFragment();
+      plans.forEach((plan) => {
+        const li = document.createElement("li");
+        li.className = "plan-list__item";
+        const isCurrent = currentPlan && currentPlan.id === plan.id;
+        if (isCurrent) {
+          li.classList.add("is-active");
+        }
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "plan-list__select";
+        const displayPlan = isCurrent && currentPlan ? currentPlan : plan;
+        button.textContent = (displayPlan.name || "Untitled plan").trim() || "Untitled plan";
+        button.addEventListener("click", () => {
+          if (plan.id === currentPlan?.id) return;
+          if (hasUnsavedChanges) {
+            const confirmSwitch = window.confirm(
+              "You have unsaved changes. Switch plans without saving?"
+            );
+            if (!confirmSwitch) {
+              return;
+            }
+          }
+          selectPlan(plan.id);
+        });
+        li.appendChild(button);
+
+        const meta = document.createElement("div");
+        meta.className = "plan-list__meta";
+        const schedule = displayPlan.schedule || [];
+        const itemCount = schedule.length;
+        const parts = [`${itemCount} ${itemCount === 1 ? "item" : "items"}`];
+        const timestampSource = plan.persisted ? plan.updatedAt : plan.createdAt;
+        const formatted = formatTimestamp(timestampSource);
+        if (formatted) {
+          parts.push(`${plan.persisted ? "updated" : "created"} ${formatted}`);
+        }
+        if (!plan.persisted) {
+          parts.push("not saved yet");
+        }
+        if (isCurrent && hasUnsavedChanges) {
+          parts.push("unsaved changes");
+        }
+        meta.textContent = parts.join(" • ");
+        li.appendChild(meta);
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "plan-list__delete";
+        deleteBtn.textContent = "Delete";
+        deleteBtn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const confirmDelete = window.confirm("Delete this lesson plan?");
+          if (!confirmDelete) return;
+          deletePlan(plan.id);
+        });
+        li.appendChild(deleteBtn);
+
+        fragment.appendChild(li);
+      });
+      planListEl.appendChild(fragment);
+    }
+
+    function renderWorkspace() {
+      if (!currentPlan) {
+        planWorkspace.hidden = true;
+        planEmptyState.hidden = false;
+        addElementBtn.disabled = true;
+        savePlanBtn.disabled = true;
+        updateNotesContext(null);
+        return;
+      }
+      planWorkspace.hidden = false;
+      planEmptyState.hidden = true;
+      planNameInput.value = currentPlan.name || "";
+      addElementBtn.disabled = false;
+      updatePlanMeta();
+      renderSchedule();
+      updateSaveButtonState();
+      updateNotesContext(currentPlan);
+    }
+
+    function updatePlanMeta() {
+      if (!currentPlan) {
+        planMetaLabel.textContent = "";
+        return;
+      }
+      const count = currentPlan.schedule.length;
+      const parts = [`${count} ${count === 1 ? "element" : "elements"}`];
+      const referenceTime = currentPlanPersisted
+        ? currentPlan.updatedAt
+        : currentPlan.createdAt;
+      const formatted = formatTimestamp(referenceTime);
+      if (formatted) {
+        parts.push(`${currentPlanPersisted ? "updated" : "created"} ${formatted}`);
+      }
+      if (!currentPlanPersisted) {
+        parts.push("not saved yet");
+      }
+      if (hasUnsavedChanges) {
+        parts.push("unsaved changes");
+      }
+      planMetaLabel.textContent = parts.join(" • ");
+    }
+
+    function renderSchedule() {
+      if (!currentPlan) {
+        scheduleList.innerHTML = "";
+        scheduleEmpty.hidden = false;
+        return;
+      }
+      const schedule = currentPlan.schedule;
+      scheduleList.innerHTML = "";
+      if (!schedule.length) {
+        scheduleEmpty.hidden = false;
+        updatePlanMeta();
+        return;
+      }
+      scheduleEmpty.hidden = true;
+      const fragment = document.createDocumentFragment();
+      schedule.forEach((entry, index) => {
+        const li = document.createElement("li");
+        li.className = "schedule-item";
+        li.dataset.itemId = entry.id;
+
+        const info = document.createElement("div");
+        info.className = "schedule-item__info";
+
+        const badge = document.createElement("span");
+        badge.className = "schedule-item__badge";
+        badge.textContent = categoryLookup.get(entry.category)?.label || entry.category;
+        info.appendChild(badge);
+
+        const details = itemLookup[entry.category]?.get(entry.slug) ?? null;
+        const nameEl = document.createElement(details?.href ? "a" : "span");
+        nameEl.className = "schedule-item__name";
+        nameEl.textContent = details?.name || entry.slug;
+        if (details?.href && nameEl instanceof HTMLAnchorElement) {
+          nameEl.href = details.href;
+          nameEl.target = "_blank";
+          nameEl.rel = "noreferrer";
+        }
+        info.appendChild(nameEl);
+
+        if (details?.summary) {
+          const summary = document.createElement("p");
+          summary.className = "schedule-item__summary";
+          summary.textContent = details.summary;
+          info.appendChild(summary);
+        }
+
+        li.appendChild(info);
+
+        const actions = document.createElement("div");
+        actions.className = "schedule-item__actions";
+
+        const upButton = document.createElement("button");
+        upButton.type = "button";
+        upButton.className = "schedule-item__control";
+        upButton.dataset.action = "move-up";
+        upButton.textContent = "Move up";
+        upButton.disabled = index === 0;
+        actions.appendChild(upButton);
+
+        const downButton = document.createElement("button");
+        downButton.type = "button";
+        downButton.className = "schedule-item__control";
+        downButton.dataset.action = "move-down";
+        downButton.textContent = "Move down";
+        downButton.disabled = index === schedule.length - 1;
+        actions.appendChild(downButton);
+
+        const removeButton = document.createElement("button");
+        removeButton.type = "button";
+        removeButton.className = "schedule-item__control schedule-item__control--danger";
+        removeButton.dataset.action = "remove";
+        removeButton.textContent = "Remove";
+        actions.appendChild(removeButton);
+
+        li.appendChild(actions);
+        fragment.appendChild(li);
+      });
+      scheduleList.appendChild(fragment);
+      updatePlanMeta();
+    }
+
+    function updateSaveButtonState() {
+      if (!currentPlan) {
+        savePlanBtn.disabled = true;
+        return;
+      }
+      savePlanBtn.disabled = !hasUnsavedChanges || !currentPlan.name.trim();
+    }
+
+    function markDirty() {
+      if (!currentPlan) return;
+      hasUnsavedChanges = true;
+      currentPlan.updatedAt = new Date().toISOString();
+      updateSaveButtonState();
+      updatePlanMeta();
+      renderPlanList();
+    }
+
+    function selectPlan(planId) {
+      const stored = plans.find((plan) => plan.id === planId);
+      if (!stored) {
+        return;
+      }
+      currentPlan = clonePlan(stored);
+      currentPlanPersisted = stored.persisted;
+      hasUnsavedChanges = false;
+      renderPlanList();
+      renderWorkspace();
+    }
+
+    function createNewPlan() {
+      const plan = createEmptyPlan();
+      plans.unshift(plan);
+      sortPlans();
+      currentPlan = clonePlan(plan);
+      currentPlanPersisted = false;
+      hasUnsavedChanges = true;
+      renderPlanList();
+      renderWorkspace();
+      planNameInput.focus();
+    }
+
+    async function saveCurrentPlan() {
+      if (!currentPlan) return;
+      const trimmedName = currentPlan.name.trim();
+      if (!trimmedName) {
+        planNameInput.focus();
+        return;
+      }
+      currentPlan.name = trimmedName;
+      const now = new Date().toISOString();
+      const existingIndex = plans.findIndex((plan) => plan.id === currentPlan.id);
+      const createdAt =
+        currentPlan.createdAt || (existingIndex !== -1 ? plans[existingIndex].createdAt : now);
+      const recordForStorage = {
+        id: currentPlan.id,
+        name: currentPlan.name,
+        createdAt,
+        updatedAt: now,
+        schedule: currentPlan.schedule.map((item) => ({
+          id: item.id,
+          category: item.category,
+          slug: item.slug,
+        })),
+      };
+
+      let persisted = false;
+      if (storageAvailable) {
+        try {
+          await withStore("readwrite", (store) => store.put(recordForStorage));
+          persisted = true;
+        } catch (error) {
+          storageAvailable = false;
+          console.warn("Unable to save lesson plan", error);
+          if (planStorageWarning) {
+            planStorageWarning.hidden = false;
+          }
+        }
+      }
+
+      const savedRecord = {
+        ...recordForStorage,
+        persisted,
+      };
+      if (existingIndex !== -1) {
+        plans.splice(existingIndex, 1);
+      }
+      plans.unshift(savedRecord);
+      sortPlans();
+      currentPlan = clonePlan(savedRecord);
+      currentPlanPersisted = persisted;
+      hasUnsavedChanges = false;
+      renderPlanList();
+      renderWorkspace();
+    }
+
+    async function deletePlan(planId) {
+      const index = plans.findIndex((plan) => plan.id === planId);
+      if (index === -1) return;
+      const [removed] = plans.splice(index, 1);
+      if (currentPlan && currentPlan.id === planId) {
+        currentPlan = null;
+        currentPlanPersisted = false;
+        hasUnsavedChanges = false;
+        renderWorkspace();
+      }
+      renderPlanList();
+      if (removed?.persisted && storageAvailable) {
+        try {
+          await withStore("readwrite", (store) => store.delete(planId));
+        } catch (error) {
+          storageAvailable = false;
+          console.warn("Unable to delete lesson plan", error);
+          if (planStorageWarning) {
+            planStorageWarning.hidden = false;
+          }
+        }
+      }
+    }
+
+    function updateNotesContext(plan) {
+      if (!notesPanel) return;
+      const detail = plan
+        ? {
+            key: `${NOTE_PREFIX}${plan.id}`,
+            title: plan.name || "Lesson plan",
+            type: NOTE_TYPE,
+          }
+        : {
+            key: `${NOTE_PREFIX}workspace`,
+            title: "Lesson plan",
+            type: NOTE_TYPE,
+          };
+      notesPanel.dispatchEvent(
+        new CustomEvent("note:context", {
+          detail,
+          bubbles: false,
+        })
+      );
+    }
+
+    function openPicker() {
+      if (!currentPlan) return;
+      resetPicker();
+      if (typeof elementDialog.showModal === "function") {
+        elementDialog.showModal();
+      } else {
+        elementDialog.setAttribute("open", "true");
+      }
+      categorySearch.focus();
+    }
+
+    function closePicker() {
+      if (typeof elementDialog.close === "function") {
+        elementDialog.close();
+      } else {
+        elementDialog.removeAttribute("open");
+      }
+      resetPicker();
+    }
+
+    function resetPicker() {
+      pickerCategoryId = null;
+      categoryStep.hidden = false;
+      itemStep.hidden = true;
+      pickerBackBtn.hidden = true;
+      pickerTitle.textContent = "Add schedule item";
+      categorySearch.value = "";
+      itemSearch.value = "";
+      renderCategoryList("");
+      itemList.innerHTML = "";
+    }
+
+    function renderCategoryList(filterText) {
+      const query = filterText.trim().toLowerCase();
+      categoryList.innerHTML = "";
+      const filtered = categories.filter((category) => {
+        const label = category.label.toLowerCase();
+        const description = (category.description || "").toLowerCase();
+        return !query || label.includes(query) || description.includes(query);
+      });
+      if (!filtered.length) {
+        const empty = document.createElement("li");
+        empty.className = "plan-dialog__empty";
+        empty.textContent = "No categories match your search.";
+        categoryList.appendChild(empty);
+        return;
+      }
+      const fragment = document.createDocumentFragment();
+      filtered.forEach((category) => {
+        const li = document.createElement("li");
+        li.className = "plan-dialog__option";
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.categoryId = category.id;
+        button.className = "plan-dialog__button";
+        const title = document.createElement("span");
+        title.className = "plan-dialog__option-title";
+        title.textContent = category.label;
+        button.appendChild(title);
+        if (category.description) {
+          const helper = document.createElement("span");
+          helper.className = "plan-dialog__option-helper";
+          helper.textContent = category.description;
+          button.appendChild(helper);
+        }
+        li.appendChild(button);
+        fragment.appendChild(li);
+      });
+      categoryList.appendChild(fragment);
+    }
+
+    function renderItemList(filterText) {
+      itemList.innerHTML = "";
+      if (!pickerCategoryId) return;
+      const entries = catalog[pickerCategoryId] || [];
+      const query = filterText.trim().toLowerCase();
+      const filtered = entries.filter((entry) => {
+        const name = entry.name.toLowerCase();
+        const summary = (entry.summary || "").toLowerCase();
+        return !query || name.includes(query) || summary.includes(query);
+      });
+      if (!filtered.length) {
+        const empty = document.createElement("li");
+        empty.className = "plan-dialog__empty";
+        empty.textContent = "No matches in this category.";
+        itemList.appendChild(empty);
+        return;
+      }
+      const fragment = document.createDocumentFragment();
+      filtered.forEach((entry) => {
+        const li = document.createElement("li");
+        li.className = "plan-dialog__option";
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.itemSlug = entry.slug;
+        button.className = "plan-dialog__button";
+        const title = document.createElement("span");
+        title.className = "plan-dialog__option-title";
+        title.textContent = entry.name;
+        button.appendChild(title);
+        if (entry.summary) {
+          const helper = document.createElement("span");
+          helper.className = "plan-dialog__option-helper";
+          helper.textContent = entry.summary;
+          button.appendChild(helper);
+        }
+        li.appendChild(button);
+        fragment.appendChild(li);
+      });
+      itemList.appendChild(fragment);
+    }
+
+    function showItemStep(categoryId) {
+      pickerCategoryId = categoryId;
+      const category = categoryLookup.get(categoryId);
+      itemSearchLabel.textContent = category
+        ? `Select a ${category.label}`
+        : "Select an item";
+      pickerTitle.textContent = category
+        ? `Add a ${category.label.toLowerCase()}`
+        : "Add schedule item";
+      categoryStep.hidden = true;
+      itemStep.hidden = false;
+      pickerBackBtn.hidden = false;
+      itemSearch.value = "";
+      renderItemList("");
+      itemSearch.focus();
+    }
+
+    function addScheduleItem(categoryId, slug) {
+      if (!currentPlan) return;
+      currentPlan.schedule.push({
+        id: generateId("schedule"),
+        category: categoryId,
+        slug,
+      });
+      markDirty();
+      renderSchedule();
+      closePicker();
+    }
+
+    function removeScheduleItem(itemId) {
+      if (!currentPlan) return;
+      const index = currentPlan.schedule.findIndex((item) => item.id === itemId);
+      if (index === -1) return;
+      currentPlan.schedule.splice(index, 1);
+      markDirty();
+      renderSchedule();
+    }
+
+    function moveScheduleItem(itemId, delta) {
+      if (!currentPlan) return;
+      const schedule = currentPlan.schedule;
+      const index = schedule.findIndex((item) => item.id === itemId);
+      if (index === -1) return;
+      const targetIndex = index + delta;
+      if (targetIndex < 0 || targetIndex >= schedule.length) {
+        return;
+      }
+      const [entry] = schedule.splice(index, 1);
+      schedule.splice(targetIndex, 0, entry);
+      markDirty();
+      renderSchedule();
+    }
+
+    scheduleList.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const actionButton = target.closest("button[data-action]");
+      if (!actionButton) return;
+      const itemEl = actionButton.closest("[data-item-id]");
+      if (!itemEl) return;
+      const itemId = itemEl.dataset.itemId;
+      if (!itemId) return;
+      const action = actionButton.dataset.action;
+      if (action === "remove") {
+        removeScheduleItem(itemId);
+      } else if (action === "move-up") {
+        moveScheduleItem(itemId, -1);
+      } else if (action === "move-down") {
+        moveScheduleItem(itemId, 1);
+      }
+    });
+
+    categorySearch.addEventListener("input", () => {
+      renderCategoryList(categorySearch.value || "");
+    });
+
+    categoryList.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const button = target.closest("button[data-category-id]");
+      if (!button) return;
+      const categoryId = button.dataset.categoryId;
+      if (!categoryId) return;
+      showItemStep(categoryId);
+    });
+
+    itemSearch.addEventListener("input", () => {
+      renderItemList(itemSearch.value || "");
+    });
+
+    itemList.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const button = target.closest("button[data-item-slug]");
+      if (!button || !pickerCategoryId) return;
+      const slug = button.dataset.itemSlug;
+      if (!slug) return;
+      addScheduleItem(pickerCategoryId, slug);
+    });
+
+    pickerBackBtn.addEventListener("click", () => {
+      pickerCategoryId = null;
+      categoryStep.hidden = false;
+      itemStep.hidden = true;
+      pickerBackBtn.hidden = true;
+      pickerTitle.textContent = "Add schedule item";
+      categorySearch.focus();
+    });
+
+    pickerCloseBtn.addEventListener("click", () => {
+      closePicker();
+    });
+
+    if (elementDialog) {
+      elementDialog.addEventListener("close", () => {
+        resetPicker();
+      });
+      elementDialog.addEventListener("cancel", () => {
+        resetPicker();
+      });
+    }
+
+    newPlanBtn.addEventListener("click", () => {
+      createNewPlan();
+    });
+
+    addElementBtn.addEventListener("click", () => {
+      openPicker();
+    });
+
+    savePlanBtn.addEventListener("click", () => {
+      saveCurrentPlan();
+    });
+
+    deletePlanBtn.addEventListener("click", () => {
+      if (!currentPlan) return;
+      const confirmed = window.confirm("Delete this lesson plan?");
+      if (!confirmed) return;
+      deletePlan(currentPlan.id);
+    });
+
+    planNameInput.addEventListener("input", () => {
+      if (!currentPlan) return;
+      currentPlan.name = planNameInput.value;
+      updateNotesContext(currentPlan);
+      markDirty();
+    });
+
+    async function loadPlans() {
+      if (!storageSupported) {
+        renderPlanList();
+        return;
+      }
+      try {
+        const loaded = await withStore("readonly", (store) => {
+          return new Promise((resolve, reject) => {
+            const plans = [];
+            const request = store.openCursor(null, "prev");
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
+              const cursor = request.result;
+              if (cursor) {
+                plans.push(cursor.value);
+                cursor.continue();
+              } else {
+                resolve(plans);
+              }
+            };
+          });
+        });
+        plans = loaded
+          .map((record) => normalisePlanRecord(record))
+          .filter(Boolean);
+        sortPlans();
+        renderPlanList();
+      } catch (error) {
+        storageAvailable = false;
+        console.warn("Unable to load saved lesson plans", error);
+        if (planStorageWarning) {
+          planStorageWarning.hidden = false;
+        }
+        plans = [];
+        renderPlanList();
+      }
+    }
+
+    renderCategoryList("");
+    renderPlanList();
+    renderWorkspace();
+    loadPlans();
+  </script>
+  <style>
+    .lesson-tool {
+      display: grid;
+      gap: clamp(1.5rem, 4vw, 2rem);
+    }
+
+    .lesson-layout {
+      display: grid;
+      gap: clamp(1.5rem, 4vw, 2rem);
+    }
+
+    @media (min-width: 960px) {
+      .lesson-layout {
+        grid-template-columns: minmax(16rem, 22rem) 1fr;
+        align-items: start;
+      }
+    }
+
+    .lesson-sidebar {
+      display: grid;
+      gap: 1rem;
+      padding: clamp(1.5rem, 4vw, 2rem);
+      background: color-mix(in srgb, var(--surface-panel, #221721) 92%, transparent);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-lg, 28px);
+      box-shadow: var(--shadow-soft, 0 18px 42px rgba(5, 2, 8, 0.35));
+    }
+
+    .lesson-sidebar__header {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .lesson-sidebar__intro {
+      margin: 0;
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
+      font-size: 0.95rem;
+    }
+
+    .lesson-warning {
+      margin: 0;
+      padding: 0.85rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid color-mix(in srgb, var(--color-accent, #ff2f55) 36%, transparent);
+      background: color-mix(in srgb, var(--surface-panel, #221721) 85%, transparent);
+      font-size: 0.9rem;
+      color: color-mix(in srgb, var(--color-accent, #ff2f55) 70%, white 30%);
+    }
+
+    .lesson-empty {
+      margin: 0;
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.05);
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
+      font-size: 0.95rem;
+    }
+
+    .plan-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .plan-list__item {
+      display: grid;
+      gap: 0.5rem;
+      padding: 0.85rem 0.95rem;
+      border-radius: var(--radius-md);
+      background: color-mix(in srgb, var(--surface-raised, #1f1521) 85%, transparent);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .plan-list__item.is-active {
+      border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent, #ff2f55) 22%, transparent);
+    }
+
+    .plan-list__select {
+      background: none;
+      border: none;
+      padding: 0;
+      text-align: left;
+      font-size: 1rem;
+      font-weight: 600;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .plan-list__select:hover,
+    .plan-list__select:focus-visible {
+      text-decoration: underline;
+    }
+
+    .plan-list__meta {
+      margin: 0;
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 82%, black 18%);
+      font-size: 0.85rem;
+    }
+
+    .plan-list__delete {
+      justify-self: start;
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 0.85rem;
+      color: color-mix(in srgb, var(--color-accent, #ff2f55) 70%, white 30%);
+      cursor: pointer;
+    }
+
+    .lesson-main {
+      display: grid;
+      gap: clamp(1.25rem, 3vw, 1.75rem);
+    }
+
+    .plan-empty {
+      margin: 0;
+      padding: clamp(2rem, 5vw, 2.8rem);
+      border-radius: var(--radius-lg, 28px);
+      background: color-mix(in srgb, var(--surface-panel, #221721) 92%, transparent);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 88%, black 12%);
+      text-align: center;
+    }
+
+    .plan-workspace {
+      display: grid;
+      gap: clamp(1.25rem, 3vw, 1.75rem);
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+      border-radius: var(--radius-lg, 28px);
+      background: color-mix(in srgb, var(--surface-panel, #221721) 95%, transparent);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: var(--shadow-soft, 0 18px 42px rgba(5, 2, 8, 0.35));
+    }
+
+    .workspace-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .workspace-title {
+      display: grid;
+      gap: 0.35rem;
+      min-width: min(20rem, 100%);
+    }
+
+    .workspace-title input {
+      width: 100%;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: color-mix(in srgb, var(--surface-raised, #1f1521) 85%, transparent);
+      padding: 0.7rem 0.85rem;
+      color: inherit;
+      font-size: 1.05rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .workspace-title input:focus-visible {
+      outline: none;
+      border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 55%, transparent);
+      box-shadow: 0 0 0 2px rgba(255, 63, 94, 0.3);
+    }
+
+    .workspace-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .workspace-meta {
+      margin: 0;
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 80%, black 20%);
+      font-size: 0.85rem;
+    }
+
+    .schedule-section {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .schedule-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .schedule-item {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 0.9rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: color-mix(in srgb, var(--surface-raised, #1f1521) 92%, transparent);
+    }
+
+    .schedule-item__info {
+      display: grid;
+      gap: 0.35rem;
+      min-width: min(16rem, 100%);
+    }
+
+    .schedule-item__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 70%, white 30%);
+    }
+
+    .schedule-item__name {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .schedule-item__name:hover,
+    .schedule-item__name:focus-visible {
+      text-decoration: underline;
+    }
+
+    .schedule-item__summary {
+      margin: 0;
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 82%, black 18%);
+      font-size: 0.9rem;
+      max-width: 45ch;
+    }
+
+    .schedule-item__actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .schedule-item__control {
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: color-mix(in srgb, var(--surface-color, #161018) 80%, black 20%);
+      color: inherit;
+      border-radius: var(--radius-sm, 14px);
+      padding: 0.45rem 0.85rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .schedule-item__control:hover,
+    .schedule-item__control:focus-visible {
+      border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 35%, transparent);
+    }
+
+    .schedule-item__control--danger {
+      color: color-mix(in srgb, var(--color-accent, #ff2f55) 70%, white 30%);
+    }
+
+    .schedule-empty {
+      margin: 0;
+    }
+
+    .workspace-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .plan-dialog::backdrop {
+      background: rgba(10, 6, 12, 0.66);
+    }
+
+    .plan-dialog {
+      border: none;
+      border-radius: var(--radius-lg, 28px);
+      padding: 0;
+      max-width: min(34rem, 90vw);
+      width: 100%;
+      background: color-mix(in srgb, var(--surface-panel, #221721) 97%, transparent);
+      color: inherit;
+      box-shadow: 0 18px 42px rgba(5, 2, 8, 0.55);
+    }
+
+    .plan-dialog__body {
+      display: grid;
+      gap: 1rem;
+      padding: clamp(1.5rem, 4vw, 2.25rem);
+    }
+
+    .plan-dialog__header {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .plan-dialog__nav {
+      border: none;
+      background: none;
+      color: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .plan-dialog__nav--close {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .plan-dialog__field {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .plan-dialog__label {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 70%, white 30%);
+    }
+
+    .plan-dialog__field input {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: color-mix(in srgb, var(--surface-raised, #1f1521) 80%, transparent);
+      padding: 0.6rem 0.75rem;
+      color: inherit;
+    }
+
+    .plan-dialog__field input:focus-visible {
+      outline: none;
+      border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+      box-shadow: 0 0 0 2px rgba(255, 63, 94, 0.25);
+    }
+
+    .plan-dialog__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0.5rem;
+      max-height: clamp(18rem, 40vh, 22rem);
+      overflow-y: auto;
+    }
+
+    .plan-dialog__list--items {
+      margin-top: 0.5rem;
+    }
+
+    .plan-dialog__option {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: color-mix(in srgb, var(--surface-raised, #1f1521) 85%, transparent);
+    }
+
+    .plan-dialog__button {
+      width: 100%;
+      border: none;
+      background: none;
+      padding: 0.75rem 0.85rem;
+      text-align: left;
+      color: inherit;
+      display: grid;
+      gap: 0.35rem;
+      cursor: pointer;
+    }
+
+    .plan-dialog__button:hover,
+    .plan-dialog__button:focus-visible {
+      background: color-mix(in srgb, var(--color-accent, #ff2f55) 15%, transparent);
+    }
+
+    .plan-dialog__option-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .plan-dialog__option-helper {
+      font-size: 0.85rem;
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 80%, black 20%);
+    }
+
+    .plan-dialog__empty {
+      margin: 0;
+      padding: 0.75rem 0.85rem;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.04);
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
+      font-size: 0.9rem;
+    }
+  </style>
+</BaseLayout>
