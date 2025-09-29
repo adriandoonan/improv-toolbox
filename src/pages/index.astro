@@ -130,10 +130,13 @@ const highlights = [
     <div class="cta__content stack">
       <h2 id="cta-heading">Build tonight&apos;s run faster</h2>
       <p>
-        Stack a few warmups, drop in a form, cue the timer, and you&apos;re ready to
-        play. Bookmark your go-tos and bring the toolbox to every rehearsal.
+        Stack a few warmups, drop in a form, cue the timer, and you&apos;re
+        ready to play. Bookmark your go-tos and bring the toolbox to every
+        rehearsal.
       </p>
-      <a class="hero__cta hero__cta--primary" href="/exercises">Plan a session</a>
+      <a class="hero__cta hero__cta--primary" href="/exercises"
+        >Plan a session</a
+      >
     </div>
   </section>
 
@@ -193,10 +196,12 @@ const highlights = [
       align-items: center;
       justify-content: center;
       padding: 0.8rem 1.75rem;
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius-md);
       font-weight: 700;
       letter-spacing: 0.02em;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
     }
     .hero__cta--primary {
       background: linear-gradient(135deg, #ff2f55, #ff6b82);
@@ -236,7 +241,7 @@ const highlights = [
       background: rgba(255, 255, 255, 0.1);
       color: rgba(255, 220, 229, 0.9);
       padding: 0.4rem 0.85rem;
-      border-radius: var(--radius-lg);
+      border-radius: var(--radius-md);
       font-size: 0.7rem;
       letter-spacing: 0.16em;
       text-transform: uppercase;
@@ -250,11 +255,8 @@ const highlights = [
     .category-card {
       text-decoration: none;
       background: color-mix(in srgb, var(--surface-panel) 92%, transparent);
-      border: 1px solid color-mix(
-        in srgb,
-        var(--color-accent) 18%,
-        rgba(255, 255, 255, 0.08)
-      );
+      border: 1px solid
+        color-mix(in srgb, var(--color-accent) 18%, rgba(255, 255, 255, 0.08));
     }
     .category-card__header {
       display: flex;

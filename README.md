@@ -48,7 +48,7 @@ The test runner performs an Astro production build, then inspects key pages in `
 
 Tools page preview:
 
-![tools page](docs/images/tools-page.jpg)
+![tools page](docs/images/tools-page.png)
 
 ## Project Structure
 

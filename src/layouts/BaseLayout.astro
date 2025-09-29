@@ -1,11 +1,9 @@
 ---
-import Drawer from "../components/Drawer.astro";
 const {
   title = "Improv Toolbox",
   description = "Exercises, warmups, forms, and show tools.",
   themeColor = "#0f172a",
 } = Astro.props;
-const drawerId = "primary-navigation";
 const navLinks = [
   {
     href: "/",
@@ -38,8 +36,6 @@ const navLinks = [
       "<svg width='24' height='24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3a5 5 0 0 0-5 5c0 .7.1 1.4.4 2l-3.6 3.6a2 2 0 0 0 2.8 2.8L10.2 13.8a5 5 0 0 0 6.4 0l3.6 3.6a2 2 0 0 0 2.8-2.8L19.4 10A5 5 0 0 0 12 3Z'/></svg>",
   },
 ];
-const menuIcon =
-  "<svg width='24' height='24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'><path d='M4 7h16M4 12h16M4 17h16'/></svg>";
 const currentPath = Astro.url.pathname;
 const currentYear = new Date().getFullYear();
 const isActive = (href: string) =>
@@ -77,15 +73,6 @@ const isActive = (href: string) =>
     <header class="app-bar" role="banner">
       <div class="app-bar__inner">
         <div class="app-bar__brand">
-          <button
-            type="button"
-            class="app-nav-trigger"
-            aria-label="Open navigation menu"
-            data-drawer-target={drawerId}
-          >
-            <span class="sr-only">Open navigation menu</span>
-            <span class="app-nav-trigger__icon" set:html={menuIcon} />
-          </button>
           <div class="app-identity">
             <a class="app-logo" href="/">Improv Toolbox</a>
             <span class="app-tagline">Warmups · Forms · Tools</span>
@@ -128,19 +115,7 @@ const isActive = (href: string) =>
           </a>
         ))
       }
-      <button
-        type="button"
-        class="bottom-nav__item bottom-nav__item--drawer"
-        data-drawer-target={drawerId}
-        aria-label="Open navigation menu"
-      >
-        <span class="bottom-nav__icon" set:html={menuIcon} />
-        <span class="bottom-nav__label">Menu</span>
-      </button>
     </nav>
-    <Drawer id={drawerId} title="Navigate" links={navLinks}>
-      <p class="app-tagline">Plan, teach, and play on the fly.</p>
-    </Drawer>
     <footer class="site-footer">
       <small>© {currentYear} Improv Toolbox Collective</small>
     </footer>
