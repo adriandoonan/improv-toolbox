@@ -59,6 +59,19 @@ const categoryOptions = [
   <section class="lesson-tool">
     <div class="lesson-layout">
       <aside class="lesson-sidebar">
+        <div class="lesson-notebooks">
+          <label class="lesson-notebooks__field">
+            <span class="lesson-notebooks__label mute small">Notebook</span>
+            <select id="notebookSelect" class="lesson-notebooks__select"></select>
+          </label>
+          <button
+            id="newNotebookBtn"
+            class="button button--surface lesson-notebooks__create"
+            type="button"
+          >
+            New notebook
+          </button>
+        </div>
         <header class="lesson-sidebar__header">
           <div>
             <h1>Lesson plans</h1>
@@ -178,8 +191,11 @@ const categoryOptions = [
     define:vars={{ LESSON_CATALOG: lessonCatalog, CATEGORY_OPTIONS: categoryOptions }}
   >
     const DB_NAME = "improv-toolbox-lesson-plans";
-    const DB_VERSION = 1;
+    const DB_VERSION = 2;
     const STORE_NAME = "plans";
+    const NOTEBOOK_STORE_NAME = "notebooks";
+    const DEFAULT_NOTEBOOK_ID = "notebook-default";
+    const DEFAULT_NOTEBOOK_NAME = "General notebook";
     const NOTE_TYPE = "lesson-plan";
     const NOTE_PREFIX = "lesson-plan:";
 
@@ -196,6 +212,8 @@ const categoryOptions = [
 
     const categoryLookup = new Map(categories.map((category) => [category.id, category]));
 
+    const notebookSelect = document.getElementById("notebookSelect");
+    const newNotebookBtn = document.getElementById("newNotebookBtn");
     const planListEl = document.getElementById("planList");
     const planListEmpty = document.getElementById("planListEmpty");
     const planStorageWarning = document.getElementById("planStorageWarning");
@@ -226,6 +244,10 @@ const categoryOptions = [
     let storageAvailable = storageSupported;
     let dbPromise = null;
 
+    /** @type {Array<NotebookRecord>} */
+    let notebooks = [];
+    /** @type {NotebookRecord | null} */
+    let currentNotebook = null;
     /** @type {Array<LessonPlanRecord>} */
     let plans = [];
     /** @type {LessonPlanRecord | null} */
@@ -250,10 +272,45 @@ const categoryOptions = [
       dbPromise = new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, DB_VERSION);
         request.onerror = () => reject(request.error);
-        request.onupgradeneeded = () => {
+        request.onupgradeneeded = (event) => {
           const db = request.result;
+          let planStore;
           if (!db.objectStoreNames.contains(STORE_NAME)) {
-            db.createObjectStore(STORE_NAME, { keyPath: "id" });
+            planStore = db.createObjectStore(STORE_NAME, { keyPath: "id" });
+          } else {
+            planStore = request.transaction?.objectStore(STORE_NAME);
+          }
+
+          let notebookStore;
+          if (!db.objectStoreNames.contains(NOTEBOOK_STORE_NAME)) {
+            notebookStore = db.createObjectStore(NOTEBOOK_STORE_NAME, { keyPath: "id" });
+          } else {
+            notebookStore = request.transaction?.objectStore(NOTEBOOK_STORE_NAME);
+          }
+
+          const timestamp = new Date().toISOString();
+          if (notebookStore) {
+            notebookStore.put({
+              id: DEFAULT_NOTEBOOK_ID,
+              name: DEFAULT_NOTEBOOK_NAME,
+              createdAt: timestamp,
+              updatedAt: timestamp,
+            });
+          }
+
+          if (event.oldVersion < 2 && planStore) {
+            const cursorRequest = planStore.openCursor();
+            cursorRequest.onsuccess = () => {
+              const cursor = cursorRequest.result;
+              if (cursor) {
+                const value = cursor.value || {};
+                if (!value.notebookId) {
+                  value.notebookId = DEFAULT_NOTEBOOK_ID;
+                  cursor.update(value);
+                }
+                cursor.continue();
+              }
+            };
           }
         };
         request.onsuccess = () => resolve(request.result);
@@ -274,14 +331,14 @@ const categoryOptions = [
      * @param {(store: IDBObjectStore) => T} work
      * @returns {Promise<T>}
      */
-    async function withStore(mode, work) {
+    async function withStore(mode, work, storeName = STORE_NAME) {
       if (!storageAvailable) {
         throw new Error("Storage unavailable");
       }
       const db = await openDb();
       return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, mode);
-        const store = tx.objectStore(STORE_NAME);
+        const tx = db.transaction(storeName, mode);
+        const store = tx.objectStore(storeName);
         let result;
         try {
           result = work(store);
@@ -296,12 +353,22 @@ const categoryOptions = [
     }
 
     /**
+     * @typedef {Object} NotebookRecord
+     * @property {string} id
+     * @property {string} name
+     * @property {string} createdAt
+     * @property {string} updatedAt
+     * @property {boolean} persisted
+     */
+
+    /**
      * @typedef {Object} LessonPlanRecord
      * @property {string} id
      * @property {string} name
      * @property {string} createdAt
      * @property {string} updatedAt
      * @property {Array<LessonPlanItem>} schedule
+     * @property {string} notebookId
      * @property {boolean} persisted
      */
 
@@ -311,6 +378,27 @@ const categoryOptions = [
      * @property {string} category
      * @property {string} slug
      */
+
+    /**
+     * @param {any} record
+     * @returns {NotebookRecord | null}
+     */
+    function normaliseNotebookRecord(record) {
+      if (!record || typeof record !== "object") {
+        return null;
+      }
+      const id = typeof record.id === "string" ? record.id : null;
+      if (!id) return null;
+      const name =
+        typeof record.name === "string" && record.name.trim()
+          ? record.name.trim()
+          : DEFAULT_NOTEBOOK_NAME;
+      const createdAt =
+        typeof record.createdAt === "string" ? record.createdAt : new Date().toISOString();
+      const updatedAt =
+        typeof record.updatedAt === "string" ? record.updatedAt : createdAt;
+      return { id, name, createdAt, updatedAt, persisted: true };
+    }
 
     /**
      * @param {any} record
@@ -330,6 +418,10 @@ const categoryOptions = [
         typeof record.createdAt === "string" ? record.createdAt : new Date().toISOString();
       const updatedAt =
         typeof record.updatedAt === "string" ? record.updatedAt : createdAt;
+      const notebookId =
+        typeof record.notebookId === "string" && record.notebookId.trim()
+          ? record.notebookId
+          : DEFAULT_NOTEBOOK_ID;
       const schedule = Array.isArray(record.schedule)
         ? record.schedule
             .map((item) => {
@@ -345,13 +437,52 @@ const categoryOptions = [
             })
             .filter(Boolean)
         : [];
-      return { id, name, createdAt, updatedAt, schedule, persisted: true };
+      return { id, name, createdAt, updatedAt, schedule, notebookId, persisted: true };
+    }
+
+    /**
+     * @param {boolean} persisted
+     * @returns {NotebookRecord}
+     */
+    function createDefaultNotebook(persisted = false) {
+      const timestamp = new Date().toISOString();
+      return {
+        id: DEFAULT_NOTEBOOK_ID,
+        name: DEFAULT_NOTEBOOK_NAME,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        persisted,
+      };
+    }
+
+    /**
+     * @param {string} name
+     * @returns {NotebookRecord}
+     */
+    function createNotebookDraft(name) {
+      const timestamp = new Date().toISOString();
+      const trimmed = typeof name === "string" ? name.trim() : "";
+      return {
+        id: generatePlanId("notebook", timestamp),
+        name: trimmed || "New notebook",
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        persisted: false,
+      };
+    }
+
+    function sortNotebooks() {
+      notebooks.sort((a, b) => {
+        if (a.id === DEFAULT_NOTEBOOK_ID) return -1;
+        if (b.id === DEFAULT_NOTEBOOK_ID) return 1;
+        return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+      });
     }
 
     /**
      * @returns {LessonPlanRecord}
      */
-    function createEmptyPlan() {
+    function createEmptyPlan(notebookId) {
       const timestamp = new Date().toISOString();
       return {
         id: generatePlanId("lesson-plan", timestamp),
@@ -359,6 +490,7 @@ const categoryOptions = [
         createdAt: timestamp,
         updatedAt: timestamp,
         schedule: [],
+        notebookId: notebookId || DEFAULT_NOTEBOOK_ID,
         persisted: false,
       };
     }
@@ -429,15 +561,64 @@ const categoryOptions = [
       });
     }
 
+    function ensureNotebookSelection() {
+      if (!notebooks.length) {
+        const fallback = createDefaultNotebook(false);
+        notebooks.push(fallback);
+        currentNotebook = fallback;
+        return;
+      }
+      const existing = currentNotebook
+        ? notebooks.find((item) => item.id === currentNotebook.id)
+        : null;
+      currentNotebook = existing || notebooks[0] || null;
+    }
+
+    function renderNotebookOptions() {
+      if (!notebookSelect) return;
+      ensureNotebookSelection();
+      notebookSelect.innerHTML = "";
+      if (!notebooks.length) {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "No notebooks";
+        notebookSelect.appendChild(option);
+        notebookSelect.disabled = true;
+        return;
+      }
+      notebookSelect.disabled = false;
+      const fragment = document.createDocumentFragment();
+      notebooks.forEach((notebook) => {
+        const option = document.createElement("option");
+        option.value = notebook.id;
+        option.textContent = notebook.name;
+        fragment.appendChild(option);
+      });
+      notebookSelect.appendChild(fragment);
+      if (currentNotebook) {
+        notebookSelect.value = currentNotebook.id;
+      }
+    }
+
     function renderPlanList() {
       planListEl.innerHTML = "";
-      if (!plans.length) {
+      const notebookId = currentNotebook?.id;
+      const visiblePlans = notebookId
+        ? plans.filter((plan) => plan.notebookId === notebookId)
+        : plans.slice();
+      if (!visiblePlans.length) {
         planListEmpty.hidden = false;
+        if (currentNotebook) {
+          planListEmpty.textContent = `No lesson plans in “${currentNotebook.name}” yet. Create one to start building your class flow.`;
+        } else {
+          planListEmpty.textContent =
+            "No lesson plans yet. Create one to start building your class flow.";
+        }
         return;
       }
       planListEmpty.hidden = true;
       const fragment = document.createDocumentFragment();
-      plans.forEach((plan) => {
+      visiblePlans.forEach((plan) => {
         const li = document.createElement("li");
         li.className = "plan-list__item";
         const isCurrent = currentPlan && currentPlan.id === plan.id;
@@ -497,6 +678,94 @@ const categoryOptions = [
         fragment.appendChild(li);
       });
       planListEl.appendChild(fragment);
+    }
+
+    function selectNotebookById(notebookId, { skipConfirm = false } = {}) {
+      if (!notebookId) {
+        if (notebookSelect && currentNotebook) {
+          notebookSelect.value = currentNotebook.id;
+        }
+        return;
+      }
+      const targetNotebook = notebooks.find((item) => item.id === notebookId);
+      if (!targetNotebook) {
+        if (notebookSelect && currentNotebook) {
+          notebookSelect.value = currentNotebook.id;
+        }
+        return;
+      }
+      if (currentNotebook && currentNotebook.id === targetNotebook.id) {
+        return;
+      }
+      if (!skipConfirm && hasUnsavedChanges) {
+        const confirmed = window.confirm(
+          "You have unsaved changes. Switch notebooks without saving?"
+        );
+        if (!confirmed) {
+          if (notebookSelect && currentNotebook) {
+            notebookSelect.value = currentNotebook.id;
+          }
+          return;
+        }
+      }
+      currentNotebook = targetNotebook;
+      if (!currentPlan || currentPlan.notebookId !== targetNotebook.id) {
+        currentPlan = null;
+        currentPlanPersisted = false;
+        hasUnsavedChanges = false;
+      }
+      if (notebookSelect) {
+        notebookSelect.value = targetNotebook.id;
+      }
+      renderPlanList();
+      renderWorkspace();
+    }
+
+    async function createNotebook() {
+      const name = window.prompt("Notebook name");
+      if (name === null) {
+        if (notebookSelect && currentNotebook) {
+          notebookSelect.value = currentNotebook.id;
+        }
+        return;
+      }
+      const trimmed = name.trim();
+      if (!trimmed) {
+        if (notebookSelect && currentNotebook) {
+          notebookSelect.value = currentNotebook.id;
+        }
+        return;
+      }
+      const draft = createNotebookDraft(trimmed);
+      let persisted = false;
+      if (storageAvailable) {
+        try {
+          await withStore(
+            "readwrite",
+            (store) =>
+              store.put({
+                id: draft.id,
+                name: draft.name,
+                createdAt: draft.createdAt,
+                updatedAt: draft.updatedAt,
+              }),
+            NOTEBOOK_STORE_NAME
+          );
+          persisted = true;
+        } catch (error) {
+          storageAvailable = false;
+          console.warn("Unable to save notebook", error);
+          if (planStorageWarning) {
+            planStorageWarning.hidden = false;
+          }
+        }
+      }
+      const stored = { ...draft, persisted };
+      notebooks.push(stored);
+      sortNotebooks();
+      renderNotebookOptions();
+      selectNotebookById(stored.id, { skipConfirm: true });
+      renderPlanList();
     }
 
     function renderWorkspace() {
@@ -652,7 +921,11 @@ const categoryOptions = [
     }
 
     function createNewPlan() {
-      const plan = createEmptyPlan();
+      ensureNotebookSelection();
+      if (!currentNotebook) {
+        return;
+      }
+      const plan = createEmptyPlan(currentNotebook.id);
       plans.unshift(plan);
       sortPlans();
       currentPlan = clonePlan(plan);
@@ -671,6 +944,9 @@ const categoryOptions = [
         return;
       }
       currentPlan.name = trimmedName;
+      const notebookId =
+        currentPlan.notebookId || currentNotebook?.id || DEFAULT_NOTEBOOK_ID;
+      currentPlan.notebookId = notebookId;
       const now = new Date().toISOString();
       const existingIndex = plans.findIndex((plan) => plan.id === currentPlan.id);
       const createdAt =
@@ -680,6 +956,7 @@ const categoryOptions = [
         name: currentPlan.name,
         createdAt,
         updatedAt: now,
+        notebookId,
         schedule: currentPlan.schedule.map((item) => ({
           id: item.id,
           category: item.category,
@@ -747,6 +1024,12 @@ const categoryOptions = [
         ? {
             key: `${NOTE_PREFIX}${plan.id}`,
             title: plan.name || "Lesson plan",
+            type: NOTE_TYPE,
+          }
+        : currentNotebook
+        ? {
+            key: `${NOTE_PREFIX}${currentNotebook.id}:workspace`,
+            title: `${currentNotebook.name} notebook`,
             type: NOTE_TYPE,
           }
         : {
@@ -996,6 +1279,19 @@ const categoryOptions = [
       });
     }
 
+    if (notebookSelect) {
+      notebookSelect.addEventListener("change", (event) => {
+        const target = /** @type {HTMLSelectElement} */ (event.target);
+        selectNotebookById(target.value);
+      });
+    }
+
+    if (newNotebookBtn) {
+      newNotebookBtn.addEventListener("click", () => {
+        createNotebook();
+      });
+    }
+
     newPlanBtn.addEventListener("click", () => {
       createNewPlan();
     });
@@ -1022,9 +1318,86 @@ const categoryOptions = [
       markDirty();
     });
 
+    async function loadNotebooks() {
+      if (!storageSupported) {
+        notebooks = [createDefaultNotebook(false)];
+        currentNotebook = notebooks[0];
+        renderNotebookOptions();
+        renderPlanList();
+        renderWorkspace();
+        return;
+      }
+      try {
+        const loaded = await withStore(
+          "readonly",
+          (store) => {
+            return new Promise((resolve, reject) => {
+              const records = [];
+              const request = store.openCursor();
+              request.onerror = () => reject(request.error);
+              request.onsuccess = () => {
+                const cursor = request.result;
+                if (cursor) {
+                  records.push(cursor.value);
+                  cursor.continue();
+                } else {
+                  resolve(records);
+                }
+              };
+            });
+          },
+          NOTEBOOK_STORE_NAME
+        );
+        notebooks = loaded.map((record) => normaliseNotebookRecord(record)).filter(Boolean);
+        if (!notebooks.length) {
+          const fallback = createDefaultNotebook(false);
+          notebooks = [fallback];
+          if (storageAvailable) {
+            try {
+              await withStore(
+                "readwrite",
+                (store) =>
+                  store.put({
+                    id: fallback.id,
+                    name: fallback.name,
+                    createdAt: fallback.createdAt,
+                    updatedAt: fallback.updatedAt,
+                  }),
+                NOTEBOOK_STORE_NAME
+              );
+              fallback.persisted = true;
+            } catch (error) {
+              storageAvailable = false;
+              console.warn("Unable to seed default notebook", error);
+              if (planStorageWarning) {
+                planStorageWarning.hidden = false;
+              }
+            }
+          }
+        }
+        sortNotebooks();
+        ensureNotebookSelection();
+        renderNotebookOptions();
+        renderPlanList();
+        renderWorkspace();
+      } catch (error) {
+        storageAvailable = false;
+        console.warn("Unable to load notebooks", error);
+        if (planStorageWarning) {
+          planStorageWarning.hidden = false;
+        }
+        notebooks = [createDefaultNotebook(false)];
+        currentNotebook = notebooks[0];
+        renderNotebookOptions();
+        renderPlanList();
+        renderWorkspace();
+      }
+    }
+
     async function loadPlans() {
       if (!storageSupported) {
         renderPlanList();
+        renderWorkspace();
         return;
       }
       try {
@@ -1048,7 +1421,13 @@ const categoryOptions = [
           .map((record) => normalisePlanRecord(record))
           .filter(Boolean);
         sortPlans();
+        if (currentPlan && !plans.some((plan) => plan.id === currentPlan.id)) {
+          currentPlan = null;
+          currentPlanPersisted = false;
+          hasUnsavedChanges = false;
+        }
         renderPlanList();
+        renderWorkspace();
       } catch (error) {
         storageAvailable = false;
         console.warn("Unable to load saved lesson plans", error);
@@ -1057,13 +1436,18 @@ const categoryOptions = [
         }
         plans = [];
         renderPlanList();
+        renderWorkspace();
       }
     }
 
     renderCategoryList("");
+    renderNotebookOptions();
     renderPlanList();
     renderWorkspace();
-    loadPlans();
+    (async () => {
+      await loadNotebooks();
+      await loadPlans();
+    })();
   </script>
   <style>
     .lesson-tool {
@@ -1091,6 +1475,39 @@ const categoryOptions = [
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: var(--radius-lg, 28px);
       box-shadow: var(--shadow-soft, 0 18px 42px rgba(5, 2, 8, 0.35));
+    }
+
+    .lesson-notebooks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: flex-end;
+    }
+
+    .lesson-notebooks__field {
+      flex: 1 1 12rem;
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .lesson-notebooks__select {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      border-radius: var(--radius-sm, 14px);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      background: color-mix(in srgb, var(--surface, #140912) 88%, transparent);
+      color: inherit;
+      font: inherit;
+      appearance: none;
+    }
+
+    .lesson-notebooks__select:focus {
+      outline: 2px solid color-mix(in srgb, var(--accent, #ff6ad5) 70%, transparent);
+      outline-offset: 2px;
+    }
+
+    .lesson-notebooks__create {
+      flex: 0 0 auto;
     }
 
     .lesson-sidebar__header {
