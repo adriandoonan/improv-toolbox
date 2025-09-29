@@ -119,6 +119,29 @@ const categoryOptions = [
               </button>
             </div>
           </header>
+          <section class="plan-details">
+            <label class="plan-field">
+              <span class="plan-field__label">Session aim</span>
+              <textarea
+                id="planAimInput"
+                class="plan-field__input"
+                placeholder="What are we focusing on today? (Markdown supported)"
+                rows="4"
+              ></textarea>
+              <span class="plan-field__helper mute small"
+                >Use Markdown for emphasis, lists, and links.</span
+              >
+            </label>
+            <label class="plan-field">
+              <span class="plan-field__label">Follow-ups</span>
+              <textarea
+                id="planFollowUpsInput"
+                class="plan-field__input"
+                placeholder="Next steps, promised resources, or reminders for the next session."
+                rows="3"
+              ></textarea>
+            </label>
+          </section>
           <section class="schedule-section">
             <ol id="scheduleList" class="schedule-list"></ol>
             <p id="scheduleEmpty" class="schedule-empty mute">
@@ -221,6 +244,8 @@ const categoryOptions = [
     const planWorkspace = document.getElementById("planWorkspace");
     const planNameInput = document.getElementById("planNameInput");
     const planMetaLabel = document.getElementById("planMetaLabel");
+    const planAimInput = document.getElementById("planAimInput");
+    const planFollowUpsInput = document.getElementById("planFollowUpsInput");
     const scheduleList = document.getElementById("scheduleList");
     const scheduleEmpty = document.getElementById("scheduleEmpty");
     const newPlanBtn = document.getElementById("newPlanBtn");
@@ -369,6 +394,8 @@ const categoryOptions = [
      * @property {string} updatedAt
      * @property {Array<LessonPlanItem>} schedule
      * @property {string} notebookId
+     * @property {string} aim
+     * @property {string} followUps
      * @property {boolean} persisted
      */
 
@@ -437,7 +464,19 @@ const categoryOptions = [
             })
             .filter(Boolean)
         : [];
-      return { id, name, createdAt, updatedAt, schedule, notebookId, persisted: true };
+      const aim = typeof record.aim === "string" ? record.aim : "";
+      const followUps = typeof record.followUps === "string" ? record.followUps : "";
+      return {
+        id,
+        name,
+        createdAt,
+        updatedAt,
+        schedule,
+        notebookId,
+        aim,
+        followUps,
+        persisted: true,
+      };
     }
 
     /**
@@ -491,6 +530,8 @@ const categoryOptions = [
         updatedAt: timestamp,
         schedule: [],
         notebookId: notebookId || DEFAULT_NOTEBOOK_ID,
+        aim: "",
+        followUps: "",
         persisted: false,
       };
     }
@@ -774,12 +815,28 @@ const categoryOptions = [
         planEmptyState.hidden = false;
         addElementBtn.disabled = true;
         savePlanBtn.disabled = true;
+        if (planAimInput) {
+          planAimInput.value = "";
+          planAimInput.disabled = true;
+        }
+        if (planFollowUpsInput) {
+          planFollowUpsInput.value = "";
+          planFollowUpsInput.disabled = true;
+        }
         updateNotesContext(null);
         return;
       }
       planWorkspace.hidden = false;
       planEmptyState.hidden = true;
       planNameInput.value = currentPlan.name || "";
+      if (planAimInput) {
+        planAimInput.disabled = false;
+        planAimInput.value = currentPlan.aim || "";
+      }
+      if (planFollowUpsInput) {
+        planFollowUpsInput.disabled = false;
+        planFollowUpsInput.value = currentPlan.followUps || "";
+      }
       addElementBtn.disabled = false;
       updatePlanMeta();
       renderSchedule();
@@ -957,6 +1014,8 @@ const categoryOptions = [
         createdAt,
         updatedAt: now,
         notebookId,
+        aim: currentPlan.aim || "",
+        followUps: currentPlan.followUps || "",
         schedule: currentPlan.schedule.map((item) => ({
           id: item.id,
           category: item.category,
@@ -1318,6 +1377,22 @@ const categoryOptions = [
       markDirty();
     });
 
+    if (planAimInput) {
+      planAimInput.addEventListener("input", () => {
+        if (!currentPlan) return;
+        currentPlan.aim = planAimInput.value;
+        markDirty();
+      });
+    }
+
+    if (planFollowUpsInput) {
+      planFollowUpsInput.addEventListener("input", () => {
+        if (!currentPlan) return;
+        currentPlan.followUps = planFollowUpsInput.value;
+        markDirty();
+      });
+    }
+
     async function loadNotebooks() {
       if (!storageSupported) {
         notebooks = [createDefaultNotebook(false)];
@@ -1663,6 +1738,55 @@ const categoryOptions = [
       margin: 0;
       color: color-mix(in srgb, var(--color-muted, #cbbfca) 80%, black 20%);
       font-size: 0.85rem;
+    }
+
+    .plan-details {
+      display: grid;
+      gap: 1rem;
+    }
+
+    @media (min-width: 720px) {
+      .plan-details {
+        grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+      }
+    }
+
+    .plan-field {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .plan-field__label {
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 70%, white 30%);
+    }
+
+    .plan-field__input {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: color-mix(in srgb, var(--surface-raised, #1f1521) 85%, transparent);
+      padding: 0.75rem 0.85rem;
+      color: inherit;
+      font: inherit;
+      min-height: 6.5rem;
+      resize: vertical;
+    }
+
+    .plan-field__input:focus-visible {
+      outline: none;
+      border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+      box-shadow: 0 0 0 2px rgba(255, 63, 94, 0.25);
+    }
+
+    .plan-field__input:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .plan-field__helper {
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 80%, black 20%);
     }
 
     .schedule-section {
