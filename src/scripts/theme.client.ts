@@ -102,9 +102,13 @@ function resolvePreference(pref: ThemePreference): "light" | "dark" {
 }
 
 function getNextPreference(current: ThemePreference): ThemePreference {
-  const index = CYCLE_ORDER.indexOf(current);
-  const nextIndex = (index + 1) % CYCLE_ORDER.length;
-  return CYCLE_ORDER[nextIndex];
+  if (current === "system") {
+    return prefersDark.matches ? "light" : "dark";
+  }
+  if (current === "light") {
+    return "dark";
+  }
+  return "system";
 }
 
 function updateMetaColor(theme: "light" | "dark") {
