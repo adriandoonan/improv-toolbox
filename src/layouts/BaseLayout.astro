@@ -1,10 +1,12 @@
 ---
 import favoritesClientScript from "../scripts/favorites.client.ts?url";
+import themeClientScript from "../scripts/theme.client.ts?url";
 
 const {
   title = "Improv Toolbox",
   description = "Exercises, warmups, forms, and show tools.",
-  themeColor = "#0f172a",
+  themeColor = "#050b19",
+  lightThemeColor = "#ecfeff",
 } = Astro.props;
 const navLinks = [
   {
@@ -44,14 +46,19 @@ const isActive = (href: string) =>
   href === "/" ? currentPath === "/" : currentPath.startsWith(href);
 ---
 
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" data-theme-preference="system">
   <head>
     <meta charset="utf-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
-    <meta name="theme-color" content={themeColor} />
+    <meta
+      name="theme-color"
+      content={themeColor}
+      data-theme-color-dark={themeColor}
+      data-theme-color-light={lightThemeColor}
+    />
     <title>{title}</title>
     <meta name="description" content={description} />
 
@@ -61,6 +68,46 @@ const isActive = (href: string) =>
       href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
+    <script>
+      (() => {
+        const storageKey = "improv-toolbox-theme";
+        const root = document.documentElement;
+        const readStoredPreference = () => {
+          try {
+            const value = window.localStorage.getItem(storageKey);
+            return value === "light" || value === "dark" || value === "system"
+              ? value
+              : null;
+          } catch {
+            return null;
+          }
+        };
+        const storedPreference = readStoredPreference();
+        const systemPrefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+        const preference = storedPreference ?? "system";
+        const resolved =
+          preference === "dark" ||
+          (preference === "system" && systemPrefersDark)
+            ? "dark"
+            : "light";
+        root.dataset.themePreference = preference;
+        root.dataset.theme = resolved;
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+          const dataset = meta.dataset;
+          const nextColor =
+            resolved === "dark"
+              ? dataset.themeColorDark || meta.getAttribute("content")
+              : dataset.themeColorLight || meta.getAttribute("content");
+          if (nextColor) {
+            meta.setAttribute("content", nextColor);
+          }
+        }
+      })();
+    </script>
 
     <link rel="stylesheet" href="/styles/theme.css" />
     <link rel="stylesheet" href="/styles/every.css" />
@@ -81,6 +128,79 @@ const isActive = (href: string) =>
           </div>
         </div>
         <div class="app-bar__actions">
+          <button
+            class="button button--surface theme-toggle"
+            type="button"
+            data-theme-toggle
+            aria-label="Toggle theme"
+          >
+            <span
+              class="theme-toggle__icon theme-toggle__icon--system"
+              aria-hidden="true"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="4" y="5" width="16" height="12" rx="2" />
+                <path d="M9 19h6" />
+              </svg>
+            </span>
+            <span
+              class="theme-toggle__icon theme-toggle__icon--light"
+              aria-hidden="true"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="4" />
+                <path
+                  d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0-1.414-1.414M7.05 7.05 5.636 5.636"
+                />
+              </svg>
+            </span>
+            <span
+              class="theme-toggle__icon theme-toggle__icon--dark"
+              aria-hidden="true"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
+                />
+              </svg>
+            </span>
+            <span class="theme-toggle__label theme-toggle__label--system">
+              System
+            </span>
+            <span class="theme-toggle__label theme-toggle__label--light">
+              Light
+            </span>
+            <span class="theme-toggle__label theme-toggle__label--dark">
+              Dark
+            </span>
+          </button>
           <a class="app-cta" href="/tools/timer">Quick timer</a>
         </div>
       </div>
@@ -118,12 +238,86 @@ const isActive = (href: string) =>
           </a>
         ))
       }
+      <button
+        type="button"
+        class="bottom-nav__item theme-toggle theme-toggle--compact"
+        data-theme-toggle
+        aria-label="Toggle theme"
+      >
+        <span
+          class="theme-toggle__icon theme-toggle__icon--system"
+          aria-hidden="true"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="4" y="5" width="16" height="12" rx="2" />
+            <path d="M9 19h6" />
+          </svg>
+        </span>
+        <span
+          class="theme-toggle__icon theme-toggle__icon--light"
+          aria-hidden="true"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364-6.364-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0-1.414-1.414M7.05 7.05 5.636 5.636"
+            />
+          </svg>
+        </span>
+        <span
+          class="theme-toggle__icon theme-toggle__icon--dark"
+          aria-hidden="true"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
+            />
+          </svg>
+        </span>
+        <span class="bottom-nav__label theme-toggle__label theme-toggle__label--system">
+          System
+        </span>
+        <span class="bottom-nav__label theme-toggle__label theme-toggle__label--light">
+          Light
+        </span>
+        <span class="bottom-nav__label theme-toggle__label theme-toggle__label--dark">
+          Dark
+        </span>
+      </button>
     </nav>
     <footer class="site-footer">
       <small>© {currentYear} Improv Toolbox Collective</small>
     </footer>
 
     <script type="module" src={favoritesClientScript}></script>
+    <script type="module" src={themeClientScript}></script>
 
     <script>
       (() => {

@@ -68,9 +68,18 @@ test('drawer navigation exposes primary sections', () => {
 });
 
 test('home page sets theme color meta', () => {
-  const themeMeta = homeHtml.match(/<meta name="theme-color" content="([^"]+)">/);
+  const themeMeta = homeHtml.match(
+    /<meta name="theme-color" content="([^"]+)"([^>]*)>/
+  );
   assert.ok(themeMeta, 'theme-color meta tag is missing');
-  assert.strictEqual(themeMeta[1], '#0f172a');
+  assert.strictEqual(themeMeta[1], '#050b19');
+  if (themeMeta[2]) {
+    assert.match(
+      themeMeta[2],
+      /data-theme-color-light="#ecfeff"/,
+      'light theme color data attribute missing'
+    );
+  }
 });
 
 test('home page features category previews', () => {
