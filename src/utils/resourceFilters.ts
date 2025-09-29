@@ -40,7 +40,13 @@ export function setupResourceListFiltering({
   const resolveFavorite = (card: HTMLLIElement) => {
     const toggleRoot = card.querySelector<HTMLElement>("[data-favorite-root]");
     const key = toggleRoot?.dataset.favoriteKey ?? "";
+,
+    const storedFavorite = key ? favoritesState[key] : undefined;
+    const isFavorite =
+      Boolean(storedFavorite) || card.dataset.favorite === "true";
+
     const isFavorite = Boolean(key && favoritesState[key]);
+
     return { toggleRoot, key, isFavorite } as const;
   };
 
@@ -69,7 +75,21 @@ export function setupResourceListFiltering({
     return typeof value === "string" ? value : value != null ? String(value) : "";
   };
 
+
+  const refreshFavoritesFromStorage = () => {
+    const payload = loadFavorites();
+    applyFavorites(payload.items);
+    return payload.items;
+  };
+
   const applyFilters = () => {
+    if (favoritesField) {
+      refreshFavoritesFromStorage();
+    }
+
+
+  const applyFilters = () => {
+
     const formData = form ? new FormData(form) : null;
 
     const activeFilters = equalityFilters.map((filter) => {
@@ -96,8 +116,12 @@ export function setupResourceListFiltering({
     });
   };
 
+
+  refreshFavoritesFromStorage();
+
   const payload = loadFavorites();
   applyFavorites(payload.items);
+
   applyFilters();
 
   form?.addEventListener("change", applyFilters);
