@@ -8,11 +8,50 @@ async function readDist(relativePath) {
   return readFile(new URL(relativePath, distRoot), 'utf8');
 }
 
+async function readDistOptional(relativePath) {
+  try {
+    return await readDist(relativePath);
+  } catch (error) {
+    if (error && error.code === 'ENOENT') {
+      return null;
+    }
+    throw error;
+  }
+}
+
 const [homeHtml, toolsHtml, exercisesHtml] = await Promise.all([
   readDist('index.html'),
   readDist('tools/index.html'),
   readDist('exercises/index.html'),
 ]);
+
+const [warmupsHtml, formsHtml] = await Promise.all([
+  readDistOptional('warmups/index.html'),
+  readDistOptional('forms/index.html'),
+]);
+
+function assertFavoritesIntegration(html, sectionLabel) {
+  const favoritesCheckboxRegex = /<input[^>]*(?:type="checkbox"[^>]*name="favoritesOnly"|name="favoritesOnly"[^>]*type="checkbox")[^>]*>/;
+  assert.ok(
+    favoritesCheckboxRegex.test(html),
+    `${sectionLabel} favorites-only checkbox filter missing`
+  );
+  const cardMatches = Array.from(
+    html.matchAll(
+      /<li[^>]*class="[^"]*resource-card[^"]*"[^>]*data-favorite="[^"]*"[^>]*>([\s\S]*?)<\/li>/g
+    )
+  );
+  assert.ok(
+    cardMatches.length > 0,
+    `${sectionLabel} listing should expose resource cards with favorite metadata`
+  );
+  assert.ok(
+    cardMatches.some(([, inner]) =>
+      /data-favorite-root/.test(inner) && /data-favorite-button/.test(inner)
+    ),
+    `${sectionLabel} cards should include favorite toggle markup`
+  );
+}
 
 test('drawer navigation exposes primary sections', () => {
   const navRegex =
@@ -81,6 +120,7 @@ test('tools listing surfaces all published utilities', () => {
 
 test('exercises list exposes filters and dataset metadata', () => {
   assert.ok(exercisesHtml.includes('id="filterDrawerToggle"'), 'filter toggle button missing');
+  assertFavoritesIntegration(exercisesHtml, 'Exercises');
   const nameOptions = ['Character Circle', 'Word at a Time Story'];
   for (const option of nameOptions) {
     assert.ok(
@@ -112,3 +152,21 @@ test('exercises list exposes filters and dataset metadata', () => {
     'exercise cards should expose focus metadata'
   );
 });
+
+test(
+  'warmups listing exposes favorite controls when available',
+  { skip: !warmupsHtml },
+  () => {
+    assert.ok(warmupsHtml.includes('id="filterDrawerToggle"'), 'filter toggle button missing on warmups');
+    assertFavoritesIntegration(warmupsHtml, 'Warmups');
+  }
+);
+
+test(
+  'forms listing exposes favorite controls when available',
+  { skip: !formsHtml },
+  () => {
+    assert.ok(formsHtml.includes('id="filterDrawerToggle"'), 'filter toggle button missing on forms');
+    assertFavoritesIntegration(formsHtml, 'Forms');
+  }
+);
