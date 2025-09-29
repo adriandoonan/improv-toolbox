@@ -103,8 +103,9 @@ test('tools listing surfaces all published utilities', () => {
     label: label.replace(/\s+/g, ' ').trim(),
     description: description.trim(),
   }));
-  assert.strictEqual(toolCards.length, 4, 'expected four tool cards');
+  assert.strictEqual(toolCards.length, 5, 'expected five tool cards');
   const expectedNames = new Map([
+    ['lesson-plans', 'Lesson Planner'],
     ['gauss-timer', 'Gauss Timer'],
     ['jam-groupaliser', 'Jam Groupaliser'],
     ['suggestions', 'Suggestion Generator'],

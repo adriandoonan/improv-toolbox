@@ -8,6 +8,14 @@ const [exercises, forms, warmups] = await Promise.all([
   getCollection("warmups"),
 ]);
 
+const toolModules = Object.values(
+  import.meta.glob(["./tools/*.astro", "./tools/*/index.astro"], { eager: true })
+).filter((mod) => mod && typeof mod === "object" && "tool" in mod && mod.tool?.name);
+
+const toolNames = Array.from(
+  new Set(toolModules.map((mod) => String(mod.tool.name)).filter(Boolean))
+);
+
 const previewNames = (collection, limit = 3) =>
   collection
     .map((entry) => entry?.data?.name)
@@ -16,6 +24,21 @@ const previewNames = (collection, limit = 3) =>
 
 const formatPreview = (names) =>
   names.length ? `${names.join(" • ")}${names.length >= 3 ? " …" : ""}` : "";
+
+const toolsPreview = (() => {
+  if (!toolNames.length) return "";
+  const highlightIndex = Math.floor(Math.random() * toolNames.length);
+  const highlight = toolNames[highlightIndex];
+  const rest = toolNames
+    .filter((_, index) => index !== highlightIndex)
+    .sort((a, b) => {
+      if (a === "Timer") return -1;
+      if (b === "Timer") return 1;
+      return a.localeCompare(b, undefined, { sensitivity: "base" });
+    });
+  const previewPool = [highlight, ...rest].slice(0, 3);
+  return formatPreview(previewPool);
+})();
 
 const categories = [
   {
@@ -44,7 +67,7 @@ const categories = [
     label: "Tools",
     icon: "🧰",
     blurb: "Timers, prompts, and utilities built for rehearsal.",
-    preview: "Timer • Gauss Timer …",
+    preview: toolsPreview,
   },
 ];
 
