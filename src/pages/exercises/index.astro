@@ -3,6 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import FavoriteToggle from "../../components/FavoriteToggle.astro";
+import exercisesListScript from "../../scripts/exercises-list.client.ts?url";
 import { getCollection } from "astro:content";
 const exercises = (await getCollection("exercises")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
@@ -93,18 +94,7 @@ const minPeople = Array.from(
       }
     </ul>
   </section>
-  <script type="module" lang="ts">
-    import { setupResourceListFiltering } from "../../utils/resourceFilters";
-
-    setupResourceListFiltering({
-      listSelector: "#exerciseList",
-      equalityFilters: [
-        { field: "name" },
-        { field: "focus" },
-        { field: "minimumPeople" },
-      ],
-    });
-  </script>
+  <script type="module" src={exercisesListScript}></script>
   <style>
     .resource-card__title a {
       color: inherit;

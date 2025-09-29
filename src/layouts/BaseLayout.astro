@@ -1,4 +1,6 @@
 ---
+import favoritesClientScript from "../scripts/favorites.client.ts?url";
+
 const {
   title = "Improv Toolbox",
   description = "Exercises, warmups, forms, and show tools.",
@@ -120,6 +122,8 @@ const isActive = (href: string) =>
     <footer class="site-footer">
       <small>© {currentYear} Improv Toolbox Collective</small>
     </footer>
+
+    <script type="module" src={favoritesClientScript}></script>
 
     <script>
       (() => {
