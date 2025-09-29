@@ -93,89 +93,16 @@ const minPeople = Array.from(
     </ul>
   </section>
   <script type="module" lang="ts">
-    import {
-      loadFavorites,
-      subscribeToFavorites,
-    } from "../../utils/favorites";
+    import { setupResourceListFiltering } from "../../utils/resourceFilters";
 
-    const form = document.querySelector<HTMLFormElement>(".filter-form");
-    const list = document.getElementById("warmupList");
-    const cards = list
-      ? Array.from(list.querySelectorAll<HTMLLIElement>(".resource-card"))
-      : [];
-
-    let favoritesState: Record<string, unknown> = {};
-
-    const resolveFavorite = (card: HTMLLIElement) => {
-      const toggleRoot = card.querySelector<HTMLElement>("[data-favorite-root]");
-      const key = toggleRoot?.dataset.favoriteKey ?? "";
-      const isFavorite = Boolean(key && favoritesState[key]);
-      return { toggleRoot, key, isFavorite } as const;
-    };
-
-    const applyFavorites = (items: Record<string, unknown>) => {
-      favoritesState = items ?? {};
-      cards.forEach((card) => {
-        const { toggleRoot, isFavorite } = resolveFavorite(card);
-        card.dataset.favorite = String(isFavorite);
-        const button = toggleRoot?.querySelector<HTMLButtonElement>(
-          "[data-favorite-button]"
-        );
-        if (button) {
-          button.setAttribute("aria-pressed", String(isFavorite));
-        }
-      });
-    };
-
-    const applyFilters = () => {
-      const name =
-        form?.querySelector<HTMLSelectElement>("[name=\"name\"]")?.value ??
-        "";
-      const focus =
-        form?.querySelector<HTMLSelectElement>("[name=\"focus\"]")?.value ??
-        "";
-      const minPeople =
-        form
-          ?.querySelector<HTMLSelectElement>("[name=\"minimumPeople\"]")
-          ?.value ?? "";
-      const favoritesOnly = Boolean(
-        form?.querySelector<HTMLInputElement>("[name=\"favoritesOnly\"]")
-          ?.checked
-      );
-
-      cards.forEach((card) => {
-        const { isFavorite } = resolveFavorite(card);
-        card.dataset.favorite = String(isFavorite);
-        const matchesName = !name || card.dataset.name === name;
-        const matchesFocus = !focus || card.dataset.focus === focus;
-        const matchesMinPeople =
-          !minPeople || card.dataset.minimumPeople === minPeople;
-        const matchesFavorite = !favoritesOnly || isFavorite;
-        const shouldShow =
-          matchesName && matchesFocus && matchesMinPeople && matchesFavorite;
-        card.hidden = !shouldShow;
-      });
-    };
-
-    const payload = loadFavorites();
-    applyFavorites(payload.items);
-    applyFilters();
-
-    form?.addEventListener("change", applyFilters);
-
-    const unsubscribe = subscribeToFavorites((detail) => {
-      if (!detail || !detail.payload) return;
-      applyFavorites(detail.payload.items);
-      applyFilters();
+    setupResourceListFiltering({
+      listSelector: "#warmupList",
+      equalityFilters: [
+        { field: "name" },
+        { field: "focus" },
+        { field: "minimumPeople" },
+      ],
     });
-
-    window.addEventListener(
-      "astro:before-swap",
-      () => {
-        unsubscribe?.();
-      },
-      { once: true }
-    );
   </script>
   <style>
     .resource-card__title a {
