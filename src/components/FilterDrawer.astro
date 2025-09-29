@@ -53,6 +53,18 @@ const { fields = [], slot } = Astro.props;
     font-weight: 600;
     font-size: 0.95rem;
   }
+  .filter-form__checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .filter-form__checkbox input[type="checkbox"] {
+    width: 1.1rem;
+    height: 1.1rem;
+    accent-color: var(--color-accent, #ff2f55);
+  }
   .filter-drawer-toggle {
     all: unset;
   }
@@ -80,21 +92,32 @@ const { fields = [], slot } = Astro.props;
   <h2>Refine</h2>
   <form class="filter-form">
     {
-      fields.map((field) => (
-        <label>
-          {field.label}
-          {field.type === "select" ? (
-            <select name={field.name}>
-              <option value="">All</option>
-              {field.options?.map((opt) => (
-                <option value={opt}>{opt}</option>
-              ))}
-            </select>
-          ) : (
-            <input type={field.type} name={field.name} />
-          )}
-        </label>
-      ))
+      fields.map((field) => {
+        const inputId = `filter-${field.name}`;
+        if (field.type === "checkbox") {
+          return (
+            <label class="filter-form__checkbox">
+              <input id={inputId} type="checkbox" name={field.name} />
+              <span>{field.label}</span>
+            </label>
+          );
+        }
+        return (
+          <label for={inputId}>
+            {field.label}
+            {field.type === "select" ? (
+              <select id={inputId} name={field.name}>
+                <option value="">All</option>
+                {field.options?.map((opt) => (
+                  <option value={opt}>{opt}</option>
+                ))}
+              </select>
+            ) : (
+              <input id={inputId} type={field.type} name={field.name} />
+            )}
+          </label>
+        );
+      })
     }
   </form>
   <div>{slot}</div>

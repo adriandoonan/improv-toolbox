@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
+import FavoriteToggle from "../../components/FavoriteToggle.astro";
 import { getCollection } from "astro:content";
 const forms = (await getCollection("forms")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
@@ -32,6 +33,7 @@ const types = Array.from(
             types.length
               ? { name: "type", label: "Type", type: "select", options: types }
               : null,
+            { name: "favoritesOnly", label: "Favourites only", type: "checkbox" },
           ].filter(Boolean)}
         />
       </div>
@@ -43,10 +45,17 @@ const types = Array.from(
             class="resource-card"
             data-name={form.data.name}
             data-type={form.data.type ?? ""}
+            data-favorite="false"
           >
             <h2 class="resource-card__title">
               <a href={`/forms/${form.slug}`}>{form.data.name}</a>
             </h2>
+            <FavoriteToggle
+              contentType="form"
+              slug={form.slug}
+              title={form.data.name}
+              description={form.data.shortDescription}
+            />
             <p class="resource-card__summary">{form.data.shortDescription}</p>
             <div class="meta-badges">
               {form.data.type && <span class="meta-badge">Type · {form.data.type}</span>}
@@ -56,22 +65,76 @@ const types = Array.from(
       }
     </ul>
   </section>
-  <script>
-    const form = document.querySelector(".filter-form");
+  <script type="module" lang="ts">
+    import {
+      loadFavorites,
+      subscribeToFavorites,
+    } from "../../utils/favorites";
+
+    const form = document.querySelector<HTMLFormElement>(".filter-form");
     const list = document.getElementById("formList");
-    form &&
-      form.addEventListener("change", () => {
-        const nameInput = form.querySelector('[name="name"]');
-        const typeInput = form.querySelector('[name="type"]');
-        const name = nameInput ? nameInput.value : "";
-        const type = typeInput ? typeInput.value : "";
-        Array.from(list?.children || []).forEach((li) => {
-          const el = li;
-          const matchesName = !name || el.dataset.name === name;
-          const matchesType = !type || el.dataset.type === type;
-          el.style.display = matchesName && matchesType ? "" : "none";
-        });
+    const cards = list
+      ? Array.from(list.querySelectorAll<HTMLLIElement>(".resource-card"))
+      : [];
+
+    const applyFavorites = (items: Record<string, unknown>) => {
+      cards.forEach((card) => {
+        const toggleRoot = card.querySelector<HTMLElement>(
+          "[data-favorite-root]"
+        );
+        const key = toggleRoot?.dataset.favoriteKey ?? "";
+        const isFavorite = Boolean(key && items[key]);
+        card.dataset.favorite = String(isFavorite);
+        const button = toggleRoot?.querySelector<HTMLButtonElement>(
+          "[data-favorite-button]"
+        );
+        if (button) {
+          button.setAttribute("aria-pressed", String(isFavorite));
+        }
       });
+    };
+
+    const applyFilters = () => {
+      const name =
+        form?.querySelector<HTMLSelectElement>("[name=\"name\"]")?.value ??
+        "";
+      const type =
+        form?.querySelector<HTMLSelectElement>("[name=\"type\"]")?.value ??
+        "";
+      const favoritesOnly = Boolean(
+        form?.querySelector<HTMLInputElement>("[name=\"favoritesOnly\"]")
+          ?.checked
+      );
+
+      cards.forEach((card) => {
+        const matchesName = !name || card.dataset.name === name;
+        const matchesType = !type || card.dataset.type === type;
+        const matchesFavorite =
+          !favoritesOnly || card.dataset.favorite === "true";
+        card.style.display =
+          matchesName && matchesType && matchesFavorite ? "" : "none";
+      });
+    };
+
+    const payload = loadFavorites();
+    applyFavorites(payload.items);
+    applyFilters();
+
+    form?.addEventListener("change", applyFilters);
+
+    const unsubscribe = subscribeToFavorites((detail) => {
+      if (!detail || !detail.payload) return;
+      applyFavorites(detail.payload.items);
+      applyFilters();
+    });
+
+    window.addEventListener(
+      "astro:before-swap",
+      () => {
+        unsubscribe?.();
+      },
+      { once: true }
+    );
   </script>
   <style>
     .resource-card__title a {
