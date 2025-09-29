@@ -48,17 +48,7 @@ The test runner performs an Astro production build, then inspects key pages in `
 
 Tools page preview:
 
-> **Why no binary image file?**
-> The OpenAI Codex web app currently rejects pull requests that include binary assets. To keep the screenshot available while
-> staying compatible with that workflow, the JPEG has been base64-encoded as text at `docs/images/tools-page.jpg.base64`.
-
-Decode it locally to recreate the screenshot:
-
-```sh
-base64 -d docs/images/tools-page.jpg.base64 > docs/images/tools-page.jpg
-```
-
-After running that command, the README preview image will render as expected.
+![tools page](docs/images/tools-page.jpg)
 
 ## Project Structure
 
