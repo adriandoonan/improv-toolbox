@@ -19,18 +19,14 @@ const resolvedTitle = title ?? "this item";
 const resolvedDescription = description ?? "";
 const key = contentType && slugValue ? favoriteKey(contentType, slugValue) : "";
 const hasKey = Boolean(key);
-const storageReady = isStorageReady();
+const storageReady = import.meta.env.SSR ? true : isStorageReady();
 const addLabel = "Save to favorites";
 const removeLabel = "Remove from favorites";
 const srAddLabel = `Add ${resolvedTitle} to favorites`;
 const srRemoveLabel = `Remove ${resolvedTitle} from favorites`;
 const statusAdd = `${resolvedTitle} added to favorites.`;
 const statusRemove = `${resolvedTitle} removed from favorites.`;
-const fallbackMessage = hasKey
-  ? storageReady
-    ? "Favorites will be ready once the page is fully loaded."
-    : "Favorites require local storage support in your browser."
-  : "Favorites are unavailable for this entry.";
+const fallbackMessage = hasKey ? "" : "Favorites are unavailable for this entry.";
 ---
 
 <div
@@ -47,10 +43,27 @@ const fallbackMessage = hasKey
     type="button"
     class="favorite-toggle__button"
     aria-pressed="false"
+    aria-label={addLabel}
     data-favorite-button
     disabled={!hasKey || !storageReady}
   >
-    <span aria-hidden="true" data-favorite-visible-text>{addLabel}</span>
+    <svg
+      class="favorite-toggle__icon"
+      viewBox="0 0 24 24"
+      role="presentation"
+      aria-hidden="true"
+      focusable="false"
+      data-favorite-icon
+    >
+      <path
+        class="favorite-toggle__icon-fill"
+        d="M12 3.5l2.47 5.34 5.89.5-4.4 3.91 1.32 5.74L12 16.9l-5.28 2.09 1.32-5.74-4.4-3.91 5.89-.5z"
+      />
+      <path
+        class="favorite-toggle__icon-outline"
+        d="M12 3.5l2.47 5.34 5.89.5-4.4 3.91 1.32 5.74L12 16.9l-5.28 2.09 1.32-5.74-4.4-3.91 5.89-.5z"
+      />
+    </svg>
     <span class="sr-only" data-favorite-sr-text>{srAddLabel}</span>
   </button>
   <span
@@ -59,7 +72,13 @@ const fallbackMessage = hasKey
     aria-live="polite"
     data-favorite-status
   ></span>
-  <span class="favorite-toggle__fallback" data-favorite-fallback>{fallbackMessage}</span>
+  <span
+    class="favorite-toggle__fallback"
+    data-favorite-fallback
+    hidden={fallbackMessage ? undefined : true}
+  >
+    {fallbackMessage}
+  </span>
 </div>
 
 <script
@@ -97,7 +116,6 @@ const fallbackMessage = hasKey
   root.dataset.favoriteEvent = FAVORITES_EVENT;
 
   const button = root.querySelector<HTMLButtonElement>("[data-favorite-button]");
-  const visibleText = root.querySelector<HTMLElement>("[data-favorite-visible-text]");
   const srText = root.querySelector<HTMLElement>("[data-favorite-sr-text]");
   const statusEl = root.querySelector<HTMLElement>("[data-favorite-status]");
   const fallbackEl = root.querySelector<HTMLElement>("[data-favorite-fallback]");
@@ -106,18 +124,21 @@ const fallbackMessage = hasKey
     if (button) {
       button.disabled = true;
       button.setAttribute("aria-pressed", "false");
-    }
-    if (visibleText) {
-      visibleText.textContent = addLabel;
+      button.setAttribute("aria-label", addLabel);
     }
     if (srText) {
       srText.textContent = srAddLabel;
     }
     if (fallbackEl) {
-      fallbackEl.hidden = false;
-      fallbackEl.textContent = message;
+      if (message) {
+        fallbackEl.hidden = false;
+        fallbackEl.textContent = message;
+      } else {
+        fallbackEl.hidden = true;
+        fallbackEl.textContent = "";
+      }
     }
-    if (statusEl) {
+    if (statusEl && message) {
       statusEl.textContent = message;
     }
   };
@@ -128,15 +149,13 @@ const fallbackMessage = hasKey
   }
 
   if (!isStorageReady()) {
-    disableControl("Favorites require local storage support in your browser.");
+    disableControl("Favorites are unavailable right now.");
     return;
   }
 
   const toggleText = (isFavorite: boolean) => {
     button.setAttribute("aria-pressed", String(isFavorite));
-    if (visibleText) {
-      visibleText.textContent = isFavorite ? removeLabel : addLabel;
-    }
+    button.setAttribute("aria-label", isFavorite ? removeLabel : addLabel);
     if (srText) {
       srText.textContent = isFavorite ? srRemoveLabel : srAddLabel;
     }
@@ -155,7 +174,8 @@ const fallbackMessage = hasKey
   };
 
   if (fallbackEl) {
-    fallbackEl.hidden = true;
+    fallbackEl.hidden = !fallbackMessage;
+    fallbackEl.textContent = fallbackMessage;
   }
 
   button.disabled = false;
@@ -192,7 +212,7 @@ const fallbackMessage = hasKey
     clickController.abort();
     unsubscribe?.();
     if (fallbackEl) {
-      fallbackEl.hidden = false;
+      fallbackEl.hidden = !fallbackMessage;
       fallbackEl.textContent = fallbackMessage;
     }
   };
@@ -227,41 +247,89 @@ const fallbackMessage = hasKey
   }
 
   .favorite-toggle__button {
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: color-mix(in srgb, var(--surface-raised, #1f1521) 70%, black 30%);
-    color: var(--color-heading, #fff5f7);
-    padding: 0.35rem 0.9rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    justify-content: center;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--color-accent, #ff2f55) 18%, transparent);
+    background: color-mix(in srgb, var(--surface-panel, #1f1521) 82%, black 18%);
+    color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease,
+      background 0.2s ease, color 0.2s ease;
   }
 
   .favorite-toggle__button:hover,
   .favorite-toggle__button:focus-visible {
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 40%, transparent);
+    background: color-mix(in srgb, var(--surface-panel, #1f1521) 70%, transparent);
+    color: color-mix(in srgb, var(--color-accent, #ff2f55) 70%, white 30%);
     transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(15, 6, 18, 0.35);
+    box-shadow: 0 8px 18px rgba(15, 6, 18, 0.3);
+  }
+
+  .favorite-toggle__button:focus-visible {
+    outline: none;
   }
 
   .favorite-toggle__button[aria-pressed="true"] {
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 65%, transparent);
     background: color-mix(in srgb, var(--color-accent, #ff2f55) 35%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 55%, transparent);
+    color: var(--color-accent, #ff2f55);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent, #ff2f55) 32%, transparent);
   }
 
   .favorite-toggle__button:disabled {
-    opacity: 0.6;
+    opacity: 0.55;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
   }
 
+  .favorite-toggle__icon {
+    inline-size: 1.35rem;
+    block-size: 1.35rem;
+    display: block;
+    transition: color 0.2s ease;
+  }
+
+  .favorite-toggle__icon-fill {
+    fill: currentColor;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .favorite-toggle__icon-outline {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .favorite-toggle__button[aria-pressed="true"] .favorite-toggle__icon-fill {
+    opacity: 1;
+  }
+
   .favorite-toggle__fallback {
     font-size: 0.85rem;
     color: color-mix(in srgb, var(--color-muted, #cbbfca) 80%, black 20%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .favorite-toggle__button {
+      transition: none;
+    }
+
+    .favorite-toggle__button:hover,
+    .favorite-toggle__button:focus-visible {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .favorite-toggle__icon-fill {
+      transition: none;
+    }
   }
 </style>
