@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import NotesPanel from "../../components/NotesPanel.astro";
+import FavoriteToggle from "../../components/FavoriteToggle.astro";
 import { getCollection, getEntry } from "astro:content";
 export async function getStaticPaths() {
   const forms = await getCollection("forms");
@@ -18,7 +19,18 @@ const form = await getEntry("forms", slug);
     />
     <article class="content-card">
       <header class="stack" style="gap:0.75rem;">
-        <h1 class="section-title">{form?.data.name}</h1>
+        <div
+          class="content-title-row"
+          style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;"
+        >
+          <h1 class="section-title">{form?.data.name}</h1>
+          <FavoriteToggle
+            contentType="form"
+            slug={form?.slug ?? ""}
+            title={form?.data.name ?? "Form"}
+            description={form?.data.shortDescription ?? ""}
+          />
+        </div>
         <p class="content-lead">{form?.data.shortDescription}</p>
       </header>
       <div class="content-body">
