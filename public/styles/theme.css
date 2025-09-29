@@ -287,42 +287,6 @@ button,
   gap: 0.1rem;
 }
 
-.app-nav-trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.6rem;
-  height: 2.6rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: color-mix(in srgb, var(--surface-raised) 78%, transparent);
-  color: var(--color-heading);
-  transition: transform 0.2s ease, box-shadow 0.2s ease,
-    background 0.2s ease, border-color 0.2s ease;
-}
-
-.app-nav-trigger:hover,
-.app-nav-trigger:focus-visible {
-  transform: translateY(-1px);
-  background: color-mix(in srgb, var(--color-accent) 18%, var(--surface-raised) 82%);
-  border-color: color-mix(in srgb, var(--color-accent) 28%, rgba(255, 255, 255, 0.15));
-  box-shadow: 0 14px 30px rgba(255, 71, 97, 0.24);
-  outline: none;
-}
-
-.app-nav-trigger.is-active {
-  background: linear-gradient(135deg, var(--color-accent) 0%, #ff6b82 100%);
-  color: #16040a;
-  border-color: rgba(255, 255, 255, 0.22);
-  box-shadow: 0 14px 30px rgba(255, 71, 97, 0.35);
-}
-
-.app-nav-trigger__icon {
-  display: inline-flex;
-  width: 24px;
-  height: 24px;
-}
-
 .app-bar__actions {
   display: flex;
   align-items: center;
@@ -359,6 +323,10 @@ button,
 }
 
 @media (max-width: 779px) {
+  .app-bar {
+    display: none;
+  }
+
   .tab-nav {
     display: none;
   }
@@ -439,11 +407,6 @@ button,
 
 .bottom-nav__label {
   line-height: 1;
-}
-
-.bottom-nav__item.bottom-nav__item--drawer {
-  flex: 0 0 auto;
-  min-width: 4.75rem;
 }
 
 .tab-nav::-webkit-scrollbar {
@@ -737,9 +700,6 @@ button,
 }
 
 @media (min-width: 780px) {
-  .app-nav-trigger {
-    display: none;
-  }
   .app-bar__inner {
     flex-wrap: nowrap;
     row-gap: 0;

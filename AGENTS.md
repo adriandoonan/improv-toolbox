@@ -7,10 +7,11 @@ Improv Toolbox — a PWA for performers and trainers, with exercises, warmups, f
 ## Tech conventions
 
 - Astro with content collections
-- Svelte components preferred where useful
+- Custom web components preferred where useful
 - PWA, offline-first, Cloudflare deployment
 - Functional-first: keep shared logic pure and side-effect free; UI event wiring may remain imperative
 - Content: Markdown + front matter
+- Clean mobile-friendly UX as per android guidelines and Apple HIG
 
 ## Key docs
 
