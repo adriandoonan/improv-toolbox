@@ -87,9 +87,10 @@ const isActive = (href: string) =>
           navLinks.map((link) => (
             <a
               href={link.href}
+              data-drawer-link
               aria-current={isActive(link.href) ? "page" : undefined}
             >
-              {link.label}
+              <span>{link.label}</span>
             </a>
           ))
         }
@@ -119,6 +120,44 @@ const isActive = (href: string) =>
     <footer class="site-footer">
       <small>© {currentYear} Improv Toolbox Collective</small>
     </footer>
+
+    <script>
+      (() => {
+        const bottomNav = document.querySelector(".bottom-nav");
+        if (!bottomNav) return;
+
+        let lastScrollY = window.scrollY || 0;
+        let ticking = false;
+        const DELTA_HIDE = 6;
+        const TOP_OFFSET = 48;
+
+        const updateVisibility = () => {
+          const currentScrollY = window.scrollY || 0;
+          const scrollDelta = currentScrollY - lastScrollY;
+          const scrollingDown = scrollDelta > DELTA_HIDE;
+          const scrollingUp = scrollDelta < -DELTA_HIDE;
+          const nearTop = currentScrollY <= TOP_OFFSET;
+
+          if (nearTop || scrollingUp) {
+            bottomNav.classList.remove("bottom-nav--hidden");
+          } else if (scrollingDown) {
+            bottomNav.classList.add("bottom-nav--hidden");
+          }
+
+          lastScrollY = currentScrollY;
+          ticking = false;
+        };
+
+        const requestTick = () => {
+          if (!ticking) {
+            window.requestAnimationFrame(updateVisibility);
+            ticking = true;
+          }
+        };
+
+        window.addEventListener("scroll", requestTick, { passive: true });
+      })();
+    </script>
 
     <script>
       if ("serviceWorker" in navigator) {
