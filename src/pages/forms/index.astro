@@ -77,13 +77,19 @@ const types = Array.from(
       ? Array.from(list.querySelectorAll<HTMLLIElement>(".resource-card"))
       : [];
 
+    let favoritesState: Record<string, unknown> = {};
+
+    const resolveFavorite = (card: HTMLLIElement) => {
+      const toggleRoot = card.querySelector<HTMLElement>("[data-favorite-root]");
+      const key = toggleRoot?.dataset.favoriteKey ?? "";
+      const isFavorite = Boolean(key && favoritesState[key]);
+      return { toggleRoot, key, isFavorite } as const;
+    };
+
     const applyFavorites = (items: Record<string, unknown>) => {
+      favoritesState = items ?? {};
       cards.forEach((card) => {
-        const toggleRoot = card.querySelector<HTMLElement>(
-          "[data-favorite-root]"
-        );
-        const key = toggleRoot?.dataset.favoriteKey ?? "";
-        const isFavorite = Boolean(key && items[key]);
+        const { toggleRoot, isFavorite } = resolveFavorite(card);
         card.dataset.favorite = String(isFavorite);
         const button = toggleRoot?.querySelector<HTMLButtonElement>(
           "[data-favorite-button]"
@@ -107,12 +113,13 @@ const types = Array.from(
       );
 
       cards.forEach((card) => {
+        const { isFavorite } = resolveFavorite(card);
+        card.dataset.favorite = String(isFavorite);
         const matchesName = !name || card.dataset.name === name;
         const matchesType = !type || card.dataset.type === type;
-        const matchesFavorite =
-          !favoritesOnly || card.dataset.favorite === "true";
-        card.style.display =
-          matchesName && matchesType && matchesFavorite ? "" : "none";
+        const matchesFavorite = !favoritesOnly || isFavorite;
+        const shouldShow = matchesName && matchesType && matchesFavorite;
+        card.hidden = !shouldShow;
       });
     };
 

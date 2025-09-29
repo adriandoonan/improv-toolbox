@@ -637,38 +637,23 @@ textarea:focus {
 .favorite-toggle__button {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.85rem;
-  min-inline-size: 2.75rem;
-  min-block-size: 2.75rem;
+  justify-content: center;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
   border-radius: var(--radius-pill);
   border: 1px solid color-mix(in srgb, var(--color-accent) 18%, transparent);
-  background: color-mix(in srgb, var(--surface-panel) 80%, transparent);
-  color: color-mix(in srgb, var(--color-text) 78%, black 22%);
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transition: background 0.2s ease, border-color 0.2s ease,
-    color 0.2s ease, transform 0.2s ease;
-}
-
-.favorite-toggle__button::before {
-  content: "";
-  inline-size: 1.1rem;
-  block-size: 1.1rem;
-  flex: none;
-  background: currentColor;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='black' viewBox='0 0 24 24'%3E%3Cpath d='M12 3.5l2.47 5.34 5.89.5-4.4 3.91 1.32 5.74L12 16.9l-5.28 2.09 1.32-5.74-4.4-3.91 5.89-.5z'/%3E%3C/svg%3E")
-    no-repeat center / contain;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='black' viewBox='0 0 24 24'%3E%3Cpath d='M12 3.5l2.47 5.34 5.89.5-4.4 3.91 1.32 5.74L12 16.9l-5.28 2.09 1.32-5.74-4.4-3.91 5.89-.5z'/%3E%3C/svg%3E")
-    no-repeat center / contain;
+  background: color-mix(in srgb, var(--surface-panel) 82%, black 18%);
+  color: color-mix(in srgb, var(--color-muted) 85%, black 15%);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease,
+    transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .favorite-toggle__button:hover {
-  background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  background: color-mix(in srgb, var(--surface-panel) 70%, transparent);
   border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
-  color: var(--color-accent);
+  color: color-mix(in srgb, var(--color-accent) 70%, white 30%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(15, 6, 18, 0.3);
 }
 
 .favorite-toggle__button:active {
@@ -676,14 +661,14 @@ textarea:focus {
 }
 
 .favorite-toggle__button[aria-pressed="true"] {
-  background: color-mix(in srgb, var(--color-accent) 26%, transparent);
-  border-color: color-mix(in srgb, var(--color-accent) 60%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
   color: var(--color-accent);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent) 30%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent) 32%, transparent);
 }
 
 .favorite-toggle__button[aria-pressed="true"]:hover {
-  background: color-mix(in srgb, var(--color-accent) 32%, transparent);
+  background: color-mix(in srgb, var(--color-accent) 42%, transparent);
 }
 
 .favorite-toggle__button:focus-visible {
@@ -693,9 +678,33 @@ textarea:focus {
 
 .favorite-toggle__button:disabled {
   cursor: not-allowed;
-  opacity: 0.65;
-  background: color-mix(in srgb, var(--surface-panel) 70%, transparent);
-  border-color: color-mix(in srgb, var(--color-text) 10%, transparent);
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+.favorite-toggle__icon {
+  inline-size: 1.35rem;
+  block-size: 1.35rem;
+  display: block;
+}
+
+.favorite-toggle__icon-fill {
+  fill: currentColor;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.favorite-toggle__icon-outline {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.favorite-toggle__button[aria-pressed="true"] .favorite-toggle__icon-fill {
+  opacity: 1;
 }
 
 .favorite-toggle__fallback {
@@ -711,6 +720,9 @@ textarea:focus {
   }
   .favorite-toggle__button:active {
     transform: none;
+  }
+  .favorite-toggle__icon-fill {
+    transition: none;
   }
 }
 
@@ -744,13 +756,12 @@ textarea:focus {
     color: HighlightText;
   }
 
-  .favorite-toggle__button::before {
-    content: "★";
-    mask: none;
-    -webkit-mask: none;
-    background: none;
-    inline-size: auto;
-    block-size: auto;
+  .favorite-toggle__icon-fill {
+    opacity: 1;
+  }
+
+  .favorite-toggle__icon-outline {
+    stroke-width: 1;
   }
 }
 
