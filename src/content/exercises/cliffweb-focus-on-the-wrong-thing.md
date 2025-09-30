@@ -23,9 +23,9 @@ description: |
   Player 1: “No! No! Take a picture! My brother has always called me soft! This will prove him I’m tough!”
   
   The second player deliberately focuses on the wrong thing as above. Player 1 plays the straight character, Hilarity ensues!
-focus: "Will Hines (general)"
 tags:
   - "Will Hines (general)"
 source: "cliffweb"
-credit: "unclaimed"
+credit: "Will Hines"
 ---
+

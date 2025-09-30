@@ -7,7 +7,6 @@ description: |
   
   The idea is to get people to do fast initiations, no hesitation and find a deal right away. The only instruction is to have a strong character choice and hold on to it. No need to try and be funny or find a game.
   In the early stages of this the scenes can be paused at any time for the instructor to ask “What’s your deal?” - this will hopefully become less necessary
-focus: "Annoyance"
 tags:
   - "Annoyance"
   - "Active Scenes"
@@ -15,5 +14,6 @@ tags:
   - "Deal"
   - "Scene work"
 source: "cliffweb"
-credit: "unclaimed"
+credit: "Annoyance"
 ---
+

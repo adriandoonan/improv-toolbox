@@ -12,10 +12,10 @@ description: |
   Zen Shield (blocks Zen Arrow) [arms crossed over face]
   Double Shield! (breaks zen shield) [arms crossed over face and tap arms together]
   Draw your Sword (yell this to someone across from you, you both draw swords, everyone else goes "Ahhh!" as you quickly change places running at each other with swords out)
-focus: "Annoyance"
 tags:
   - "Annoyance"
   - "Warm up"
 source: "cliffweb"
-credit: "unclaimed"
+credit: "Annoyance"
 ---
+

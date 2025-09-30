@@ -8,11 +8,11 @@ description: |
   The 2 players initiate a game of tennis, it should be stressed that the tennis itself is highly unimportant, in fact if no ball is hit that’s fine, great even! The players should find a way to heighten their deal too.
   
   The players should be instructed not to mime, but to act natural, just the scene has been muted.
-focus: "Annoyance"
 tags:
   - "Annoyance"
   - "Object work"
   - "Deal"
 source: "cliffweb"
-credit: "unclaimed"
+credit: "Annoyance"
 ---
+

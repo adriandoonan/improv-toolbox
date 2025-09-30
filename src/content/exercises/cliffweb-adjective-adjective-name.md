@@ -18,10 +18,11 @@ description: |
   **Smelly Creepy Carl: **(sniff) "Hi girls. I'm Carl. Sorry about the smell. That's why I came into the ladies' room…"
   
   After they have performed a one-minute monologue as this character, start over with a new volunteer from the back-line.
-focus: "UCB Manual"
 tags:
   - "UCB Manual"
   - "Characters"
-source: "cliffweb"
+source: "cliffweb; UCB Manual"
+
 credit: "unclaimed"
 ---
+
