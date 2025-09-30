@@ -137,6 +137,20 @@ test('tools listing surfaces all published utilities', () => {
 test('exercises list exposes filters and dataset metadata', () => {
   assert.ok(exercisesHtml.includes('id="filterDrawerToggle"'), 'filter toggle button missing');
   assertFavoritesIntegration(exercisesHtml, 'Exercises');
+  const inlineModules = Array.from(
+    exercisesHtml.matchAll(
+      /<script type="module" src="data:video\/mp2t;base64,([^\"]+)"/g
+    )
+  );
+  const hasFilterBootstrap = inlineModules.some(([, encoded]) => {
+    try {
+      const code = Buffer.from(encoded, 'base64').toString('utf8');
+      return code.includes('setupResourceListFiltering(');
+    } catch (error) {
+      return false;
+    }
+  });
+  assert.ok(hasFilterBootstrap, 'exercises page should inline resource filter bootstrap script');
   const nameOptions = ['Character Circle', 'Word at a Time Story'];
   for (const option of nameOptions) {
     assert.ok(

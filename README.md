@@ -41,7 +41,7 @@ Build and validate the static HTML output before committing:
 npm test
 ```
 
-The test runner performs an Astro production build, then inspects key pages in `dist/` to verify navigation links, category cards, tool listings, and exercise filters.
+The test runner performs an Astro production build, then inspects key pages in `dist/` to verify navigation links, category cards, tool listings, exercise filters, and the inline module that boots the resource filtering script.
 
 ## Documentation & Assets
 

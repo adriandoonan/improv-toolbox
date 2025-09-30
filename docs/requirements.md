@@ -136,6 +136,7 @@ Types:
 - **2025-10-15:** Documented PWA quick actions that deep link to Timer, Warmups, and Exercises.
 - **2025-10-16:** Documented the streamlined standalone home experience for installed devices.
 - **2025-10-17:** Added weighted fuzzy search across resource listings and refreshed filter tooling.
+- **2025-10-18:** Hardened resource filter bootstrap so fuzzy search, equality selects, and favourites wiring load reliably after build.
 - **2025-10-14:** Added single-word `purpose`, `tags`, `source`, and `credit` requirements for exercises and captured Cliffweb import metadata expectations.
 - **2025-10-12:** Documented delivered favourites, personal notes, and Lesson Planner functionality; refreshed future roadmap items.
 - **2025-10-05:** Captured alpha scope (navigation, content collections, tools) and documented automated HTML regression tests.

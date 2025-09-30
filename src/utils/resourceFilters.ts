@@ -2,7 +2,8 @@ import {
   loadFavorites,
   subscribeToFavorites,
 } from "./favorites";
-import { FuzzyIndex, FuzzyIndexOptions } from "./fuzzySearch";
+import { FuzzyIndex } from "./fuzzySearch";
+import type { FuzzyIndexOptions } from "./fuzzySearch";
 
 interface EqualityFilterDefinition {
   field: string;
