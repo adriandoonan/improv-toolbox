@@ -114,6 +114,7 @@ Types:
 ## 6. Non-Functional Requirements
 
 - **Performance**: Optimized for mobile, low bandwidth, and offline use
+  - The service worker pre-caches the app shell, theme stylesheet, and hashed Astro bundles so the UI and styling remain available offline after installation.
 - **Usability**: Clean UI with minimal distractions
 - **Standalone home**: Installed PWA sessions open directly to the content categories; marketing hero/highlights/CTA are hidden
   so facilitators can jump straight into resources.
