@@ -5,7 +5,8 @@ import FilterDrawer from "../../components/FilterDrawer.astro";
 import FavoriteToggle from "../../components/FavoriteToggle.astro";
 import formsTableModuleUrl from "../../scripts/forms-table.client.ts?url";
 import { getCollection } from "astro:content";
-const formsTableScript = formsTableModuleUrl.replace(/\.ts$/, ".js");
+const toModuleScript = (url: string) => url.replace(/\.ts(?=\?|$)/, ".js");
+const formsTableScript = toModuleScript(formsTableModuleUrl);
 const forms = (await getCollection("forms")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
 );
