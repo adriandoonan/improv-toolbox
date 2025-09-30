@@ -163,6 +163,56 @@ const highlights = [
     </div>
   </section>
 
+  <script>
+    (() => {
+      const CLASS_NAME = "is-standalone";
+      const targets = [document.documentElement, document.body];
+
+      const apply = (active) => {
+        targets.forEach((el) => {
+          if (el) {
+            el.classList.toggle(CLASS_NAME, Boolean(active));
+          }
+        });
+      };
+
+      const computeStandalone = () => {
+        const mediaStandalone =
+          typeof window.matchMedia === "function"
+            ? window.matchMedia("(display-mode: standalone)").matches
+            : false;
+        const iosStandalone =
+          typeof window.navigator !== "undefined" &&
+          typeof window.navigator.standalone === "boolean"
+            ? window.navigator.standalone
+            : false;
+        return mediaStandalone || iosStandalone;
+      };
+
+      const updateStandaloneState = () => apply(computeStandalone());
+
+      const query =
+        typeof window.matchMedia === "function"
+          ? window.matchMedia("(display-mode: standalone)")
+          : null;
+      if (query) {
+        if (typeof query.addEventListener === "function") {
+          query.addEventListener("change", updateStandaloneState);
+        } else if (typeof query.addListener === "function") {
+          query.addListener(updateStandaloneState);
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", updateStandaloneState, {
+          once: true,
+        });
+      } else {
+        updateStandaloneState();
+      }
+    })();
+  </script>
+
   <style>
     .hero {
       --switcher-gap: clamp(2rem, 5vw, 3.5rem);
@@ -337,6 +387,32 @@ const highlights = [
     }
     .cta__content {
       max-width: 50ch;
+    }
+    @media (display-mode: standalone) {
+      .hero,
+      .highlights,
+      .cta {
+        display: none;
+      }
+      .categories {
+        margin: 0;
+        padding-block: clamp(1.5rem, 5vw, 2.5rem);
+        min-height: 100vh;
+        min-height: 100dvh;
+        align-content: start;
+      }
+    }
+    :is(html.is-standalone, body.is-standalone) .hero,
+    :is(html.is-standalone, body.is-standalone) .highlights,
+    :is(html.is-standalone, body.is-standalone) .cta {
+      display: none;
+    }
+    :is(html.is-standalone, body.is-standalone) .categories {
+      margin: 0;
+      padding-block: clamp(1.5rem, 5vw, 2.5rem);
+      min-height: 100vh;
+      min-height: 100dvh;
+      align-content: start;
     }
     @media (min-width: 720px) {
       .categories {
