@@ -8,5 +8,34 @@
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Timer",
+      "short_name": "Timer",
+      "description": "Jump straight into the rehearsal countdown timer.",
+      "url": "/tools/timer",
+      "icons": [
+        { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "Warmups",
+      "short_name": "Warmups",
+      "description": "Browse warmups to kick off a rehearsal fast.",
+      "url": "/warmups",
+      "icons": [
+        { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "Exercises",
+      "short_name": "Exercises",
+      "description": "Open the drills library for coaching sessions.",
+      "url": "/exercises",
+      "icons": [
+        { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }
+      ]
+    }
   ]
 }
