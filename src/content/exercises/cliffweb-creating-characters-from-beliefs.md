@@ -1,24 +1,14 @@
 ---
-name: "Creating characters from beliefs"
-purpose: "Characters"
-shortDescription: "This exercise will help you practice making Game character choices. This exercise is also an opportunity to practice committing to or remaining consistent with a Game character."
-description: |
-  - Your entire group should take the stage. - Walk around and take turns
-  speaking. When someone speaks, everyone else should stop walking and listen.
-  When they have finished speaking, everyone can move again. - Start by stating
-  personal beliefs or opinions. Stay away from jokes and be as honest as possible.
-  These statements should be simple, even mundane personal opinions. Examples:
-  "You should never read the ending of a book first." ''You should take a nap
-  every day." ''You should turn the lights off when you leave a room." "Always
-  yield to pedestrians in a crosswalk." - After walking and sharing statements for
-  a few minutes, form a back-line. Take turns initiating scenes as characters that
-  embody one of…
-focus: "Characters"
+name: Creating characters from beliefs
+purpose: Characters
+shortDescription: Share personal beliefs as a group, then launch scenes embodying someone else’s point of view.
+description: The ensemble circulates, voicing genuine personal beliefs and listening closely. After the share, players initiate scenes as characters who hold a teammate’s belief, using those opinions to fuel specific choices.
+focus: Characters
 tags:
-  - "Characters"
-  - "UCB Manual"
-source: "cliffweb"
-credit: "unclaimed"
+- Characters
+- UCB Manual
+source: cliffweb
+credit: unclaimed
 ---
 
 - Your entire group should take the stage.

@@ -1,23 +1,14 @@
 ---
-name: "Using physical characteristics to create characters"
-purpose: "Characters"
-shortDescription: "This exercise shows you how you can bolster your character choices through physicality. If you're playing a high-powered CEO who is confident and in charge, you could make the quick choice to lead with the body part that makes you feel this way."
-description: |
-  - Your entire group should get onstage except for one person. - Start walking
-  around the room and acknowledge each other without speaking. You should try to
-  notice, as you walk, which part of your body you naturally lead with. People
-  tend to lead with their heads, chest, pelvis, or feet as they walk. - Once you
-  have all figured out what you lead with, you should exaggerate leading with that
-  body part and play with how it makes you feel-what kinds of characters does it
-  suggest to you? The person sitting out will then call out different body parts.
-  The rest of the group will then simultaneously switch to the announced body part
-  (head, chest, pelvis, feet, etc.) as…
-focus: "Characters"
+name: Using physical characteristics to create characters
+purpose: Characters
+shortDescription: Discover characters by leading with different body parts, then bring that physicality into scenes.
+description: The group walks around, exaggerating how it feels to lead with head, chest, pelvis, or feet and noting the character that emerges. Pairs then use those physical choices in short scenes, letting movement dictate status, worldview, and reactions.
+focus: Characters
 tags:
-  - "Characters"
-  - "UCB Manual"
-source: "cliffweb"
-credit: "unclaimed"
+- Characters
+- UCB Manual
+source: cliffweb
+credit: unclaimed
 ---
 
 - Your entire group should get onstage except for one person.

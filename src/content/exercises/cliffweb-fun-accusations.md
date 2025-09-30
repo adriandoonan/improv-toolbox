@@ -1,22 +1,13 @@
 ---
-name: "Fun Accusations"
-purpose: "Deal"
-shortDescription: "Here\u2019s an exercise I\u2019ve been doing to let people practice being a fool in scenes."
-description: |
-  Here’s an exercise I’ve been doing to let people practice being a fool in
-  scenes. - Two people up. Give them a suggestion. - In the first line, someone
-  makes a “fun” accusation to the other person. - In response, the person gives
-  what I’m calling “low-status yes.” A “fun accusation” means something creative,
-  whimsical, silly, outrageous. “Are you wearing your shoes on your hands?” Even
-  just a little strange is okay. “Are you putting all those donuts in a little
-  pile?” That’s as opposed to a “mundane” accusation like “Why are you ten minutes
-  late?” What I mean by “low status yes” is a “yes” where you know what you’re
-  doing is weird but you’re doing it anyway. A…
+name: Fun Accusations
+purpose: Deal
+shortDescription: Here’s an exercise I’ve been doing to let people practice being a fool in scenes. - Two people up. Give them a suggestion.
+description: Here’s an exercise I’ve been doing to let people practice being a fool in scenes. - Two people up. Give them a suggestion. - In the first line, someone makes a “fun” accusation to the other person.
 tags:
-  - "Will Hines (general)"
-  - "Deal"
-source: "cliffweb"
-credit: "Will Hines"
+- Will Hines (general)
+- Deal
+source: cliffweb
+credit: Will Hines
 ---
 
 Here’s an exercise I’ve been doing to let people practice being a fool in scenes.

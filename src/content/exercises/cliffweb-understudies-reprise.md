@@ -1,23 +1,13 @@
 ---
-name: "Understudies - Reprise"
-purpose: "Game"
-shortDescription: "This version of Understudies will force you to focus on exploration by making you do it after every new heightening. This doesn't always have to happen so rigidly in scenes, but it is a great way to strengthen your exploration muscles. Multiple people working the same scene should offer a lot of creativity and variation in terms of exploration. Your goal as a group should be to make moves that complement and fall in line with earlier exploration moves. It will also give your group a chance to practice exploring without having to worry about any of the other responsibilities one must normally consider when performing a scene. Improvisers can watch the scene from the back-line and focus on exploring"
-description: |
-  - Six to eight improvisers take the stage. - Someone else in the group offers a
-  one-word suggestion to inspire any two improvisers on the stage. The rest of the
-  improvisers will stand on the back-line. Two improvisers will begin a scene,
-  looking to clearly establish a reality containing a Who, What, and Where. The
-  improvisers should continue to Yes And each other and get more specific until
-  they discover the first unusual thing. Once the two improvisers performing the
-  scene find the Game, one of the players on the back-line should tag out either
-  improviser by tapping them on the shoulder. When an improviser is tagged out,
-  they are taken out of the scene and replaced by the improviser…
+name: Understudies - Reprise
+purpose: Game
+shortDescription: Tag-run scene drill where replacements step into existing characters and must explore the last game move before heightening.
+description: Six to eight players start a two-person scene, find the game, and then tag in as “understudies.” Each new entrant adopts the same character and continues the pattern, making sure the previous move is explored before anyone heightens again.
 tags:
-  - "UCB Manual"
-  - "Game"
-source: "cliffweb; UCB Manual"
-
-credit: "unclaimed"
+- UCB Manual
+- Game
+source: cliffweb; UCB Manual
+credit: UCB
 ---
 
 - Six to eight improvisers take the stage.

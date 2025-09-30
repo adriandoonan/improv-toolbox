@@ -1,32 +1,29 @@
 ---
-name: "Compliment / Boast"
-purpose: "WillHinesHowToBeTheGreatestImproviserOnEarth"
-shortDescription: "This is an exercise to boost the confidence and vulnerability of members of a group. WARNING: This is a touchy-feely exercise. You have to get over being cool, which is the point. I recommend this for the last session of an eight-week course, or for teams who are a bit burnt out or in their heads. It is good either at the top of a rehearsal or after a break. **DIRECTIONS** Split up into pairs. If there\u2019s an odd number, the teacher should join a pair. PHASE ONE: Compliments When the teacher says go, one person in the pair starts complimenting the other on their improv\u2014what they do, the way they do it, anything. At 45 seconds the teacher says \u201cswitch,\u201d and now the person who had been getting complimented does the complimenting. PHASE TWO: Boasting This is the harder part. Everyone switches into a new pair. When the teacher says go, one person boasts about their own strengths in improv to the other person. Say what you\u2019re good at. Boast about the version of yourself on a good day; it\u2019s okay if you don\u2019t always do the thing you\u2019re bragging about. The person who\u2019s listening should help by nodding. The teacher should tell the class that they are being given permission to boast. Being on stage requires a bit of an ego, so boosting your own before you act is not self-indulgent but necessary. The audience, your team, and you all want the confident version of you on stage, so this boasting exercise is actually helpful to everyone. It is also good to practice bolstering your own view of yourself, as a balance against the negative voice that can get into every performer\u2019s head from time to time. At 45 seconds, the teacher says \u201cswitch,\u201d and the other member of the pair boasts. It\u2019s not nearly as hard as it sounds, and everyone leaves the class feeling pretty great. This exercise is also good to force wannabe comedians to stop trying to be smarter and funnier than everyone, and to make them be emotionally vulnerable once in a while. BACKGROUND I learned this when I took a monologue study workshop in the fall of 2001. I had been put on a house improv team at the Upright Citizens Brigade shortly before this. It was my first time being a regular performer, and I was terrified of not being up to the task, so I started going to an acting class. It was a drop-in monologue study workshop run by a guy named Rob McCaskill, who\u2019d taught an improv course I\u2019d taken a few years before. Doing \u201creal\u201d acting was extremely frightening. I was a computer programmer, and everyone else in this monologue drop-in class were these very emotive, actorly actors. The first day, I performed the monologue from the end of Cool Hand Luke, feeling silly and scared as I did it. I liked Rob a lot. He gave generous, pragmatic advice that was easy to do and didn\u2019t make me feel terrible. It ranged from very direct things (\u201cTry a longer pause after each period,\u201d \u201cPick a specific person you\u2019re addressing\u201d) to more general stuff (\u201cLet this get simpler,\u201d \u201cDo less\u201d). Just the act of going to this course made me feel braver, and the actual advice also improved my performance. Rob would often have us start the workshops with this compliment/boast exercise. It reminded me that the other actors didn\u2019t see me as someone who wasn\u2019t up to the task, but instead as someone who was being brave and going for it. We were all rooting for each other and focusing on what was working"
-description: |
-  This is an exercise to boost the confidence and vulnerability of members of a
-  group. WARNING: This is a touchy-feely exercise. You have to get over being
-  cool, which is the point. I recommend this for the last session of an eight-week
-  course, or for teams who are a bit burnt out or in their heads. It is good
-  either at the top of a rehearsal or after a break. **DIRECTIONS** Split up into
-  pairs. If there’s an odd number, the teacher should join a pair. PHASE ONE:
-  Compliments When the teacher says go, one person in the pair starts
-  complimenting the other on their improv—what they do, the way they do it,
-  anything. At 45 seconds the teacher says…
+name: Compliment / Boast
+purpose: Agreement
+shortDescription: This is an exercise to boost the confidence and vulnerability of members of a group.
+description: This is an exercise to boost the confidence and vulnerability of members of a group. In pairs, students compliment each other or receive compliments, switching according to the instructor.
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-source: "cliffweb; Will Hines - How to be the greatest improviser on earth"
-
-credit: "unclaimed"
+- Will Hines - How to be the greatest improviser on earth
+- confidence
+- pairs
+source: Will Hines - How to be the greatest improviser on earth
+credit: Will Hines
 ---
 
 This is an exercise to boost the confidence and vulnerability of members of a group.
-WARNING: This is a touchy-feely exercise. You have to get over being cool, which is the point.
+
+> WARNING: This is a touchy-feely exercise. You have to get over being cool, which is the point.
+
 I recommend this for the last session of an eight-week course, or for teams who are a bit burnt out or in their heads. It is good either at the top of a rehearsal or after a break.
+
 **DIRECTIONS**
 Split up into pairs. If there’s an odd number, the teacher should join a pair.
+
 PHASE ONE: Compliments
 When the teacher says go, one person in the pair starts complimenting the other on their improv—what they do, the way they do it, anything.
 At 45 seconds the teacher says “switch,” and now the person who had been getting complimented does the complimenting.
+
 PHASE TWO: Boasting
 This is the harder part.
 Everyone switches into a new pair. When the teacher says go, one person boasts about their own strengths in improv to the other person. Say what you’re good at. Boast about the version of yourself on a good day; it’s okay if you don’t always do the thing you’re bragging about. The person who’s listening should help by nodding.
@@ -35,7 +32,9 @@ The audience, your team, and you all want the confident version of you on stage,
 At 45 seconds, the teacher says “switch,” and the other member of the pair boasts.
 It’s not nearly as hard as it sounds, and everyone leaves the class feeling pretty great.
 This exercise is also good to force wannabe comedians to stop trying to be smarter and funnier than everyone, and to make them be emotionally vulnerable once in a while.
-BACKGROUND
+
+**BACKGROUND**
+
 I learned this when I took a monologue study workshop in the fall of 2001. I had been put on a house improv team at the Upright Citizens Brigade shortly before this. It was my first time being a regular performer, and I was terrified of not being up to the task, so I started going to an acting class. It was a drop-in monologue study workshop run by a guy named Rob McCaskill, who’d taught an improv course I’d taken a few years before.
 Doing “real” acting was extremely frightening. I was a computer programmer, and everyone else in this monologue drop-in class were these very emotive, actorly actors. The first day, I performed the monologue from the end of Cool Hand Luke, feeling silly and scared as I did it.
 I liked Rob a lot. He gave generous, pragmatic advice that was easy to do and didn’t make me feel terrible. It ranged from very direct things (“Try a longer pause after each period,” “Pick a specific person you’re addressing”) to more general stuff (“Let this get simpler,” “Do less”). Just the act of going to this course made me feel braver, and the actual advice also improved my performance.

@@ -1,23 +1,13 @@
 ---
-name: "60 Seconds Of Silence"
-purpose: "GroundedPlay"
-shortDescription: "Think of your brain as an excited puppy, trying to race ahead to the future. Here\u2019s an exercise to get it back to the present."
-description: |
-  Think of your brain as an excited puppy, trying to race ahead to the future.
-  Here’s an exercise to get it back to the present. Two people up. They get a
-  suggestion and then assume a starting position. Something not too big is best—a
-  hip cocked to one side is better than a big crouch while screaming. The people
-  should be able to see each other. No stepping downstage and gazing out over the
-  audience. Then they wait 60 seconds. No object work. The scene isn’t starting.
-  They just wait 60 seconds and regard each other. After 60 seconds, the teacher
-  says “start,” and they do. 60 seconds on stage is a hugely long time. At first
-  your brain is…
+name: 60 Seconds Of Silence
+purpose: Grounded Play
+shortDescription: Think of your brain as an excited puppy, trying to race ahead to the future. Here’s an exercise to get it back to the present.
+description: Think of your brain as an excited puppy, trying to race ahead to the future. Here’s an exercise to get it back to the present. Two people up.
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - "Grounded play"
-source: "cliffweb; Will Hines - How to be the greatest improviser on earth"
-
-credit: "unclaimed"
+- Will Hines - How to be the greatest improviser on earth
+- Grounded play
+source: Will Hines - How to be the greatest improviser on earth
+credit: Will Hines
 ---
 
 Think of your brain as an excited puppy, trying to race ahead to the future. Here’s an exercise to get it back to the present.

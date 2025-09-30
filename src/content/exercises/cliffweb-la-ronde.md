@@ -1,23 +1,13 @@
 ---
-name: "La Ronde"
-purpose: "SceneWork"
-shortDescription: "This is a common form or exercise, but here we\u2019re going to do it with a focus on being changeable."
-description: |
-  This is a common form or exercise, but here we’re going to do it with a focus on
-  being changeable. **Basic structure** The basic structure is inspired by an old
-  play called, yes, La Ronde, where every scene has two characters, one of whom
-  was in the previous scene. The actual play is about sexual politics in 1890s
-  Vienna, with scene titles like “The Whore and The Soldier” followed by “The
-  Soldier and the Parlor Maid.” The improv version just borrows the structure and
-  not the focus on sexual politics. If you have five people, it goes like this:
-  First scene has Person A and Person B Next scene has Person B and Person C. Next
-  scene has Person C…
+name: La Ronde
+purpose: Scene Work
+shortDescription: This is a common form or exercise, but here we’re going to do it with a focus on being changeable.
+description: This is a common form or exercise, but here we’re going to do it with a focus on being changeable. **Basic structure** The basic structure is inspired by an old play called, yes, La Ronde, where every scene has two characters, one of whom was in the previous scene.
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - "Scene work"
-source: "cliffweb; Will Hines - How to be the greatest improviser on earth"
-
-credit: "unclaimed"
+  - Will Hines - How to be the greatest improviser on earth
+  - Scene work
+source: cliffweb; Will Hines - How to be the greatest improviser on earth
+credit: Will Hines
 ---
 
 This is a common form or exercise, but here we’re going to do it with a focus on being changeable.
@@ -35,7 +25,7 @@ You don’t pick ahead of time who does which scene, and you don’t pick which 
 1. Everyone should try to be a simple character with a simple “thing,” meaning one of the following:
 2. you’re a very familiar archetype (e.g., “schoolteacher” or “drill sergeant”);
 3. you have a clear point of view (“perky idealist” or “grouch who hates young people”);
-or
+   or
 4. you have a clear emotional temperament (“cheery” or “sad”).
 5. Then, whenever someone tags in, your goal is to put the character from the previous scene into a place that we would never expect to see them. If the first scene is a drillsergeant yelling at a soldier, someone could tag in as a yoga teacher—and thus we see the angry drill sergeant in a yoga class, i.e., a situation we would not expect for that character.
 

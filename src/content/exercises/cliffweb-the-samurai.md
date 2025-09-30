@@ -1,25 +1,15 @@
 ---
-name: "The Samurai"
-purpose: "SceneWork"
-shortDescription: "Practicing being funny is tough. Here\u2019s an exercise designed to reward you when you do something that is both funny and still productive for an improv scene."
-description: |
-  Practicing being funny is tough. Here’s an exercise designed to reward you when
-  you do something that is both funny and still productive for an improv scene.
-  4–6 people up on the back line. They are the “samurai.” They will be doing the
-  scenes. Another 4–6 people along the side walls. They are the “sensei.” The
-  sensei will only be watching the improv, not doing it. (“Sensei” isn’t the
-  historically accurate term, but I find it more palatable than “master” and also
-  more cool to say.) Give each of the sensei five playing cards and assign to them
-  one of the samurai. If Erik is one of the samurai on the back line, you assign
-  Gwen, who is on the…
+name: The Samurai
+purpose: Scene Work
+shortDescription: Practicing being funny is tough.
+description: Practicing being funny is tough. Here’s an exercise designed to reward you when you do something that is both funny and still productive for an improv scene.
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - "Scene work"
-  - "Object work"
-  - "Characters"
-source: "cliffweb; Will Hines - How to be the greatest improviser on earth"
-
-credit: "unclaimed"
+  - Will Hines - How to be the greatest improviser on earth
+  - Scene work
+  - Object work
+  - Characters
+source: cliffweb; Will Hines - How to be the greatest improviser on earth
+credit: Will Hines
 ---
 
 Practicing being funny is tough. Here’s an exercise designed to reward you when you do something that is both funny and still productive for an improv scene.

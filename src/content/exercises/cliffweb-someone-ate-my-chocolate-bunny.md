@@ -1,12 +1,11 @@
 ---
-name: "Someone ate my chocolate bunny!"
-purpose: "WarmUp"
-shortDescription: "Students stand in a circle, one says with an obvious emotion \"Someone ate my chocolate bunny!\" the whole groups responds, mimicking the emotion \"I don't think that's very funny!\". And it goes around the circle. The idea is everyone tries to come up with a fresh emotion or attitude."
-description: "Students stand in a circle, one says with an obvious emotion \"Someone ate my chocolate bunny!\" the whole groups responds, mimicking the emotion \"I don't think that's very funny!\". And it goes around the circle. The idea is everyone tries to come up with a fresh emotion or attitude."
+name: Someone ate my chocolate bunny!
+purpose: Warm Up
+shortDescription: Circle call-and-response that passes a big emotional choice around the group.
+description: Players stand in a circle. One declares “Someone ate my chocolate bunny!” with a bold emotion and the whole group mirrors it, replying “I don’t think that’s very funny!” before a new feeling gets passed along.
 tags:
-  - "Annoyance"
-  - "Warm up"
-source: "cliffweb"
-credit: "Annoyance"
+  - Annoyance
+  - Warm up
+source: cliffweb
+credit: Annoyance
 ---
-

@@ -1,23 +1,13 @@
 ---
-name: "Only Numbers"
-purpose: "GroundedPlay"
-shortDescription: "Two people up. No suggestion. They do a scene where they only say numbers, in order, to each other."
-description: |
-  Two people up. No suggestion. They do a scene where they only say numbers, in
-  order, to each other. So the first person says, “One.” And the other person
-  responds, “Two, three, four?” And the first person says, “Five! Six! Seven.” No
-  repeating numbers. If someone goes “Eight?” you don’t respond with “Eight.” You
-  respond with “Nine.”At first people will try to communicate very specific, very
-  literal things. Someone will be trying to say, “I’m mad at my husband. He was
-  supposed to meet me here!” but they can only say, “One! Two, three, four! Five!”
-  They are gesticulating a ton and trying to make “two” equal “husband.” But that
-  doesn’t work. You can’t re-use numbers, so there’s no way…
+name: Only Numbers
+purpose: Grounded Play
+shortDescription: Two people up. No suggestion. They do a scene where they only say numbers, in order, to each other.
+description: Two people up. No suggestion. They do a scene where they only say numbers, in order, to each other. So the first person says, “One.” And the other person responds, “Two, three, four?” And the first person says, “Five!
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - "Grounded play"
-source: "cliffweb; Will Hines - How to be the greatest improviser on earth"
-
-credit: "unclaimed"
+  - Will Hines - How to be the greatest improviser on earth
+  - Grounded play
+source: cliffweb; Will Hines - How to be the greatest improviser on earth
+credit: Will Hines
 ---
 
 Two people up. No suggestion. They do a scene where they only say numbers, in order, to each other.

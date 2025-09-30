@@ -1,23 +1,14 @@
 ---
-name: "Using status to build a character"
-purpose: "Characters"
-shortDescription: "- Using status to build a character"
-description: |
-  - Using status to build a character - Your entire group should get onstage.
-  Start walking around the room and acknowledge each other without speaking. - As
-  you pass each other, you should try to act as if you are a bit higher in status
-  than everyone else you interact with. Each interaction should also serve to
-  increase your status. - Try to find different ways to express your status (e.g.,
-  not making eye contact, walking with a swagger, walking with good posture,
-  etc.). After a few minutes, someone will announce that everyone in the group
-  born in the months of January through June should reverse and become lower in
-  status with each interaction, so that about half the group…
-focus: "Characters"
+name: Using status to build a character
+purpose: Characters
+shortDescription: Explore high and low status physically as a group, then replay scenes with status swaps to feel the difference.
+description: Walk the room testing high- and low-status behaviors—posture, eye contact, speed—and notice how each feels. Then two players are assigned contrasting status for quick scenes, replaying them with reversed status to highlight how behavior, not job title, defines power dynamics.
+focus: Characters
 tags:
-  - "Characters"
-  - "UCB Manual"
-source: "cliffweb"
-credit: "unclaimed"
+- Characters
+- UCB Manual
+source: cliffweb
+credit: unclaimed
 ---
 
 - Using status to build a character

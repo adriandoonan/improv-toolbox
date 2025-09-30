@@ -1,23 +1,13 @@
 ---
-name: "I, You, We"
-purpose: "SceneWork"
-shortDescription: "A good shortcut to knowing, caring, and saying is to make the scene about the people in the scene. A common error for newer improvisers is when two characters spend the whole scene talking about a third character who isn\u2019t there. The spouse, the boss, the crazy friend. It feels natural, but a scene can\u2019t really get started until the people in it talk to each other about each other. In real life, we rarely talk to each other about each other. We\u2019re scared to do it, or it feels rude. But for our improv scenes, we have to get comfortable speaking directly. A good exercise to practice this is to do two-person scenes in which each person must start their lines with \u201cI,\u201d \u201cyou,\u201d or \u201cwe.\u201d Do this until you feel the scene has found a game. Making a scene about the characters we can see generally makes the scene more powerful. Here\u2019s a scene between Chris Kula and Billy Merritt."
-description: |
-  A good shortcut to knowing, caring, and saying is to make the scene about the
-  people in the scene. A common error for newer improvisers is when two characters
-  spend the whole scene talking about a third character who isn’t there. The
-  spouse, the boss, the crazy friend. It feels natural, but a scene can’t really
-  get started until the people in it talk to each other about each other. In real
-  life, we rarely talk to each other about each other. We’re scared to do it, or
-  it feels rude. But for our improv scenes, we have to get comfortable speaking
-  directly. A good exercise to practice this is to do two-person scenes in which
-  each person must start…
+name: I, You, We
+purpose: Scene Work
+shortDescription: A good shortcut to knowing, caring, and saying is to make the scene about the people in the scene.
+description: A good shortcut to knowing, caring, and saying is to make the scene about the people in the scene. A common error for newer improvisers is when two characters spend the whole scene talking about a third character who isn’t there.
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - "Scene work"
-source: "cliffweb; Will Hines - How to be the greatest improviser on earth"
-
-credit: "unclaimed"
+  - Will Hines - How to be the greatest improviser on earth
+  - Scene work
+source: cliffweb; Will Hines - How to be the greatest improviser on earth
+credit: Will Hines
 ---
 
 A good shortcut to knowing, caring, and saying is to make the scene about the people in the scene.

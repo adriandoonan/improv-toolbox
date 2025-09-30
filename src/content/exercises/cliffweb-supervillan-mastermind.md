@@ -1,23 +1,12 @@
 ---
-name: "Supervillan / Mastermind"
-purpose: "WillHinesHowToBeTheGreatestImproviserOnEarth"
-shortDescription: "Two people up."
-description: |
-  Two people up. Player A makes an accusation. Player B deliberately acts like a
-  supervillain or mastermind in response. Player A must then sympathetically
-  disagree (otherwise, Player A will often get too angry). Player A: Jeremy, did
-  you use all the conditioner? Player B: Bwa ha ha, yes, I did! Now your hair will
-  look stringy and flawed! And I shall look more beautiful by comparison! Player
-  A: (sympathetically disagreeing) Look, I know that I can be arrogant about my
-  hair, but this is really going too far. PROS: Player B practices being the “bad”
-  character while still taking full ownership of the accusation. The sympathetic
-  disagreement prevents Player A from attacking too aggressively. It lets Player B
-  catch their…
+name: Supervillan / Mastermind
+purpose: Characters
+shortDescription: Two people up. Player A makes an accusation. Player B deliberately acts like a supervillain or mastermind in response.
+description: Two people up. Player A makes an accusation. Player B deliberately acts like a supervillain or mastermind in response. Player A must then sympathetically disagree (otherwise, Player A will often get too angry).
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-source: "cliffweb; Will Hines - How to be the greatest improviser on earth"
-
-credit: "unclaimed"
+  - Will Hines - How to be the greatest improviser on earth
+source: cliffweb; Will Hines - How to be the greatest improviser on earth
+credit: Will Hines
 ---
 
 Two people up.
