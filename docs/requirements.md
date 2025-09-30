@@ -134,6 +134,7 @@ Types:
 ## Change Log
 
 - **2025-10-19:** Unified resource listings on TanStack Table, retiring the bespoke fuzzy matcher and Fuse.js dependency while adding source-aware filtering for forms, warmups, and exercises.
+- **2025-10-19:** Switched the service worker to network-first for styles/scripts so PWA installs pick up fresh theme updates while keeping offline fallbacks.
 - **2025-10-18:** Hardened resource filter bootstrap so fuzzy search, equality selects, and favourites wiring load reliably after build.
 - **2025-10-17:** Added weighted fuzzy search across resource listings and refreshed filter tooling.
 - **2025-10-16:** Documented the streamlined standalone home experience for installed devices.

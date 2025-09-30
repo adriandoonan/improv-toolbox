@@ -1,7 +1,5 @@
-const CACHE = "toolbox-v2";
+const CACHE = "toolbox-v3";
 const CORE_ASSETS = [
-  "/styles/every.css",
-  "/styles/theme.css",
   "/manifest.webmanifest",
   "/icons/icon-192.png",
   "/icons/icon-512.png"
@@ -81,20 +79,46 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  const respondFromNetwork = async () => {
-    try {
-      const response = await fetch(request);
-      if (shouldCache(request, response)) {
-        const cache = await caches.open(CACHE);
-        cache.put(request, response.clone());
-      }
-      return response;
-    } catch (err) {
-      const cached = await caches.match(request);
-      if (cached) return cached;
-      throw err;
-    }
-  };
+  if (["style", "script"].includes(request.destination)) {
+    event.respondWith(
+      (async () => {
+        try {
+          const response = await fetch(request, { cache: "no-cache" });
+          if (shouldCache(request, response)) {
+            const cache = await caches.open(CACHE);
+            cache.put(request, response.clone());
+          }
+          return response;
+        } catch (err) {
+          const cached = await caches.match(request);
+          if (cached) {
+            return cached;
+          }
+          throw err;
+        }
+      })()
+    );
+    return;
+  }
 
-  event.respondWith(caches.match(request).then(cached => cached || respondFromNetwork()));
+  event.respondWith(
+    caches.match(request).then(
+      (cached) =>
+        cached ||
+        (async () => {
+          try {
+            const response = await fetch(request);
+            if (shouldCache(request, response)) {
+              const cache = await caches.open(CACHE);
+              cache.put(request, response.clone());
+            }
+            return response;
+          } catch (err) {
+            const fallback = await caches.match(request);
+            if (fallback) return fallback;
+            throw err;
+          }
+        })()
+    )
+  );
 });
