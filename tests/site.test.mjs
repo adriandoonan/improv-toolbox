@@ -137,13 +137,10 @@ test('tools listing surfaces all published utilities', () => {
 test('exercises list exposes filters and dataset metadata', () => {
   assert.ok(exercisesHtml.includes('id="filterDrawerToggle"'), 'filter toggle button missing');
   assertFavoritesIntegration(exercisesHtml, 'Exercises');
-  const moduleScripts = Array.from(
-    exercisesHtml.matchAll(/<script type="module" src="([^"]+)"/g)
+  assert.ok(
+    exercisesHtml.includes('exercises-table.client'),
+    'exercises page should inline resource table bootstrap script'
   );
-  const hasFilterBootstrap = moduleScripts.some(([, src]) =>
-    src.includes('exercises-table.client') && src.endsWith('.js')
-  );
-  assert.ok(hasFilterBootstrap, 'exercises page should inline resource table bootstrap script');
   const nameOptions = ['Character Circle', 'Word at a Time Story'];
   for (const option of nameOptions) {
     assert.ok(

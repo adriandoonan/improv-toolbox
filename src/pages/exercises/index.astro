@@ -3,9 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import FavoriteToggle from "../../components/FavoriteToggle.astro";
-import exercisesTableModuleUrl from "../../scripts/exercises-table.client.ts?url";
 import { getCollection } from "astro:content";
-const exercisesTableScript = exercisesTableModuleUrl.replace(/\.ts$/, ".js");
 const exercises = (await getCollection("exercises")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
 );
@@ -133,7 +131,9 @@ const minPeople = Array.from(
       }
     </ul>
   </section>
-  <script type="module" src={exercisesTableScript}></script>
+  <script type="module" is:inline>
+    import "../../scripts/exercises-table.client.ts";
+  </script>
   <style>
     .resource-card__title a {
       color: inherit;
