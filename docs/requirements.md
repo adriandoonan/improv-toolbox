@@ -40,7 +40,7 @@ All content sections (warmups, exercises, forms, tools) share the same **base fe
 
 - **Delivered (alpha):**
   - Global drawer navigation covering Home, Exercises, Forms, Warmups, and Tools.
-  - Static content collections with weighted fuzzy search, structured filters, detail pages, favourites, and tool embeds for exercises, warmups, and forms (see [exercises index](../src/pages/exercises/index.astro)).
+  - Static content collections with TanStack Table-powered search and structured filters, paired with favourites, tool embeds, and responsive cards for exercises, warmups, and forms (see [exercises index](../src/pages/exercises/index.astro)).
   - Personal notes saved per item with offline storage handled by [NotesPanel](../src/components/NotesPanel.astro).
   - Tools directory with Timer, Gauss Timer, Jam Groupaliser, Suggestion Generator, and the [Lesson Planner](../src/pages/tools/lesson-plans/index.astro).
   - Installed PWAs expose home screen quick actions for Timer, Warmups, and Exercises via manifest shortcuts.
@@ -133,10 +133,11 @@ Types:
 
 ## Change Log
 
-- **2025-10-15:** Documented PWA quick actions that deep link to Timer, Warmups, and Exercises.
-- **2025-10-16:** Documented the streamlined standalone home experience for installed devices.
-- **2025-10-17:** Added weighted fuzzy search across resource listings and refreshed filter tooling.
+- **2025-10-19:** Unified resource listings on TanStack Table, retiring the bespoke fuzzy matcher and Fuse.js dependency while adding source-aware filtering for forms, warmups, and exercises.
 - **2025-10-18:** Hardened resource filter bootstrap so fuzzy search, equality selects, and favourites wiring load reliably after build.
+- **2025-10-17:** Added weighted fuzzy search across resource listings and refreshed filter tooling.
+- **2025-10-16:** Documented the streamlined standalone home experience for installed devices.
+- **2025-10-15:** Documented PWA quick actions that deep link to Timer, Warmups, and Exercises.
 - **2025-10-14:** Added single-word `purpose`, `tags`, `source`, and `credit` requirements for exercises and captured Cliffweb import metadata expectations.
 - **2025-10-12:** Documented delivered favourites, personal notes, and Lesson Planner functionality; refreshed future roadmap items.
 - **2025-10-05:** Captured alpha scope (navigation, content collections, tools) and documented automated HTML regression tests.

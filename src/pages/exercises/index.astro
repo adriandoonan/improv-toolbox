@@ -3,9 +3,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import FavoriteToggle from "../../components/FavoriteToggle.astro";
-import exercisesListModuleUrl from "../../scripts/exercises-list.client.ts?url";
+import exercisesTableModuleUrl from "../../scripts/exercises-table.client.ts?url";
 import { getCollection } from "astro:content";
-const exercisesListScript = exercisesListModuleUrl.replace(/\.ts$/, ".js");
+const exercisesTableScript = exercisesTableModuleUrl.replace(/\.ts$/, ".js");
 const exercises = (await getCollection("exercises")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
 );
@@ -26,25 +26,6 @@ const minPeople = Array.from(
     value != null
   ))
 ).sort((a, b) => a - b);
-const exerciseResourceData = exercises.map((exercise) => ({
-  id: exercise.slug,
-  name: exercise.data.name,
-  focus: exercise.data.focus ?? "",
-  source: exercise.data.source ?? "",
-  credit: exercise.data.credit ?? "",
-  minimumPeople:
-    exercise.data.minimumPeople != null
-      ? String(exercise.data.minimumPeople)
-      : "",
-  description: exercise.data.shortDescription ?? "",
-  tags: Array.isArray(exercise.data.tags)
-    ? exercise.data.tags.filter(Boolean).join(" ")
-    : "",
-}));
-const exerciseResourceJson = JSON.stringify(exerciseResourceData).replace(
-  /</g,
-  "\\u003c"
-);
 ---
 
 <BaseLayout>
@@ -106,12 +87,7 @@ const exerciseResourceJson = JSON.stringify(exerciseResourceData).replace(
         />
       </div>
     </header>
-    <script
-      type="application/json"
-      data-resource-list="exerciseList"
-      set:html={exerciseResourceJson}
-    ></script>
-    <ul id="exerciseList" class="resource-list">
+    <ul id="exerciseList" class="resource-list" data-resource-display="table">
       {
         exercises.map((exercise) => (
           <li
@@ -124,6 +100,12 @@ const exerciseResourceJson = JSON.stringify(exerciseResourceData).replace(
             data-minimum-people={
               exercise.data.minimumPeople != null
                 ? String(exercise.data.minimumPeople)
+                : ""
+            }
+            data-description={exercise.data.shortDescription ?? ""}
+            data-tags={
+              Array.isArray(exercise.data.tags)
+                ? exercise.data.tags.filter(Boolean).join(", ")
                 : ""
             }
             data-favorite="false"
@@ -151,7 +133,7 @@ const exerciseResourceJson = JSON.stringify(exerciseResourceData).replace(
       }
     </ul>
   </section>
-  <script type="module" src={exercisesListScript}></script>
+  <script type="module" src={exercisesTableScript}></script>
   <style>
     .resource-card__title a {
       color: inherit;
@@ -159,6 +141,12 @@ const exerciseResourceJson = JSON.stringify(exerciseResourceData).replace(
     .resource-card__title a:hover,
     .resource-card__title a:focus-visible {
       color: var(--color-accent, #ff2f55);
+    }
+    .resource-empty {
+      margin: 1.5rem 0 0;
+      text-align: center;
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
+      font-size: 0.95rem;
     }
   </style>
 </BaseLayout>

@@ -3,9 +3,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import FavoriteToggle from "../../components/FavoriteToggle.astro";
-import formsListModuleUrl from "../../scripts/forms-list.client.ts?url";
+import formsTableModuleUrl from "../../scripts/forms-table.client.ts?url";
 import { getCollection } from "astro:content";
-const formsListScript = formsListModuleUrl.replace(/\.ts$/, ".js");
+const formsTableScript = formsTableModuleUrl.replace(/\.ts$/, ".js");
 const forms = (await getCollection("forms")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
 );
@@ -15,19 +15,13 @@ const names = Array.from(new Set(forms.map((f) => f.data.name))).sort((a, b) =>
 const types = Array.from(
   new Set(forms.map((f) => f.data.type).filter(Boolean))
 ).sort((a, b) => a.localeCompare(b));
-const formResourceData = forms.map((form) => ({
-  id: form.slug,
-  name: form.data.name,
-  type: form.data.type ?? "",
-  description: form.data.shortDescription ?? "",
-  tags: Array.isArray(form.data.tags)
-    ? form.data.tags.filter(Boolean).join(" ")
-    : "",
-}));
-const formResourceJson = JSON.stringify(formResourceData).replace(
-  /</g,
-  "\\u003c"
-);
+const sources = Array.from(
+  new Set(
+    forms
+      .map((f) => f.data.source)
+      .filter((value): value is string => Boolean(value && value.trim()))
+  )
+).sort((a, b) => a.localeCompare(b));
 ---
 
 <BaseLayout>
@@ -55,17 +49,20 @@ const formResourceJson = JSON.stringify(formResourceData).replace(
             types.length
               ? { name: "type", label: "Type", type: "select", options: types }
               : null,
+            sources.length
+              ? {
+                  name: "source",
+                  label: "Source",
+                  type: "select",
+                  options: sources,
+                }
+              : null,
             { name: "favoritesOnly", label: "Favourites only", type: "checkbox" },
           ].filter(Boolean)}
         />
       </div>
     </header>
-    <script
-      type="application/json"
-      data-resource-list="formList"
-      set:html={formResourceJson}
-    ></script>
-    <ul id="formList" class="resource-list">
+    <ul id="formList" class="resource-list" data-resource-display="table">
       {
         forms.map((form) => (
           <li
@@ -73,6 +70,13 @@ const formResourceJson = JSON.stringify(formResourceData).replace(
             data-resource-id={form.slug}
             data-name={form.data.name}
             data-type={form.data.type ?? ""}
+            data-description={form.data.shortDescription ?? ""}
+            data-tags={
+              Array.isArray(form.data.tags)
+                ? form.data.tags.filter(Boolean).join(", ")
+                : ""
+            }
+            data-source={form.data.source ?? ""}
             data-favorite="false"
           >
             <h2 class="resource-card__title">
@@ -87,13 +91,16 @@ const formResourceJson = JSON.stringify(formResourceData).replace(
             <p class="resource-card__summary">{form.data.shortDescription}</p>
             <div class="meta-badges">
               {form.data.type && <span class="meta-badge">Type · {form.data.type}</span>}
+              {form.data.source && (
+                <span class="meta-badge">Source · {form.data.source}</span>
+              )}
             </div>
           </li>
         ))
       }
     </ul>
   </section>
-  <script type="module" src={formsListScript}></script>
+  <script type="module" src={formsTableScript}></script>
   <style>
     .resource-card__title a {
       color: inherit;
@@ -101,6 +108,12 @@ const formResourceJson = JSON.stringify(formResourceData).replace(
     .resource-card__title a:hover,
     .resource-card__title a:focus-visible {
       color: var(--color-accent, #ff2f55);
+    }
+    .resource-empty {
+      margin: 1.5rem 0 0;
+      text-align: center;
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
+      font-size: 0.95rem;
     }
   </style>
 </BaseLayout>

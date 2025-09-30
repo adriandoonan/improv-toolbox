@@ -3,9 +3,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import FavoriteToggle from "../../components/FavoriteToggle.astro";
-import warmupsListModuleUrl from "../../scripts/warmups-list.client.ts?url";
+import warmupsTableModuleUrl from "../../scripts/warmups-table.client.ts?url";
 import { getCollection } from "astro:content";
-const warmupsListScript = warmupsListModuleUrl.replace(/\.ts$/, ".js");
+const warmupsTableScript = warmupsTableModuleUrl.replace(/\.ts$/, ".js");
 const warmups = (await getCollection("warmups")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
 );
@@ -20,23 +20,6 @@ const minPeople = Array.from(
     value != null
   ))
 ).sort((a, b) => a - b);
-const warmupResourceData = warmups.map((warmup) => ({
-  id: warmup.slug,
-  name: warmup.data.name,
-  focus: warmup.data.focus ?? "",
-  minimumPeople:
-    warmup.data.minimumPeople != null
-      ? String(warmup.data.minimumPeople)
-      : "",
-  description: warmup.data.shortDescription ?? "",
-  tags: Array.isArray(warmup.data.tags)
-    ? warmup.data.tags.filter(Boolean).join(" ")
-    : "",
-}));
-const warmupResourceJson = JSON.stringify(warmupResourceData).replace(
-  /</g,
-  "\\u003c"
-);
 ---
 
 <BaseLayout>
@@ -81,12 +64,7 @@ const warmupResourceJson = JSON.stringify(warmupResourceData).replace(
         />
       </div>
     </header>
-    <script
-      type="application/json"
-      data-resource-list="warmupList"
-      set:html={warmupResourceJson}
-    ></script>
-    <ul id="warmupList" class="resource-list">
+    <ul id="warmupList" class="resource-list" data-resource-display="table">
       {
         warmups.map((warmup) => (
           <li
@@ -97,6 +75,12 @@ const warmupResourceJson = JSON.stringify(warmupResourceData).replace(
             data-minimum-people={
               warmup.data.minimumPeople != null
                 ? String(warmup.data.minimumPeople)
+                : ""
+            }
+            data-description={warmup.data.shortDescription ?? ""}
+            data-tags={
+              Array.isArray(warmup.data.tags)
+                ? warmup.data.tags.filter(Boolean).join(", ")
                 : ""
             }
             data-favorite="false"
@@ -124,7 +108,7 @@ const warmupResourceJson = JSON.stringify(warmupResourceData).replace(
       }
     </ul>
   </section>
-  <script type="module" src={warmupsListScript}></script>
+  <script type="module" src={warmupsTableScript}></script>
   <style>
     .resource-card__title a {
       color: inherit;
@@ -132,6 +116,12 @@ const warmupResourceJson = JSON.stringify(warmupResourceData).replace(
     .resource-card__title a:hover,
     .resource-card__title a:focus-visible {
       color: var(--color-accent, #ff2f55);
+    }
+    .resource-empty {
+      margin: 1.5rem 0 0;
+      text-align: center;
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
+      font-size: 0.95rem;
     }
   </style>
 </BaseLayout>
