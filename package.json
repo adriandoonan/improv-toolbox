@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.9",
+    "@tanstack/table-core": "^8.21.3",
     "astro": "^5.13.11"
   }
 }

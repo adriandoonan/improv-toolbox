@@ -3,8 +3,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import FavoriteToggle from "../../components/FavoriteToggle.astro";
-import exercisesListScript from "../../scripts/exercises-list.client.ts?url";
+import exercisesTableModuleUrl from "../../scripts/exercises-table.client.ts?url";
 import { getCollection } from "astro:content";
+const exercisesTableScript = exercisesTableModuleUrl.replace(/\.ts$/, ".js");
 const exercises = (await getCollection("exercises")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
 );
@@ -41,6 +42,13 @@ const minPeople = Array.from(
       <div class="collection__controls">
         <FilterDrawer
           fields={[
+            {
+              name: "query",
+              label: "Search",
+              type: "search",
+              placeholder: "Search exercises...",
+              autocomplete: "off",
+            },
             { name: "name", label: "Name", type: "select", options: names },
             focuses.length
               ? {
@@ -79,11 +87,12 @@ const minPeople = Array.from(
         />
       </div>
     </header>
-    <ul id="exerciseList" class="resource-list">
+    <ul id="exerciseList" class="resource-list" data-resource-display="table">
       {
         exercises.map((exercise) => (
           <li
             class="resource-card"
+            data-resource-id={exercise.slug}
             data-name={exercise.data.name}
             data-focus={exercise.data.focus ?? ""}
             data-source={exercise.data.source ?? ""}
@@ -91,6 +100,12 @@ const minPeople = Array.from(
             data-minimum-people={
               exercise.data.minimumPeople != null
                 ? String(exercise.data.minimumPeople)
+                : ""
+            }
+            data-description={exercise.data.shortDescription ?? ""}
+            data-tags={
+              Array.isArray(exercise.data.tags)
+                ? exercise.data.tags.filter(Boolean).join(", ")
                 : ""
             }
             data-favorite="false"
@@ -118,7 +133,7 @@ const minPeople = Array.from(
       }
     </ul>
   </section>
-  <script type="module" src={exercisesListScript}></script>
+  <script type="module" src={exercisesTableScript}></script>
   <style>
     .resource-card__title a {
       color: inherit;
@@ -126,6 +141,12 @@ const minPeople = Array.from(
     .resource-card__title a:hover,
     .resource-card__title a:focus-visible {
       color: var(--color-accent, #ff2f55);
+    }
+    .resource-empty {
+      margin: 1.5rem 0 0;
+      text-align: center;
+      color: color-mix(in srgb, var(--color-muted, #cbbfca) 85%, black 15%);
+      font-size: 0.95rem;
     }
   </style>
 </BaseLayout>

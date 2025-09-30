@@ -2,6 +2,16 @@
 
 ## Tasks
 
+### Backfill interaction coverage for resource filters
+
+- Add automated browser tests that exercise the fuzzy search, structured filters, and favourites-only toggle across exercises, warmups, and forms.
+- Capture baseline expectations for ranking so future tweaks to the fuzzy weights stay intentional.
+
+### Profile TanStack table performance
+
+- Capture bundle impact of the shared table harness across exercises, warmups, and forms.
+- Validate mobile filter responsiveness on lower-end devices and record findings.
+
 ### Polish Cliffweb exercise import formatting
 
 - Review generated descriptions for edge cases where HTML lists or emphasis lost fidelity.
