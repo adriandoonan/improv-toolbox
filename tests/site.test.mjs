@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 
 const distRoot = new URL('../dist/', import.meta.url);
 
@@ -24,6 +24,12 @@ const [homeHtml, toolsHtml, exercisesHtml] = await Promise.all([
   readDist('tools/index.html'),
   readDist('exercises/index.html'),
 ]);
+
+const exercisesDir = new URL('../src/content/exercises/', import.meta.url);
+const exerciseEntries = (await readdir(exercisesDir)).filter((name) =>
+  name.endsWith('.md')
+);
+const expectedExerciseCount = exerciseEntries.length;
 
 const [warmupsHtml, formsHtml] = await Promise.all([
   readDistOptional('warmups/index.html'),
@@ -156,7 +162,11 @@ test('exercises list exposes filters and dataset metadata', () => {
     'minimum people filter should include numeric options'
   );
   const listCount = (exercisesHtml.match(/class="resource-card"/g) || []).length;
-  assert.strictEqual(listCount, 12, 'expected 12 exercises in the listing');
+  assert.strictEqual(
+    listCount,
+    expectedExerciseCount,
+    `expected ${expectedExerciseCount} exercises in the listing`
+  );
   assert.ok(
     exercisesHtml.includes('data-focus="Character, Energy, Group Play"'),
     'exercise cards should expose focus metadata'

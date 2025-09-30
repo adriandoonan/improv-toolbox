@@ -13,10 +13,10 @@ description: |
   3. RAP REPRISE + RAP
   
   ...and it goes round until everyone has had a go
-focus: "Annoyance"
 tags:
   - "Annoyance"
   - "Warm up"
 source: "cliffweb"
-credit: "unclaimed"
+credit: "Annoyance"
 ---
+

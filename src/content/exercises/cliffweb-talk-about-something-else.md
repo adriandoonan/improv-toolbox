@@ -9,12 +9,13 @@ description: |
   - The other improviser should immediately join in with this activity.
   
   - When either improviser starts speaking, they must talk about something other than what they are doing.
-focus: "UCB Manual"
 tags:
   - "UCB Manual"
   - "Active Scenes"
   - "Object work"
   - "Grounded play"
-source: "cliffweb"
+source: "cliffweb; UCB Manual"
+
 credit: "unclaimed"
 ---
+

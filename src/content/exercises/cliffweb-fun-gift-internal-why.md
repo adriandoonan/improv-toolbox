@@ -20,10 +20,10 @@ description: |
   That’s it. Two more up.
   
   Good types of internal reasons: emotions (“I’m happy”), philosophies (“haste makes waste”), twisted logic (“I think eventually, word will get out and people will be impressed”).
-focus: "Will Hines (general)"
 tags:
   - "Will Hines (general)"
   - "Deal"
 source: "cliffweb"
-credit: "unclaimed"
+credit: "Will Hines"
 ---
+
