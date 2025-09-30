@@ -1,15 +1,13 @@
 ---
-name: "Deal based training wheels pretty flower"
-purpose: "Characters"
-shortDescription: "Dig into characters before a scene gets going and restart with a deal to hold on to"
-description: |
-  Two people start a scene and then after a few lines we pause to figure out what each character's deal is. 
-  Restarting the scene with focus and something to hold on to.
-focus: "Characters"
+name: Deal based training wheels pretty flower
+purpose: Characters
+shortDescription: Two people start a scene and then after a few lines we pause to figure out what each character's deal is.
+description: Two people start a scene and then after a few lines we pause to figure out what each character's deal is. Restarting the scene with focus and something to hold on to.
+focus: Characters
 tags:
-  - "Characters"
-  - "Game"
-source: "cliffweb"
+- Characters
+- Game
+source: cliffweb
 credit: Annoyance
 ---
 

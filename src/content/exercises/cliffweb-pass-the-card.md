@@ -1,23 +1,13 @@
 ---
-name: "Pass The Card"
-purpose: "SceneWork"
-shortDescription: "After you do this exercise, you will notice scenes where someone is constantly repeating the same information again and again, as if they are trying to pass a card to their scene partner. If they\u2019re repeating themselves, it\u2019s time for the other person to accept the offer, or else the person just needs to adjust and drop it to talk about something else."
-description: |
-  This is an exercise from teacher Corey Brown to practice giving and receiving
-  offers. Two people up. Give one a playing card (or a business card or even a
-  scrap of paper). Then give them a suggestion. Either person can start regardless
-  of who has the card. Continue the scene until the person with the card makes any
-  kind of an offer. “Man, I’m beat,” or “You look happy,” or “Nice weather
-  outside.” Or a more indirect one, like, “John, get in my office,” which implies
-  they’re at work and that the other person works for him, probably. At that
-  point—when the person with the card adds something—he passes the card to the
-  other person. The card represents his offer.…
+name: Pass The Card
+purpose: SceneWork
+shortDescription: This is an exercise from teacher Corey Brown to practice giving and receiving offers. Two people up.
+description: This is an exercise from teacher Corey Brown to practice giving and receiving offers. Two people up. Give one a playing card (or a business card or even a scrap of paper).
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - "Scene work"
-source: "cliffweb; Will Hines - How to be the greatest improviser on earth"
-
-credit: "unclaimed"
+- Will Hines - How to be the greatest improviser on earth
+- Scene work
+source: cliffweb; Will Hines - How to be the greatest improviser on earth
+credit: Will Hines
 ---
 
 This is an exercise from teacher Corey Brown to practice giving and receiving offers.

@@ -5,7 +5,7 @@ const exercises = defineCollection({
     name: z.string(),
     purpose: z
       .string()
-      .regex(/^[A-Za-z0-9]+$/, "Purpose must be a single word with no spaces"),
+      .regex(/^[A-Za-z0-9\s]+$/, "Purpose must be letters and spaces only"),
     shortDescription: z.string(),
     focus: z.string().optional(),
     description: z.string(),

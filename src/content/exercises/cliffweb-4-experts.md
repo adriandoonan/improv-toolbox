@@ -1,17 +1,14 @@
 ---
-name: "4 Experts"
-purpose: "Characters"
-shortDescription: "Teaches that the philosophy or deal of a character can simply be an area of interest of obsession"
-description: |
-  4 Players up in 4 chairs. The audience suggests some interesting areas of
-  expertise for the players one by one, such as Quiches, Flat earth theory, The
-  Church of Harry Potter.
+name: 4 Experts
+purpose: Characters
+shortDescription: 4 Players up in 4 chairs.
+description: 4 Players up in 4 chairs. The audience suggests some interesting areas of expertise for the players one by one, such as Quiches, Flat earth theory, The Church of Harry Potter.
 tags:
-  - "Annoyance"
-  - "Characters"
-  - "Deal"
-source: "cliffweb"
-credit: "Annoyance"
+- Annoyance
+- Characters
+- Deal
+source: cliffweb
+credit: Annoyance
 ---
 
 4 Players up in 4 chairs. The audience suggests some  interesting areas of expertise for the players one by one, such as Quiches, Flat earth theory, The Church of Harry Potter.

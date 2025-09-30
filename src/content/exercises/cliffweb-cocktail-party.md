@@ -1,14 +1,13 @@
 ---
-name: "Cocktail Party"
-purpose: "Listening"
-shortDescription: "The purpose of this exercise is to allow improvisers to practice taking and giving focus in group scenes. This variation of the exercise gives new improvisers another opportunity to practice listening. If you are really listening to the other conversations, you should be able to find ways for themes and ideas to overlap naturally. This is a skill you will use often when performing Long Form"
-description: |
-  Improvisers share the stage to act out a split focus scene with the instructor conducting the focus and moving from one pair to another. This encourages listening and extrapolation as players need to keep the conversation in going their heads, even while not in focus. Coming back to a logical point and quickly getting back into agreement with their scene partner.
-focus: "Listening"
+name: Cocktail Party
+purpose: Listening
+shortDescription: Improvisers share the stage to act out a split focus scene with the instructor conducting the focus and moving from one pair to another.
+description: Improvisers share the stage to act out a split focus scene with the instructor conducting the focus and moving from one pair to another. This encourages listening and extrapolation as players need to keep the conversation in going their heads, even while not in focus.
+focus: Listening
 tags:
-  - "Listening"
-  - "Sharing Focus"
-  - "UCB Manual"
+- Listening
+- Sharing Focus
+- UCB Manual
 source: UCB Manual
 credit: UCB
 ---

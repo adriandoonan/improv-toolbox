@@ -1,23 +1,13 @@
 ---
-name: "The \"I am\" game"
-purpose: "GroupGame"
-shortDescription: "This exercise will force your ensemble to practice performing Verbal Add On Group Games."
-description: |
-  - Half of the group will take the stage and the other half of the group will act
-  as an audience. - One member of the ensemble steps off of the backline and
-  directly addresses the audience. - This improviser makes a statement in the
-  following format: "I am _ ." This blank is filled in with an inanimate object. -
-  After this improviser declares their object, they should take a few lines to
-  describe the object's actions, thoughts, feelings, beliefs, or opinions. - The
-  improviser embodies the object both verbally and physically. - A second
-  improviser will then step out to play a different inanimate object, adhering to
-  the same "I am __" format, followed by a few lines…
+name: The "I am" game
+purpose: GroupGame
+shortDescription: Players step out to personify objects with “I am…” declarations, locking into a shared pattern of boasts or traits.
+description: Split the group into performers and audience. One at a time, players claim “I am ___,” describe that object’s thoughts or behaviors, and later speakers heighten or echo the discovered pattern so the whole ensemble shares a point of view.
 tags:
-  - "UCB Manual"
-  - "Group game"
-source: "cliffweb; UCB Manual"
-
-credit: "unclaimed"
+- UCB Manual
+- Group game
+source: cliffweb; UCB Manual
+credit: UCB
 ---
 
 - Half of the group will take the stage and the other half of the group will act as an audience.

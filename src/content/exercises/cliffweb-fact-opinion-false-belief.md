@@ -1,14 +1,13 @@
 ---
-name: "Fact, Opinion, False Belief"
-purpose: "WarmUp"
-shortDescription: "Practice switching between facts, beliefs and opinions you own and those you don't, can you keep it believable?"
-description: |
-  Players move around the space and are directed to state facts about themselves, opinions they actually hold or crazy beliefs and lies about themselves.
-focus: "Warm up"
+name: Fact, Opinion, False Belief
+purpose: WarmUp
+shortDescription: Players move around the space and are directed to state facts about themselves, opinions they actually hold or crazy beliefs and lies about themselves.
+description: Players move around the space and are directed to state facts about themselves, opinions they actually hold or crazy beliefs and lies about themselves.
+focus: Warm up
 tags:
-  - "Warm up"
-  - "Amy Poehler"
-source: "cliffweb"
+- Warm up
+- Amy Poehler
+source: cliffweb
 credit: Amy Poehler
 ---
 

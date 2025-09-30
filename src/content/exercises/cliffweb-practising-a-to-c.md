@@ -1,22 +1,13 @@
 ---
-name: "Practising A to C"
-purpose: "AToC"
-shortDescription: "To practice going A to C in order to get to multiple interesting ideas from a single idea. To force you to break down the process of going A to C. To get a better sense of how your teammates think and play by looking at how they go from A to C."
-description: |
-  - A group of improvisers stands in a circle. - One improviser begins the
-  exercise by saying an idea followed by the letter "A." - The improviser to their
-  right goes through the process of A to C in their head. This improviser then
-  says their C idea aloud, followed by the letter "C." - The person to their right
-  provides the new A word by guessing what the previous person's B idea might have
-  been. Once they have a guess, this improviser says it aloud, followed by the
-  letter "A." - The person to their right uses the A to C process and says their C
-  word idea aloud, followed by the letter "C." - The exercise continues around…
+name: Practising A to C
+purpose: AToC
+shortDescription: Circle drill for practicing the associative A-to-C thinking used in openings.
+description: The group stands in a circle. One player states an “A” idea, the next silently leaps to a “C” association, and the following player guesses the missing “B” before starting the next chain—training quick, lateral connections.
 tags:
-  - "UCB Manual"
-  - "A to C"
-source: "cliffweb; UCB Manual"
-
-credit: "unclaimed"
+- UCB Manual
+- A to C
+source: cliffweb; UCB Manual
+credit: UCB
 ---
 
 - A group of improvisers stands in a circle.

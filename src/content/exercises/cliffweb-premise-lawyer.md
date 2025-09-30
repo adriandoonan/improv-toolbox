@@ -1,23 +1,13 @@
 ---
-name: "Premise Lawyer"
-purpose: "Game"
-shortDescription: "- A group of at least three improvisers takes the stage and form a circle."
-description: |
-  - A group of at least three improvisers takes the stage and form a circle. - One
-  improviser steps into the circle to play the Premise Lawyer. - Improvisers
-  standing on the circle will raise their hands when they have a premise in mind.
-  - The premise lawyer will call on an improviser to hear their premise. Note: The
-  premise should be absurd so that it challenges the Premise Lawyer to defend it.
-  For example, "I want my employees to double their productivity'" isn't a
-  premise, because wanting employees to increase productivity is not an unusual
-  thing. A similar premise that would work might be, "I want my employees to work
-  a 22-hour workday in order to double their productivity."…
+name: Premise Lawyer
+purpose: Game
+shortDescription: Justify wild premises on the spot like a lawyer defending an absurd case.
+description: Players stand in a circle while one steps in as the premise lawyer. Teammates pitch unusual premises, and the lawyer delivers in-character explorations that justify the idea before rotating so everyone practices defending offers.
 tags:
-  - "UCB Manual"
-  - "Game"
-source: "cliffweb; UCB Manual"
-
-credit: "unclaimed"
+- UCB Manual
+- Game
+source: cliffweb; UCB Manual
+credit: UCB
 ---
 
 - A group of at least three improvisers takes the stage and form a circle.

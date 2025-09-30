@@ -1,17 +1,12 @@
 ---
-name: "60 Seconds Of Silence"
-purpose: "Grounded Play"
-shortDescription: "Think of your brain as an excited puppy, trying to race ahead to the future. Here\u2019s an exercise to get it back to the present."
-description: |
-  Think of your brain as an excited puppy, trying to race ahead to the future.
-  Here’s an exercise to get it back to the present. Two people up. They get a
-  suggestion and then assume a starting position. After 60 seconds, the teacher
-  says “start,” and they do.
+name: 60 Seconds Of Silence
+purpose: Grounded Play
+shortDescription: Think of your brain as an excited puppy, trying to race ahead to the future. Here’s an exercise to get it back to the present.
+description: Think of your brain as an excited puppy, trying to race ahead to the future. Here’s an exercise to get it back to the present. Two people up.
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - "Grounded play"
-source: Will Hines - How to be the greatest improviser on earth"
-
+- Will Hines - How to be the greatest improviser on earth
+- Grounded play
+source: Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---
 

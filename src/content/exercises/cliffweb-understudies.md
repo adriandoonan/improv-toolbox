@@ -1,23 +1,13 @@
 ---
-name: "Understudies"
-purpose: "Game"
-shortDescription: "This exercise will help expand your mind in terms of heightening. With multiple people performing the same scene, there should be a lot of creativity and variation with regard to heightening. Hopefully, this will help everyone in your group see the myriad options and possibilities for heightening any Game. It will also give your group a chance to practice heightening without having to worry about any of the other responsibilities one must normally consider when performing a scene. Improvisers can watch the scene from the back-line and think of nothing other than heightening. This exercise also offers you a chance to examine the subtle differences between those moves that are on Game and those that are not"
-description: |
-  - Six to eight improvisers take the stage. - Someone else in the group offers a
-  one-word suggestion to inspire any two improvisers on the stage. The rest of the
-  improvisers will stand against the wall behind these two improvisers. This is
-  referred to as the back-line. - Two improvisers will begin a scene, looking to
-  clearly establish a reality containing a Who, What, and Where. - The improvisers
-  should continue to Yes And each other and get more specific until they discover
-  the first unusual thing. - Once the two improvisers performing the scene find
-  the Game, one of the players on the back-line should tag out either improviser
-  by tapping them on the shoulder. When an improviser is…
+name: Understudies
+purpose: Game
+shortDescription: Tag-in rehearsal where new players inherit existing characters and continue the discovered game.
+description: Six to eight improvisers launch a two-person scene, identify the first unusual thing, and then tag in from the back line. Every tagger assumes the exact character they replace and keeps heightening the same game with fresh “if this is true…” moves.
 tags:
-  - "UCB Manual"
-  - "Game"
-source: "cliffweb; UCB Manual"
-
-credit: "unclaimed"
+- UCB Manual
+- Game
+source: cliffweb; UCB Manual
+credit: UCB
 ---
 
 - Six to eight improvisers take the stage.

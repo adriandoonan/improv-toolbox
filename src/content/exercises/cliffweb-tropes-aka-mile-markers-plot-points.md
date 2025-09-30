@@ -1,21 +1,11 @@
 ---
-name: "Tropes aka Mile Markers, Plot Points"
-purpose: "TropesAkaMileMarkersPlotPoints"
-shortDescription: "\u2022 Encourage us to move past the first game move so we can truly explore our game rather than just dissecting the first move. \u2022 Forces players to do the thing rather than talking about doing the thing or worrying that the scene will end once the thing has been done. \u2022 Reminds players that they have a wealth of knowledge and life experience to draw from for base realities. \u2022 Encourages top of intelligence play and commitment. \u2022 Discourages players from getting distracted by new unusual things."
-description: |
-  2-Person Scenes. Coach will provide players with a commonly known (whether
-  through life or media) situations and players will perform an abridged (2-4
-  minute) version of this situation/interaction that is not funny or unusual, but
-  as accurate as possible. Encourage players to hit the major Tropes/Mile Markers/
-  Plot Points of these situations. Begin with a greeting and end with a farewell.
-  Review the major plot points (likely 5-7 points in the scene). Redo the scene
-  from the very beginning with the same players, only this time allow them to find
-  something unusual/a game to play. The concession is that they must hit all of
-  those plot points, meaning they can’t get hung up on the first game move. They
-  must…
+name: Tropes aka Mile Markers, Plot Points
+purpose: TropesAkaMileMarkersPlotPoints
+shortDescription: 2-Person Scenes.
+description: 2-Person Scenes. Coach will provide players with a commonly known (whether through life or media) situations and players will perform an abridged (2-4 minute) version of this situation/interaction that is not funny or unusual, but as accurate as possible.
 tags: []
-source: "cliffweb"
-credit: "unclaimed"
+source: cliffweb
+credit: unclaimed
 ---
 
 2-Person Scenes. Coach will provide players with a commonly known (whether through life or media) situations and players will perform an abridged (2-4 minute) version of this situation/interaction that is not funny or unusual, but as accurate as possible. Encourage players to hit the major Tropes/Mile Markers/ Plot Points of these situations. Begin with a greeting and end with a farewell.

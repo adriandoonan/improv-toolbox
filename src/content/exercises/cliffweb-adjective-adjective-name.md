@@ -1,13 +1,12 @@
 ---
-name: "Adjective, Adjective, Name"
-purpose: "Characters"
-shortDescription: "This exercise allows you to practice performing character monologues without the burden of coming up with characteristics yourself."
+name: Adjective, Adjective, Name
+purpose: Characters
+shortDescription: Improvisers deliver one-minute monologues with key character traits gifted by the players on the backline.
 description: Improvisers deliver one-minute monologues with key character traits gifted by the players on the backline. Everybody gets a turn creating fun, unexpected characters.
 tags:
-  - "UCB Manual"
-  - "Characters"
-source: "UCB Manual"
-
+- UCB Manual
+- Characters
+source: UCB Manual
 credit: UCB
 ---
 

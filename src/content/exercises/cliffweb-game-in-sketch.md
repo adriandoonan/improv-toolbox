@@ -1,24 +1,14 @@
 ---
-name: "Game In Sketch"
-purpose: "Game"
-shortDescription: "Identifying the Game of written sketches is a great way to train your mind to recognize Game outside of the classroom or rehearsal studio. Getting good at this will help you to identify Games in your improvised scenes that might be strong enough to develop into written sketches. If you find that the specifics of the Long Form scene you are trying to write up into a sketch just aren't translating to the page, you can try to find a new or better situation or scenario to set your Game in, just like the alternate scenarios we were able to generate for the Game of \"Dead Parrot."
-description: |
-  View sketch comedy, either alone or with other improvisers. (Some shows you
-  could use for this exercise are Monty Python, Saturday Night Live, The Kids in
-  the Hall, Mr. Show, and Upright Citizens Brigade.) Identify the Game by summing
-  up what is funny about each sketch. Describe the Game in a few sentences or
-  less. Then try to describe it in one sentence. Then distill the Game into five
-  words or less. In distilling the Game of each sketch, don't use specifics or
-  create a plot synopsis. Examples: The Game of Monty Python's "Cheese Shop" is
-  "specialty shop that does not sell what it claims to specialize in." The Game of
-  Monty Python's "Dead Parrot" is "refusal to acknowledge an…
+name: Game In Sketch
+purpose: Game
+shortDescription: View sketch comedy, either alone or with other improvisers.
+description: View sketch comedy, either alone or with other improvisers. (Some shows you could use for this exercise are Monty Python, Saturday Night Live, The Kids in the Hall, Mr.
 tags:
-  - "UCB Manual"
-  - "Game"
-  - "Videotape"
-source: "cliffweb; UCB Manual"
-
-credit: "unclaimed"
+- UCB Manual
+- Game
+- Videotape
+source: cliffweb; UCB Manual
+credit: UCB
 ---
 
 View sketch comedy, either alone or with other improvisers. (Some shows you could use for this exercise are Monty Python, Saturday Night Live, The Kids in the Hall, Mr. Show, and Upright Citizens Brigade.) Identify the Game by summing up what is funny about each sketch. Describe the Game in a few sentences or less. Then try to describe it in one sentence. Then distill the Game into five words or less.

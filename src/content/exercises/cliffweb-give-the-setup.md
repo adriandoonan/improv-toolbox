@@ -1,25 +1,14 @@
 ---
-name: "Give the setup"
-purpose: "GroundedPlay"
-shortDescription: "The purpose of this exercise is to give you a chance to focus on playing the reality of the scene in a believable way. If you are able to successfully portray characters and situations that feel real and grounded, the absurd element of the scene will stand out better in contrast. It is easier to recognize the unusual in a scene if we begin our scenes with a familiar situation or recognizable reality. This exercise also reinforces that our ideas for scenes do not have to be crazy, wacky, forced or complicated at the start. In fact, starting with the familiar increases our odds of finding a first unusual thing."
-description: |
-  **PART 1** - Two improvisers take the stage. - Instead of receiving a
-  suggestion, every scene will start with the two improvisers having a
-  conversation as their actual selves. The improvisers in this scene should focus
-  on playing the scene in a grounded, realistic, and truthful way. The scene
-  should have a casual or conversational tone. - A third improviser will stop them
-  if he or she feels that either improviser is "performing" or not acting
-  realistically in any way. This third improviser should be asking him or herself,
-  "Is this really what either of these people would say?" in order to find those
-  moments that are not realistic or genuine. - Once the "unreal" moment has been
-  discussed, the…
+name: Give the setup
+purpose: GroundedPlay
+shortDescription: "**PART 1** - Two improvisers take the stage."
+description: "**PART 1** - Two improvisers take the stage. - Instead of receiving a suggestion, every scene will start with the two improvisers having a conversation as their actual selves."
 tags:
-  - "UCB Manual"
-  - "Grounded play"
-  - "Characters"
-source: "cliffweb; UCB Manual"
-
-credit: "unclaimed"
+- UCB Manual
+- Grounded play
+- Characters
+source: cliffweb; UCB Manual
+credit: UCB
 ---
 
 **PART 1**

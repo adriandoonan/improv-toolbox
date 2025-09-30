@@ -1,13 +1,13 @@
 ---
-name: "Follow the follower"
-purpose: "WarmUp"
-shortDescription: "This is a good way to practice getting in sync with other improvisers when using sound and movement to generate information."
-description: This is a good way to practice getting in sync with other improvisers when using sound and movement to generate information. Sound and movement will be used in this way to generate information in an Organic Opening. Note that this exercise can also serve as a good warm-up for improvisation since it allows you to practice, in an abstract sense. what we arc trying to do in organic Long Form scenes (start from nothing and find interesting ideas to explore).
+name: Follow the follower
+purpose: WarmUp
+shortDescription: This is a good way to practice getting in sync with other improvisers when using sound and movement to generate information.
+description: This is a good way to practice getting in sync with other improvisers when using sound and movement to generate information. Sound and movement will be used in this way to generate information in an Organic Opening.
 tags:
-  - "UCB Manual"
-  - "Warm up"
-  - "Group mind"
-source: "UCB Manual"
+- UCB Manual
+- Warm up
+- Group mind
+source: UCB Manual
 credit: UCB
 ---
 

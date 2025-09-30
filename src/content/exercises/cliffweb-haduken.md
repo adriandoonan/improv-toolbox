@@ -1,21 +1,12 @@
 ---
-name: "Haduken"
-purpose: "WarmUp"
-shortDescription: "Like the classic Bounder except:"
-description: |
-  Like the classic Bounder except:
-  
-  Haduken (go left/right) [do the street fighter action]
-  Tiger Uppercut (change direction Haduken) [punch up]
-  Double Dagger (skip a person) [throw 2 daggers]
-  Zen Arrow (across) [fire an arrow with a bow]
-  Zen Shield (blocks Zen Arrow) [arms crossed over face]
-  Double Shield! (breaks zen shield) [arms crossed over face and tap arms together]
-  Draw your Sword (yell this to someone across from you, you both draw swords, everyone else goes "Ahhh!" as you quickly change places running at each other with swords out)
+name: Haduken
+purpose: WarmUp
+shortDescription: Bounder-style circle warm-up that swaps in Street Fighter-inspired commands like Haduken, Tiger Uppercut, Double Dagger, Zen Arrow, and Zen Shield.
+description: 'Run the Bounder passing game but call video game moves: Haduken sends energy left or right, Tiger Uppercut reverses direction, Double Dagger skips a player, Zen Arrow shoots across the circle, and Zen Shield blocks—keeping everyone alert and playful.'
 tags:
-  - "Annoyance"
-  - "Warm up"
-source: "cliffweb"
-credit: "Annoyance"
+- Annoyance
+- Warm up
+source: cliffweb
+credit: Annoyance
 ---
 

@@ -1,16 +1,12 @@
 ---
-name: "Character Matching"
-purpose: "Characters"
-shortDescription: "This exercise lets you quickly adopt a variety of energies, and lets you practice changing yourself based on someone else\u2019s decisions."
-description: |
-  Everyone in a circle. The teacher picks someone to start. That person walks
-  across the circle and speaks as a character for a line or two.  Whoever is being spoken to responds as the same
-  kind of character. Same voice, same philosophy.
+name: Character Matching
+purpose: Characters
+shortDescription: Everyone in a circle. The teacher picks someone to start. That person walks across the circle and speaks as a character for a line or two.
+description: Everyone in a circle. The teacher picks someone to start. That person walks across the circle and speaks as a character for a line or two. Whoever is being spoken to responds as the same kind of character.
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - "Characters"
-source: "Will Hines - How to be the greatest improviser on earth"
-
+- Will Hines - How to be the greatest improviser on earth
+- Characters
+source: Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---
 

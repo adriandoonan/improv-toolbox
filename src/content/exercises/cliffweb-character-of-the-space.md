@@ -1,16 +1,14 @@
 ---
-name: "Character of the space"
-purpose: "Scene Work"
-shortDescription: "One improviser will, in silence, make a choice that establishes one of the following aspects of the character of the space: activity (playing pool, fishing, stretching, etc.), location (automobile, prison cell, supermarket, etc.), or environmental condition (zero gravity, hot/cold, bright lights, etc.). A second improviser will join the scene and nonverbally agree with the choice that has been made."
-description: |
-  An exercise to agree without words, with one improviser initiating some object work to establish a space and a scene partner building on that environment with some matching object work.
+name: Character of the space
+purpose: Scene Work
+shortDescription: An exercise to agree without words, with one improviser initiating some object work to establish a space and a scene partner building on that.
+description: An exercise to agree without words, with one improviser initiating some object work to establish a space and a scene partner building on that environment with some matching object work.
 tags:
-  - "UCB Manual"
-  - "Scene work"
-  - "Active Scenes"
-  - "Agreement"
-source: "UCB Manual"
-
+- UCB Manual
+- Scene work
+- Active Scenes
+- Agreement
+source: UCB Manual
 credit: UCB
 ---
 

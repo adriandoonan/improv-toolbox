@@ -1,17 +1,13 @@
 ---
-name: "Sound And Movement"
-purpose: "Matching"
-shortDescription: "Match physicality, honoring choices made by others"
-description: |
-  An everyone in a circle type exercise where improvisers will be watching for the small, subtle movements made by the rest of
-  the circle and looking to match and amplify. Eventually something will happen. Incorporate sounds for a sound and movement that 
-  also be used to jump start scenes
+name: Sound And Movement
+purpose: Matching
+shortDescription: Circle warm-up to mirror and heighten shared movements before layering sound.
+description: Players stand in a circle, track subtle movements, mirror and heighten them as a group, then add sound so the pattern evolves into recognisable images for organic openings.
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - "Opening"
-  - "Warm up"
-source: "Will Hines - How to be the greatest improviser on earth"
-
+- Will Hines - How to be the greatest improviser on earth
+- Opening
+- Warm up
+source: Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---
 

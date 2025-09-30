@@ -1,13 +1,13 @@
 ---
-name: "Bippity Bippity Bop!"
-purpose: "Warm Up"
-shortDescription: "This is a fun warm-up exercise that wakes students up and sharpens the mind. It always gets everyone laughing. It's also a good exercise for illustrating how putting pressure on ourselves gets us stuck in our heads. When the clock is ticking, it can be unusually hard to think of a type of bird, beast or fish. Encourage students to take a deep breath, picture an animal, and calmly say its name."
-description: "This is an everyone in the circle type game where the aim is not to be in the center, encourages listening, zero-second reaction and fun."
-focus: "Warm up"
+name: Bippity Bippity Bop!
+purpose: Warm Up
+shortDescription: This is an everyone in the circle type game where the aim is not to be in the center, encourages listening, zero-second reaction and fun.
+description: This is an everyone in the circle type game where the aim is not to be in the center, encourages listening, zero-second reaction and fun.
+focus: Warm up
 tags:
-  - "Warm up"
-source: "cliffweb"
-credit: "unclaimed"
+- Warm up
+source: cliffweb
+credit: unclaimed
 ---
 
 Form a circle with one improviser in the centre - Improviser A. Their goal is to catch someone out, and hence get themselves out of the circle.

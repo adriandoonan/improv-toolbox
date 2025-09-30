@@ -1,17 +1,13 @@
 ---
-name: "Compliment / Boast"
-purpose: "Agreement"
-shortDescription: "This is an exercise to boost the confidence and vulnerability of members of a group."
-description: |
-  This is an exercise to boost the confidence and vulnerability of members of a
-  group. In pairs, students compliment each other or receive compliments, switching 
-  according to the instructor. Pairs are mixed up and players are encouraged to boast
-  trying to toe the line between confidence and braggadocio.
+name: Compliment / Boast
+purpose: Agreement
+shortDescription: This is an exercise to boost the confidence and vulnerability of members of a group.
+description: This is an exercise to boost the confidence and vulnerability of members of a group. In pairs, students compliment each other or receive compliments, switching according to the instructor.
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - confidence
-  - pairs
-source: "Will Hines - How to be the greatest improviser on earth"
+- Will Hines - How to be the greatest improviser on earth
+- confidence
+- pairs
+source: Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---
 

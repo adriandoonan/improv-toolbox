@@ -1,23 +1,13 @@
 ---
-name: "La Ronde"
-purpose: "SceneWork"
-shortDescription: "This is a common form or exercise, but here we\u2019re going to do it with a focus on being changeable."
-description: |
-  This is a common form or exercise, but here we’re going to do it with a focus on
-  being changeable. **Basic structure** The basic structure is inspired by an old
-  play called, yes, La Ronde, where every scene has two characters, one of whom
-  was in the previous scene. The actual play is about sexual politics in 1890s
-  Vienna, with scene titles like “The Whore and The Soldier” followed by “The
-  Soldier and the Parlor Maid.” The improv version just borrows the structure and
-  not the focus on sexual politics. If you have five people, it goes like this:
-  First scene has Person A and Person B Next scene has Person B and Person C. Next
-  scene has Person C…
+name: La Ronde
+purpose: SceneWork
+shortDescription: This is a common form or exercise, but here we’re going to do it with a focus on being changeable.
+description: This is a common form or exercise, but here we’re going to do it with a focus on being changeable. **Basic structure** The basic structure is inspired by an old play called, yes, La Ronde, where every scene has two characters, one of whom was in the previous scene.
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - "Scene work"
-source: "cliffweb; Will Hines - How to be the greatest improviser on earth"
-
-credit: "unclaimed"
+- Will Hines - How to be the greatest improviser on earth
+- Scene work
+source: cliffweb; Will Hines - How to be the greatest improviser on earth
+credit: Will Hines
 ---
 
 This is a common form or exercise, but here we’re going to do it with a focus on being changeable.

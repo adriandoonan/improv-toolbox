@@ -1,17 +1,12 @@
 ---
-name: "Blow Them Away"
-purpose: "Scene Work"
-shortDescription: "This is an exercise that is simple to explain, though a bit tricky to do. Do scenes where the goal is to blow the audience away."
-description: |
-  Do scenes where the goal is to blow the audience away. In the spirit of the
-  roulette example, do a series of scenes where you are trying to blow the
-  audience away with how far things go. Make more interesting choices with greater
-  commitment than you normally think you’re allowed to.
+name: Blow Them Away
+purpose: Scene Work
+shortDescription: Do scenes where the goal is to blow the audience away.
+description: Do scenes where the goal is to blow the audience away. In the spirit of the roulette example, do a series of scenes where you are trying to blow the audience away with how far things go.
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - "Scene work"
-source: "Will Hines - How to be the greatest improviser on earth"
-
+- Will Hines - How to be the greatest improviser on earth
+- Scene work
+source: Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---
 

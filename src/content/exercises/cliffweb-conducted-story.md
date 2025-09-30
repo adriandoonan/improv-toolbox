@@ -1,15 +1,12 @@
 ---
-name: "Conducted story"
-purpose: "Listening"
-shortDescription: "This exercise will improve your listening by forcing you to be in the moment. "
-description: |
-  Three or more improvisers stand in a line. We start a story which is then picked
-  up by other improvisers, focus being conducted by the teacher or another improviser.
+name: Conducted story
+purpose: Listening
+shortDescription: Three or more improvisers stand in a line.
+description: Three or more improvisers stand in a line. We start a story which is then picked up by other improvisers, focus being conducted by the teacher or another improviser.
 tags:
-  - "UCB Manual"
-  - "Listening"
-source: "UCB Manual"
-
+- UCB Manual
+- Listening
+source: UCB Manual
 credit: UCB
 ---
 

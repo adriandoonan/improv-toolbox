@@ -1,17 +1,14 @@
 ---
-name: "Experts"
-purpose: "Characters"
-shortDescription: "Be able to form characters from just movement and point of view."
-description: |
-  Work back to a character based on a profession. Players start seated but then have time to 
-  work out a character by moving around the space. After they have a character a short interview
-  scene is played out to get back answers filtered through this character and their specific deal.
+name: Experts
+purpose: Characters
+shortDescription: Work back to a character based on a profession. Players start seated but then have time to work out a character by moving around the space.
+description: Work back to a character based on a profession. Players start seated but then have time to work out a character by moving around the space. After they have a character a short interview scene is played out to get back answers filtered through this character and their specific deal.
 tags:
-  - "Annoyance"
-  - "Characters"
-  - Deal
-source: "cliffweb"
-credit: "Annoyance"
+- Annoyance
+- Characters
+- Deal
+source: cliffweb
+credit: Annoyance
 ---
 
 4 people up in chairs.

@@ -1,16 +1,12 @@
 ---
-name: "Confessions"
-purpose: "Scene Work"
-shortDescription: "Do two-person scenes in which each character makes a confession to the other one at some point."
-description: |
-  Two person scenes which include a confessions.
-  We are trying to focus on the characters and the impact of what is being confessed.
-  We are looking for personal, honest confessions.
+name: Confessions
+purpose: Scene Work
+shortDescription: Two person scenes which include a confessions. We are trying to focus on the characters and the impact of what is being confessed.
+description: Two person scenes which include a confessions. We are trying to focus on the characters and the impact of what is being confessed. We are looking for personal, honest confessions.
 tags:
-  - "Will Hines - How to be the greatest improviser on earth"
-  - "Scene work"
-source: "Will Hines - How to be the greatest improviser on earth"
-
+- Will Hines - How to be the greatest improviser on earth
+- Scene work
+source: Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---
 

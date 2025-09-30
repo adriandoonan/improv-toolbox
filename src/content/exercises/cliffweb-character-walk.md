@@ -1,14 +1,13 @@
 ---
-name: "Character Walk"
-purpose: "Characters"
-shortDescription: "The entire group walks around as the teacher gives them instructions to inform a character such as:"
-description: |
-  The whole class is moving in this exercise where the instructor can direct how the players should be focusing their characters either in physicality, due to an emotional state or reacting to something happening in the environment.
-focus: "Characters"
+name: Character Walk
+purpose: Characters
+shortDescription: Whole group walks while the instructor shifts focus on physicality, emotions, or environmental reactions.
+description: Keep the entire class moving as the instructor calls adjustments—physical traits, emotional states, or environmental influences—to explore different character choices.
+focus: Characters
 tags:
-  - "Characters"
-source: "cliffweb"
-credit: "unclaimed"
+- Characters
+source: cliffweb
+credit: unclaimed
 ---
 
 The entire group walks around as the teacher gives them instructions to inform a character such as:

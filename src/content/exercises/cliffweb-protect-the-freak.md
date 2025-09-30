@@ -1,23 +1,14 @@
 ---
-name: "Protect the freak"
-purpose: "SceneWork"
-shortDescription: "Its sometimes an improvisers instict to normalise every scene by analysing it and pointing out what's wrong but this can take the fun out of it. it's best to double down on the fun wherever possible,"
-description: |
-  This is where our two straight men, instead of pointing out how unusual the
-  wacko character is, choose to protect the freakish choice by subverting the
-  logical rules of reality. By bending to the freak’s world view. The straight men
-  specifically do NOT call out the freakish character as unusual. They react to
-  the freak as if he/she/it’s completely normal, totally correct in point of view,
-  and perhaps even the paradigm of how one should act in this world! It is fun to
-  subvert the rules of reality like this. The easiest way to achieve this is to
-  elevate the status of the unusual character. For example: - Batshit crazy
-  initiating character charges the stage, screaming, “Burn them all! My…
+name: Protect the freak
+purpose: SceneWork
+shortDescription: Coach scene partners to legitimize the wild character instead of calling them out—elevate the freak’s worldview.
+description: Run three-person scenes where two “straight” players embrace and defend the bizarre character’s logic, raising their status and bending reality to support the premise so the game can escalate together.
 tags:
-  - "Annoyance"
-  - "Scene work"
-  - "Deal"
-source: "cliffweb"
-credit: "Annoyance"
+- Annoyance
+- Scene work
+- Deal
+source: cliffweb
+credit: Annoyance
 ---
 
 This is where our two straight men, instead of pointing out how unusual the wacko character is, choose to protect the freakish choice by subverting the logical rules of reality. By bending to the freak’s world view. The straight men specifically do NOT call out the freakish character as unusual. They react to the freak as if he/she/it’s completely normal, totally correct in point of view, and perhaps even the paradigm of how one should act in this world! It is fun to subvert the rules of reality like this. The easiest way to achieve this is to elevate the status of the unusual character. For example:

@@ -1,13 +1,12 @@
 ---
-name: "Find yes and in a real conversation"
-purpose: "Homework"
-shortDescription: "This exercise allows you to practice Yes And outside of the classroom or rehearsal studio. Recognizing how Yes And naturally occurs will make you better at using this concept in your scene work."
-description: |
-  Watch out for improv patterns in the real world. We want our scenes to be believable and what better way than listening to real, honest-to-dog conversations in the streets.
-focus: "Homework"
+name: Find yes and in a real conversation
+purpose: Homework
+shortDescription: Watch out for improv patterns in the real world.
+description: Watch out for improv patterns in the real world. We want our scenes to be believable and what better way than listening to real, honest-to-dog conversations in the streets.
+focus: Homework
 tags:
-  - "Homework"
-  - "UCB Manual"
+- Homework
+- UCB Manual
 source: UCB Manual
 credit: UCB
 ---
