@@ -3,9 +3,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import FavoriteToggle from "../../components/FavoriteToggle.astro";
-import warmupsTableEntryUrl from "../../scripts/warmups-table.entry.js?url";
 import { getCollection } from "astro:content";
-const warmupsTableScript = warmupsTableEntryUrl;
 const warmups = (await getCollection("warmups")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
 );
@@ -108,7 +106,9 @@ const minPeople = Array.from(
       }
     </ul>
   </section>
-  <script type="module" src={warmupsTableScript}></script>
+  <script type="module" is:inline>
+    import "../../scripts/warmups-table.client.ts";
+  </script>
   <style>
     .resource-card__title a {
       color: inherit;
