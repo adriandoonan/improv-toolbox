@@ -20,8 +20,8 @@ const noteKey = `${contentType}:${contentId}`;
     <div class="note-history__header">
       <h3>Saved notes</h3>
       <p class="note-history__helper">
-        Reopen anything you've captured for this piece. Updating a note keeps the
-        original saved time so you can see when you first captured it.
+        Reopen anything you've captured for this piece. Updating a note keeps
+        the original saved time so you can see when you first captured it.
       </p>
     </div>
     <ul class="note-list" data-note-list></ul>
@@ -77,18 +77,20 @@ const noteKey = `${contentType}:${contentId}`;
 <style>
   .notes-panel {
     margin-top: clamp(2.5rem, 6vw, 3.5rem);
-    background: color-mix(in srgb, var(--surface-panel, #221721) 92%, transparent);
-    border-radius: var(--radius-lg, 28px);
-    padding: clamp(1.75rem, 5vw, 3rem);
-    border: 1px solid color-mix(
+    background: color-mix(
       in srgb,
-      var(--color-accent, #ff2f55) 16%,
-      rgba(255, 255, 255, 0.08)
+      var(--surface-panel, #221721) 92%,
+      transparent
     );
-    box-shadow: var(
-      --shadow-soft,
-      0 18px 42px rgba(5, 2, 8, 0.45)
-    );
+    border-radius: var(--radius-md, 28px);
+    padding: clamp(1.75rem, 5vw, 3rem);
+    border: 1px solid
+      color-mix(
+        in srgb,
+        var(--color-accent, #ff2f55) 16%,
+        rgba(255, 255, 255, 0.08)
+      );
+    box-shadow: var(--shadow-soft, 0 18px 42px rgba(5, 2, 8, 0.45));
     display: grid;
     gap: 1.25rem;
   }
@@ -113,7 +115,11 @@ const noteKey = `${contentType}:${contentId}`;
     font-size: 0.85rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 70%, white 30%);
+    color: color-mix(
+      in srgb,
+      var(--color-muted-strong, #f1d5dc) 70%,
+      white 30%
+    );
   }
 
   .note-field textarea {
@@ -125,15 +131,25 @@ const noteKey = `${contentType}:${contentId}`;
     padding: 1rem 1.1rem;
     font-size: 1rem;
     line-height: 1.5;
-    background: color-mix(in srgb, var(--surface-color, #161018) 82%, black 18%);
+    background: color-mix(
+      in srgb,
+      var(--surface-color, #161018) 82%,
+      black 18%
+    );
     color: var(--color-text, #f9f6f8);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .note-field textarea:focus-visible {
     outline: none;
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 55%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 55%,
+      transparent
+    );
     box-shadow: 0 0 0 2px rgba(255, 71, 97, 0.3);
   }
 
@@ -166,15 +182,23 @@ const noteKey = `${contentType}:${contentId}`;
     justify-content: center;
     gap: 0.35rem;
     padding: 0.6rem 1.2rem;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     border: 1px solid transparent;
     font-size: 0.95rem;
     font-weight: 600;
     letter-spacing: 0.03em;
     text-transform: uppercase;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
-      border-color 0.2s ease, color 0.2s ease;
-    background: color-mix(in srgb, var(--surface-raised, #1f1521) 68%, black 32%);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+    background: color-mix(
+      in srgb,
+      var(--surface-raised, #1f1521) 68%,
+      black 32%
+    );
     color: var(--color-heading, #fff5f7);
     box-shadow: 0 10px 24px rgba(10, 4, 12, 0.35);
   }
@@ -193,7 +217,11 @@ const noteKey = `${contentType}:${contentId}`;
   }
 
   .note-button--primary {
-    background: linear-gradient(135deg, var(--color-accent, #ff2f55) 0%, #ff6b82 100%);
+    background: linear-gradient(
+      135deg,
+      var(--color-accent, #ff2f55) 0%,
+      #ff6b82 100%
+    );
     color: #140408;
     border: none;
     box-shadow: 0 18px 38px rgba(255, 63, 94, 0.45);
@@ -211,8 +239,16 @@ const noteKey = `${contentType}:${contentId}`;
   }
 
   .note-button--outline {
-    background: color-mix(in srgb, var(--surface-color, #161018) 75%, transparent);
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--surface-color, #161018) 75%,
+      transparent
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 45%,
+      transparent
+    );
     color: var(--color-accent-soft, #ff536c);
   }
 
@@ -223,12 +259,24 @@ const noteKey = `${contentType}:${contentId}`;
       var(--color-accent, #ff2f55) 18%,
       var(--surface-raised, #1f1521) 82%
     );
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 55%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 55%,
+      transparent
+    );
   }
 
   .note-button--danger {
-    background: color-mix(in srgb, var(--color-accent, #ff2f55) 12%, transparent);
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 12%,
+      transparent
+    );
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 45%,
+      transparent
+    );
     color: var(--color-accent-soft, #ff536c);
   }
 
@@ -239,7 +287,11 @@ const noteKey = `${contentType}:${contentId}`;
       var(--color-accent, #ff2f55) 26%,
       var(--surface-raised, #1f1521) 74%
     );
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 60%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 60%,
+      transparent
+    );
     color: #140408;
   }
 
@@ -264,7 +316,11 @@ const noteKey = `${contentType}:${contentId}`;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 1rem;
     padding: 0.75rem 1rem;
-    background: color-mix(in srgb, var(--surface-raised, #1f1521) 84%, black 16%);
+    background: color-mix(
+      in srgb,
+      var(--surface-raised, #1f1521) 84%,
+      black 16%
+    );
     box-shadow: 0 12px 28px rgba(6, 2, 10, 0.4);
   }
 
@@ -343,7 +399,7 @@ const noteKey = `${contentType}:${contentId}`;
 
   :global(.note-item) {
     position: relative;
-    border-radius: var(--radius-lg, 28px);
+    border-radius: var(--radius-md, 28px);
     padding: 1.15rem 1.25rem 1.2rem;
     display: grid;
     gap: 0.9rem;
@@ -355,7 +411,9 @@ const noteKey = `${contentType}:${contentId}`;
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 20px 42px rgba(8, 4, 12, 0.4);
     overflow: hidden;
-    transition: transform 0.22s ease, box-shadow 0.22s ease,
+    transition:
+      transform 0.22s ease,
+      box-shadow 0.22s ease,
       border-color 0.22s ease;
   }
 
@@ -375,7 +433,11 @@ const noteKey = `${contentType}:${contentId}`;
   @media (hover: hover) {
     :global(.note-item:hover) {
       transform: translateY(-2px);
-      border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 24%, transparent);
+      border-color: color-mix(
+        in srgb,
+        var(--color-accent, #ff2f55) 24%,
+        transparent
+      );
       box-shadow: 0 24px 48px rgba(8, 4, 12, 0.48);
     }
   }
@@ -442,7 +504,11 @@ const noteKey = `${contentType}:${contentId}`;
     );
     font-size: 0.75rem;
     letter-spacing: 0.03em;
-    color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 75%, white 25%);
+    color: color-mix(
+      in srgb,
+      var(--color-muted-strong, #f1d5dc) 75%,
+      white 25%
+    );
     white-space: nowrap;
   }
 
@@ -490,10 +556,18 @@ const noteKey = `${contentType}:${contentId}`;
       var(--surface-glass, #241521) 72%,
       transparent
     );
-    color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 82%, white 18%);
+    color: color-mix(
+      in srgb,
+      var(--color-muted-strong, #f1d5dc) 82%,
+      white 18%
+    );
     box-shadow: 0 8px 18px rgba(8, 4, 12, 0.35);
-    transition: transform 0.18s ease, box-shadow 0.18s ease,
-      background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+    transition:
+      transform 0.18s ease,
+      box-shadow 0.18s ease,
+      background 0.18s ease,
+      border-color 0.18s ease,
+      color 0.18s ease;
     cursor: pointer;
     backdrop-filter: blur(10px) saturate(160%);
     position: relative;
@@ -522,7 +596,11 @@ const noteKey = `${contentType}:${contentId}`;
   }
 
   :global(.note-icon-button--edit) {
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 24%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 24%,
+      transparent
+    );
     color: color-mix(in srgb, var(--color-accent-soft, #ff536c) 80%, white 20%);
   }
 
@@ -533,12 +611,20 @@ const noteKey = `${contentType}:${contentId}`;
       var(--color-accent, #ff2f55) 16%,
       var(--surface-glass, #241521) 84%
     );
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 58%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 58%,
+      transparent
+    );
     color: #1a050b;
   }
 
   :global(.note-icon-button--delete) {
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 20%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 20%,
+      transparent
+    );
     color: color-mix(in srgb, var(--color-warning, #ffb3b3) 55%, white 45%);
     background: color-mix(
       in srgb,
@@ -554,7 +640,11 @@ const noteKey = `${contentType}:${contentId}`;
       var(--color-accent, #ff2f55) 24%,
       #1a0d12 76%
     );
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 62%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 62%,
+      transparent
+    );
     color: #1a050b;
   }
 
@@ -579,7 +669,9 @@ const noteKey = `${contentType}:${contentId}`;
 
   :global(.note-item--editing) {
     border-color: rgba(255, 83, 108, 0.45);
-    box-shadow: 0 0 0 1px rgba(255, 83, 108, 0.35), 0 24px 48px rgba(255, 71, 97, 0.35);
+    box-shadow:
+      0 0 0 1px rgba(255, 83, 108, 0.35),
+      0 24px 48px rgba(255, 71, 97, 0.35);
   }
 
   :global(.note-item--editing)::before {
@@ -596,12 +688,20 @@ const noteKey = `${contentType}:${contentId}`;
   }
 
   :global(.note-item--editing .note-item__header) {
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 45%,
+      transparent
+    );
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
   }
 
   :global(.note-item--editing .note-item__updated) {
-    border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 42%, transparent);
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent, #ff2f55) 42%,
+      transparent
+    );
     color: color-mix(in srgb, var(--color-heading, #fff5f7) 85%, white 15%);
   }
 
@@ -761,9 +861,7 @@ const noteKey = `${contentType}:${contentId}`;
     }
 
     function updateSaveButtonLabel() {
-      saveButton.textContent = editingNoteId
-        ? "Update note"
-        : defaultSaveLabel;
+      saveButton.textContent = editingNoteId ? "Update note" : defaultSaveLabel;
     }
 
     function updateSaveButtonState(value) {
@@ -1462,7 +1560,10 @@ const noteKey = `${contentType}:${contentId}`;
             updated.textContent = updatedFormatted || "Edited locally";
             if (updatedFormatted) {
               updated.dataset.label = "Edited";
-              updated.setAttribute("aria-label", `Edited on ${updatedFormatted}`);
+              updated.setAttribute(
+                "aria-label",
+                `Edited on ${updatedFormatted}`
+              );
             }
             meta.appendChild(updated);
           }
@@ -1532,7 +1633,9 @@ const noteKey = `${contentType}:${contentId}`;
       const isEditing = Boolean(editingNoteId);
 
       if (isEditing) {
-        const exists = collection.items.some((item) => item.id === editingNoteId);
+        const exists = collection.items.some(
+          (item) => item.id === editingNoteId
+        );
         if (!exists) {
           cancelEdit();
         }
@@ -1553,11 +1656,13 @@ const noteKey = `${contentType}:${contentId}`;
 
       let statusMessage = "";
       if (!storageReady) {
-        statusMessage = "Local storage is unavailable; notes stay on this page only.";
+        statusMessage =
+          "Local storage is unavailable; notes stay on this page only.";
       } else if (editingNoteId) {
         statusMessage = "Editing existing note. Click save to update it.";
       } else if (draftContent) {
-        statusMessage = "Draft restored. Save to add it to your notes or clear it.";
+        statusMessage =
+          "Draft restored. Save to add it to your notes or clear it.";
       } else if (collection.items.length) {
         statusMessage = "Notes loaded from local storage.";
       } else {
@@ -1610,7 +1715,9 @@ const noteKey = `${contentType}:${contentId}`;
       const savedAt = new Date().toISOString();
 
       if (editingNoteId) {
-        const index = collection.items.findIndex((item) => item.id === editingNoteId);
+        const index = collection.items.findIndex(
+          (item) => item.id === editingNoteId
+        );
         if (index === -1) {
           cancelEdit();
           setStatus("The note you were editing is no longer available.");
