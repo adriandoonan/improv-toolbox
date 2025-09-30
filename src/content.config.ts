@@ -23,6 +23,8 @@ const warmups = defineCollection({
     description: z.string(),
     focus: z.string().optional(),
     minimumPeople: z.number().optional(),
+    source: z.string().optional(),
+    credit: z.string().optional(),
   }),
 });
 
@@ -32,6 +34,8 @@ const forms = defineCollection({
     shortDescription: z.string(),
     description: z.string(),
     type: z.string().optional(),
+    source: z.string().optional(),
+    credit: z.string().optional(),
   }),
 });
 
