@@ -61,6 +61,10 @@ All content sections (warmups, exercises, forms, tools) share the same **base fe
 
 - Same base features as warmups
 - Can embed timers or suggestion tools (e.g. emotions, seven deadly sins)
+- Fields: name, purpose (single keyword), shortDescription, description, optional focus, tags array, source, credit, optional minimumPeople.
+- Purpose captures the primary skill in one word so filtering remains lightweight; tags contain the broader context (categories, focus areas).
+- Source and credit identify where the exercise originated (e.g. `cliffweb` with credit `unclaimed` for imported material) to simplify future attribution updates.
+- Filters allow sorting by focus, source, credit, minimum participants, and favourites.
 
 ### 3.3 Forms
 
@@ -125,6 +129,7 @@ Types:
 
 ## Change Log
 
+- **2025-10-14:** Added single-word `purpose`, `tags`, `source`, and `credit` requirements for exercises and captured Cliffweb import metadata expectations.
 - **2025-10-12:** Documented delivered favourites, personal notes, and Lesson Planner functionality; refreshed future roadmap items.
 - **2025-10-05:** Captured alpha scope (navigation, content collections, tools) and documented automated HTML regression tests.
 - **2025-10-02:** Clarified functional programming expectations, documented feature delivery phases, added timer validation requirement, created Architecture/API doc stubs.

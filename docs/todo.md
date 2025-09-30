@@ -1,8 +1,16 @@
 # Todo & Refactor Backlog
 
+## Tasks
+
+### Polish Cliffweb exercise import formatting
+
+- Review generated descriptions for edge cases where HTML lists or emphasis lost fidelity.
+- Capture any manual corrections needed so the Python importer can be iterated instead of hand-editing.
+
 ## Refactor opportunities
 
 ### Modularize NotesPanel data and rendering helpers
+
 - **Context:** `src/components/NotesPanel.astro` currently couples storage, migration, markdown conversion, and UI wiring within a single inline script, increasing complexity and making testing difficult.
 - **Next steps:**
   - Extract storage (versioning, migrations, persistence) into a pure utility such as `src/utils/notesStorage.ts` with accompanying unit tests.
@@ -10,6 +18,7 @@
   - Keep the Astro component focused on UI orchestration by importing the new helpers and delegating side effects.
 
 ### Decouple Lesson Planner state management and persistence
+
 - **Context:** `src/pages/tools/lesson-plans/index.astro` intermixes IndexedDB access, domain modeling, and DOM manipulation, making the feature hard to reason about and extend.
 - **Next steps:**
   - Introduce a storage module under `src/utils/lesson-plans/` to encapsulate IndexedDB operations and error handling.
