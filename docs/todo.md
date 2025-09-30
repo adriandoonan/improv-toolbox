@@ -7,6 +7,10 @@
 - Review generated descriptions for edge cases where HTML lists or emphasis lost fidelity.
 - Capture any manual corrections needed so the Python importer can be iterated instead of hand-editing.
 
+### Inline shortcut icon once bespoke asset ready
+
+- Generate a dedicated 96×96 shortcut icon and embed it as a base64 `data:` URL in `public/manifest.webmanifest` so the PWA can expose tailor-made artwork without adding new binary assets to the repo.
+
 ## Refactor opportunities
 
 ### Modularize NotesPanel data and rendering helpers
