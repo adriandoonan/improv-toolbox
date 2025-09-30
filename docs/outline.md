@@ -1,6 +1,6 @@
-Improv toolbox should provide a lot of information for improv performers and trainers as well as tools that can mainly be used during practice and coaching sessions.
+Improv toolbox provides a lot of information for improv performers and trainers as well as tools that can mainly be used during practice and coaching sessions.
 
-Later features could include creating lesson plans, keeping notes on sessions and scheduling.
+Shipped capabilities already cover lesson planning, personal notes, and offline-friendly storage; upcoming work focuses on deeper scheduling and automation layers.
 
 ## tech stack and conventions
 
@@ -9,7 +9,7 @@ Later features could include creating lesson plans, keeping notes on sessions an
 - web components
 - svelte components preferred when best solution
 - pwa, local and mobile first
-- functional programming only
+- functional programming only for shared logic; keep side-effecting UI glue minimal and isolated
 - tools are discrete components so that collaborators can add a tool as long as the front matter is correct and it works
 - content is added in markdown, named fields in front matter
 
@@ -24,13 +24,13 @@ Later features could include creating lesson plans, keeping notes on sessions an
 
 Primary destinations (Home, Exercises, Forms, Warmups, Tools) sit in a mobile-first bottom navigation bar with icon + label pairings. The sticky top app bar hosts the title, quick timer shortcut, and a standard hamburger trigger that anchors the modal drawer. A persistent "Menu" action in the bottom bar opens the same drawer so overflow items stay reachable even after long scrolls.
 
-For the content sections the user should be able to list, filter and view detail pages for each element. A user should be able to favourite elements and be able to filter by favourites in the list page.
+For the content sections the user can list, filter and view detail pages for each element. Favourites persist locally (via [`FavoriteToggle`](../src/components/FavoriteToggle.astro)) so facilitators can filter by their go-to items.
 
 When on a detail page, if there is a matching tool, it should be possible to run the tool directly from the page. For example, for an exercise with a thirty second stare start and then a one minute scene, there should be a timer that has a thirty second and then one minute timers. For an excersise about playing emotions, there should be a suggestion component, pre filtered to only select from a collection of emotions, same for whatever, like the seven deadly sins, only the seven sins should be possible suggestions. For a form like Gauss form, there should be a Gauss timer.
 
-On the details page a user should be able to add their own notes in markdown format that will be displayed alongside our own information on this element.
+On the details page a user can add their own notes in markdown format that will be displayed alongside our own information on this element using the shared [`NotesPanel`](../src/components/NotesPanel.astro).
 
-Users should also be able to submit new elements for the database
+Users should also be able to submit new elements for the database (submission flow still to be implemented).
 
 ## tools
 
@@ -48,6 +48,10 @@ The toolbox should offer different timers, all timers should block a phone from 
 A user should be able to get suggestions for their sets. The default should be a word taken from a library of simple words. a user should also be able to select categories of suggestion to get suggestions for different things. examples include emotions, to get a suggestion from a list of emotions, location, to get a suggestion that is a location, song lyrics to get a list of song lyrics, to get a suggestion that is a line of a song, song names, to get a suggestion from a list of song or album names, poem names, to get a suggestion from a list of poem names, poem line, to get a suggestion that is the line of a poem, and so on.
 
 Collaborators to the app should be able to add new word lists easily.
+
+### Lesson planner
+
+The lesson planner tool ([`src/pages/tools/lesson-plans/index.astro`](../src/pages/tools/lesson-plans/index.astro)) lets facilitators assemble reusable session plans by selecting warmups, exercises, breaks, and custom notes. Plans are stored locally so they can be reused offline and exported for sharing.
 
 ### Jam groupaliser
 

@@ -1,13 +1,13 @@
 # Improv Toolbox — Requirements
 
-_Last updated: 2025-10-02_
+_Last updated: 2025-10-12_
 
 ## 1. Project Purpose
 
 Improv Toolbox provides information and interactive tools for improv performers and trainers.  
 It is designed for use during practice, coaching sessions, and shows, with a mobile-first, offline-capable PWA.
 
-Later features will support lesson planning, note-taking, and scheduling.
+Lesson planning, personal notes, and scheduling enhancements continue to evolve as we collect feedback from facilitators.
 
 ---
 
@@ -30,20 +30,21 @@ All content sections (warmups, exercises, forms, tools) share the same **base fe
 - **List view**: searchable, filterable, sortable
 - **Detail page**:
   - Core fields (name, description, tags, etc.)
-  - Ability to favourite elements
+  - Ability to favourite elements via the [FavoriteToggle component](../src/components/FavoriteToggle.astro)
   - If relevant, embed matching tools (e.g. timers, suggestion generators)
   - Optional trainer notes, variations, related elements
-  - User-submitted notes in Markdown (future feature)
+  - Personal notes stored locally in Markdown through the [NotesPanel component](../src/components/NotesPanel.astro)
 - **Submission**: users can submit new elements for the database
 
 ### 3.0 Implementation Status (MVP vs. backlog)
 
 - **Delivered (alpha):**
   - Global drawer navigation covering Home, Exercises, Forms, Warmups, and Tools.
-  - Static content collections with list filtering, detail pages, and tool embeds for exercises, warmups, and forms.
-  - Tools directory with Timer, Gauss Timer, Jam Groupaliser, and Suggestion Generator utilities.
+  - Static content collections with list filtering, detail pages, favourites, and tool embeds for exercises, warmups, and forms (see [exercises index](../src/pages/exercises/index.astro)).
+  - Personal notes saved per item with offline storage handled by [NotesPanel](../src/components/NotesPanel.astro).
+  - Tools directory with Timer, Gauss Timer, Jam Groupaliser, Suggestion Generator, and the [Lesson Planner](../src/pages/tools/lesson-plans/index.astro).
 - **In progress:** Enhancing forms-specific filters and deep-link coverage for suggestion APIs.
-- **Planned (backlog):** Favourites, user submissions, user notes, advanced search, and scheduling workflows.
+- **Planned (backlog):** User submissions, advanced search, cross-device sync, and scheduling workflows.
 
 ### 3.1 Warmups
 
@@ -99,10 +100,10 @@ Types:
 
 ## 5. Future Features
 
-- **User Notes**: Add personal notes in Markdown on detail pages
-- **Session Planner**: Plan sessions by selecting a sequence of elements (warmups, exercises, breaks, forms) with time estimates to ensure everything fits
-- **Lesson Plans**: Organize and save repeatable plans
-- **Scheduling**: Calendar-based planning and reminders
+- **Session Planner automations**: Build on the Lesson Planner with time budgeting, suggested flows, and constraint validation.
+- **Scheduling**: Calendar-based planning and reminders.
+- **Cross-device sync**: Optional account-based syncing for favourites, notes, and lesson plans.
+- **Community submissions**: Intake flow for facilitators to share exercises and tools.
 
 ---
 
@@ -124,5 +125,6 @@ Types:
 
 ## Change Log
 
+- **2025-10-12:** Documented delivered favourites, personal notes, and Lesson Planner functionality; refreshed future roadmap items.
 - **2025-10-05:** Captured alpha scope (navigation, content collections, tools) and documented automated HTML regression tests.
 - **2025-10-02:** Clarified functional programming expectations, documented feature delivery phases, added timer validation requirement, created Architecture/API doc stubs.
