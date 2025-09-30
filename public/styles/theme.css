@@ -53,9 +53,21 @@
   --muted-color: color-mix(in srgb, var(--color-text) 65%, black 35%);
   --muted-border-color: color-mix(in srgb, var(--color-text) 15%, transparent);
   --border-elevated: color-mix(in srgb, var(--color-text) 16%, transparent);
-  --border-elevated-strong: color-mix(in srgb, var(--color-text) 22%, transparent);
-  --accent-shadow-soft: color-mix(in srgb, var(--color-accent) 24%, transparent);
-  --accent-shadow-strong: color-mix(in srgb, var(--color-accent) 36%, transparent);
+  --border-elevated-strong: color-mix(
+    in srgb,
+    var(--color-text) 22%,
+    transparent
+  );
+  --accent-shadow-soft: color-mix(
+    in srgb,
+    var(--color-accent) 24%,
+    transparent
+  );
+  --accent-shadow-strong: color-mix(
+    in srgb,
+    var(--color-accent) 36%,
+    transparent
+  );
   --shadow-soft: 0 18px 42px rgba(12, 18, 38, 0.45);
   --shadow-hard: 0 24px 68px rgba(5, 9, 23, 0.6);
   --body-gradient: radial-gradient(
@@ -103,9 +115,21 @@
   );
   --muted-border-color: color-mix(in srgb, var(--color-text) 18%, transparent);
   --border-elevated: color-mix(in srgb, var(--color-text) 24%, transparent);
-  --border-elevated-strong: color-mix(in srgb, var(--color-text) 32%, transparent);
-  --accent-shadow-soft: color-mix(in srgb, var(--color-accent) 26%, transparent);
-  --accent-shadow-strong: color-mix(in srgb, var(--color-accent) 36%, transparent);
+  --border-elevated-strong: color-mix(
+    in srgb,
+    var(--color-text) 32%,
+    transparent
+  );
+  --accent-shadow-soft: color-mix(
+    in srgb,
+    var(--color-accent) 26%,
+    transparent
+  );
+  --accent-shadow-strong: color-mix(
+    in srgb,
+    var(--color-accent) 36%,
+    transparent
+  );
   --shadow-soft: 0 18px 42px rgba(14, 165, 233, 0.18);
   --shadow-hard: 0 24px 68px rgba(15, 23, 42, 0.14);
   --body-gradient: radial-gradient(
@@ -226,30 +250,21 @@ button,
     var(--color-background) 18%
   );
   color: var(--color-heading);
-  box-shadow: 0 12px 28px color-mix(
-      in srgb,
-      var(--surface-color) 35%,
-      transparent
-    );
+  box-shadow: 0 12px 28px
+    color-mix(in srgb, var(--surface-color) 35%, transparent);
 }
 
 .button:hover,
 .button:focus-visible {
   transform: translateY(-2px);
-  box-shadow: 0 16px 36px color-mix(
-      in srgb,
-      var(--surface-color) 45%,
-      transparent
-    );
+  box-shadow: 0 16px 36px
+    color-mix(in srgb, var(--surface-color) 45%, transparent);
 }
 
 .button:focus-visible {
   outline: none;
-  box-shadow: 0 16px 36px color-mix(
-        in srgb,
-        var(--surface-color) 45%,
-        transparent
-      ),
+  box-shadow: 0 16px 36px
+      color-mix(in srgb, var(--surface-color) 45%, transparent),
     var(--focus-ring);
 }
 
@@ -263,16 +278,11 @@ button,
 .button--accent {
   background: linear-gradient(
     135deg,
-    color-mix(
-      in srgb,
-      var(--color-accent) 92%,
-      var(--color-background) 8%
-    ),
+    color-mix(in srgb, var(--color-accent) 92%, var(--color-background) 8%),
     var(--color-accent)
   );
   color: var(--color-on-accent);
-  border: 1px solid
-    color-mix(in srgb, var(--color-accent) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
   box-shadow: 0 18px 38px var(--accent-shadow-soft);
 }
 
@@ -300,11 +310,8 @@ button,
     var(--color-accent) 35%,
     var(--color-border-subtle)
   );
-  box-shadow: 0 14px 32px color-mix(
-      in srgb,
-      var(--surface-color) 40%,
-      transparent
-    );
+  box-shadow: 0 14px 32px
+    color-mix(in srgb, var(--surface-color) 40%, transparent);
 }
 
 .button--surface:focus-visible {
@@ -313,11 +320,8 @@ button,
     var(--color-accent) 35%,
     var(--color-border-subtle)
   );
-  box-shadow: 0 14px 32px color-mix(
-        in srgb,
-        var(--surface-color) 40%,
-        transparent
-      ),
+  box-shadow: 0 14px 32px
+      color-mix(in srgb, var(--surface-color) 40%, transparent),
     var(--focus-ring);
 }
 
@@ -552,16 +556,9 @@ button,
 .bottom-nav__item.is-active {
   background: linear-gradient(
     135deg,
-    color-mix(
-      in srgb,
-      var(--color-accent) 96%,
-      var(--color-background) 4%
-    ) 0%,
-    color-mix(
-      in srgb,
-      var(--color-accent) 90%,
-      var(--color-background) 10%
-    ) 100%
+    color-mix(in srgb, var(--color-accent) 96%, var(--color-background) 4%) 0%,
+    color-mix(in srgb, var(--color-accent) 90%, var(--color-background) 10%)
+      100%
   );
   border-color: var(--border-elevated-strong);
   color: var(--color-on-accent);
@@ -618,16 +615,9 @@ button,
 .tab-nav a[aria-current="page"] {
   background: linear-gradient(
     135deg,
-    color-mix(
-      in srgb,
-      var(--color-accent) 96%,
-      var(--color-background) 4%
-    ) 0%,
-    color-mix(
-      in srgb,
-      var(--color-accent) 90%,
-      var(--color-background) 10%
-    ) 100%
+    color-mix(in srgb, var(--color-accent) 96%, var(--color-background) 4%) 0%,
+    color-mix(in srgb, var(--color-accent) 90%, var(--color-background) 10%)
+      100%
   );
   border-color: var(--border-elevated-strong);
   color: var(--color-on-accent);
@@ -763,8 +753,7 @@ textarea:focus {
   border: 1px solid
     color-mix(in srgb, var(--color-accent) 16%, var(--color-border-subtle));
   box-shadow: var(--shadow-soft);
-  transition: transform 0.2s ease, box-shadow 0.2s ease,
-    border-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .resource-card:hover,
@@ -826,7 +815,11 @@ textarea:focus {
     var(--surface-panel) 82%,
     var(--color-background) 18%
   );
-  color: color-mix(in srgb, var(--color-muted) 85%, var(--color-background) 15%);
+  color: color-mix(
+    in srgb,
+    var(--color-muted) 85%,
+    var(--color-background) 15%
+  );
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease,
     transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -836,11 +829,8 @@ textarea:focus {
   border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
   color: color-mix(in srgb, var(--color-accent) 70%, white 30%);
   transform: translateY(-1px);
-  box-shadow: 0 8px 18px color-mix(
-      in srgb,
-      var(--surface-color) 38%,
-      transparent
-    );
+  box-shadow: 0 8px 18px
+    color-mix(in srgb, var(--surface-color) 38%, transparent);
 }
 
 .favorite-toggle__button:active {
@@ -967,7 +957,7 @@ textarea:focus {
 
 .content-card {
   background: color-mix(in srgb, var(--surface-panel) 90%, transparent);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   padding: clamp(1.5rem, 5vw, 3rem);
   border: 1px solid
     color-mix(in srgb, var(--color-accent) 18%, var(--color-border-subtle));
@@ -1015,7 +1005,7 @@ textarea:focus {
 .panel {
   position: relative;
   background: color-mix(in srgb, var(--surface-panel) 92%, transparent);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   padding: clamp(1.75rem, 5vw, 3rem);
   border: 1px solid var(--color-border-subtle);
   box-shadow: var(--shadow-hard);

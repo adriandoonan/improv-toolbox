@@ -5,7 +5,8 @@ import { getCollection } from "astro:content";
 
 export const tool = {
   name: "Lesson Planner",
-  description: "Stack warm-ups, exercises, and forms into reusable class plans.",
+  description:
+    "Stack warm-ups, exercises, and forms into reusable class plans.",
   icon: "🗂️",
   creator: "Improv Toolbox",
   href: "/tools/lesson-plans",
@@ -62,7 +63,8 @@ const categoryOptions = [
         <div class="lesson-notebooks">
           <label class="lesson-notebooks__field">
             <span class="lesson-notebooks__label mute small">Notebook</span>
-            <select id="notebookSelect" class="lesson-notebooks__select"></select>
+            <select id="notebookSelect" class="lesson-notebooks__select"
+            ></select>
           </label>
           <button
             id="newNotebookBtn"
@@ -76,7 +78,8 @@ const categoryOptions = [
           <div>
             <h1>Lesson plans</h1>
             <p class="lesson-sidebar__intro">
-              Save your go-to class lineups and remix them fast before rehearsal.
+              Save your go-to class lineups and remix them fast before
+              rehearsal.
             </p>
           </div>
           <button id="newPlanBtn" class="button button--accent" type="button">
@@ -84,8 +87,8 @@ const categoryOptions = [
           </button>
         </header>
         <p id="planStorageWarning" class="lesson-warning" hidden>
-          Your browser can’t keep plans after this session. Export or copy them if you
-          need a backup.
+          Your browser can’t keep plans after this session. Export or copy them
+          if you need a backup.
         </p>
         <div id="planListEmpty" class="lesson-empty">
           No lesson plans yet. Create one to start building your class flow.
@@ -94,7 +97,9 @@ const categoryOptions = [
       </aside>
       <div class="lesson-main">
         <div id="planEmptyState" class="plan-empty">
-          <p>Select an existing plan or create a new one to assemble a schedule.</p>
+          <p>
+            Select an existing plan or create a new one to assemble a schedule.
+          </p>
         </div>
         <div id="planWorkspace" class="plan-workspace" hidden>
           <header class="workspace-header">
@@ -111,10 +116,18 @@ const categoryOptions = [
               <p id="planMetaLabel" class="workspace-meta mute small"></p>
             </div>
             <div class="workspace-actions">
-              <button id="addElementBtn" type="button" class="button button--surface">
+              <button
+                id="addElementBtn"
+                type="button"
+                class="button button--surface"
+              >
                 Add item
               </button>
-              <button id="savePlanBtn" type="button" class="button button--accent">
+              <button
+                id="savePlanBtn"
+                type="button"
+                class="button button--accent"
+              >
                 Save plan
               </button>
             </div>
@@ -126,8 +139,7 @@ const categoryOptions = [
                 id="planAimInput"
                 class="plan-field__input"
                 placeholder="What are we focusing on today? (Markdown supported)"
-                rows="4"
-              ></textarea>
+                rows="4"></textarea>
               <span class="plan-field__helper mute small"
                 >Use Markdown for emphasis, lists, and links.</span
               >
@@ -138,8 +150,7 @@ const categoryOptions = [
                 id="planFollowUpsInput"
                 class="plan-field__input"
                 placeholder="Next steps, promised resources, or reminders for the next session."
-                rows="3"
-              ></textarea>
+                rows="3"></textarea>
             </label>
           </section>
           <section class="schedule-section">
@@ -149,7 +160,11 @@ const categoryOptions = [
             </p>
           </section>
           <footer class="workspace-footer">
-            <button id="deletePlanBtn" type="button" class="button button--ghost">
+            <button
+              id="deletePlanBtn"
+              type="button"
+              class="button button--ghost"
+            >
               Delete plan
             </button>
           </footer>
@@ -196,7 +211,9 @@ const categoryOptions = [
         </div>
         <div id="itemStep" class="plan-dialog__step" hidden>
           <label class="plan-dialog__field">
-            <span class="plan-dialog__label" id="itemSearchLabel">Select an item</span>
+            <span class="plan-dialog__label" id="itemSearchLabel"
+              >Select an item</span
+            >
             <input
               id="itemSearch"
               type="search"
@@ -204,14 +221,18 @@ const categoryOptions = [
               autocomplete="off"
             />
           </label>
-          <ul id="itemList" class="plan-dialog__list plan-dialog__list--items"></ul>
+          <ul id="itemList" class="plan-dialog__list plan-dialog__list--items">
+          </ul>
         </div>
       </form>
     </dialog>
   </section>
   <script
     type="module"
-    define:vars={{ LESSON_CATALOG: lessonCatalog, CATEGORY_OPTIONS: categoryOptions }}
+    define:vars={{
+      LESSON_CATALOG: lessonCatalog,
+      CATEGORY_OPTIONS: categoryOptions,
+    }}
   >
     const DB_NAME = "improv-toolbox-lesson-plans";
     const DB_VERSION = 2;
@@ -233,7 +254,9 @@ const categoryOptions = [
       ])
     );
 
-    const categoryLookup = new Map(categories.map((category) => [category.id, category]));
+    const categoryLookup = new Map(
+      categories.map((category) => [category.id, category])
+    );
 
     const notebookSelect = document.getElementById("notebookSelect");
     const newNotebookBtn = document.getElementById("newNotebookBtn");
@@ -308,9 +331,12 @@ const categoryOptions = [
 
           let notebookStore;
           if (!db.objectStoreNames.contains(NOTEBOOK_STORE_NAME)) {
-            notebookStore = db.createObjectStore(NOTEBOOK_STORE_NAME, { keyPath: "id" });
+            notebookStore = db.createObjectStore(NOTEBOOK_STORE_NAME, {
+              keyPath: "id",
+            });
           } else {
-            notebookStore = request.transaction?.objectStore(NOTEBOOK_STORE_NAME);
+            notebookStore =
+              request.transaction?.objectStore(NOTEBOOK_STORE_NAME);
           }
 
           const timestamp = new Date().toISOString();
@@ -421,7 +447,9 @@ const categoryOptions = [
           ? record.name.trim()
           : DEFAULT_NOTEBOOK_NAME;
       const createdAt =
-        typeof record.createdAt === "string" ? record.createdAt : new Date().toISOString();
+        typeof record.createdAt === "string"
+          ? record.createdAt
+          : new Date().toISOString();
       const updatedAt =
         typeof record.updatedAt === "string" ? record.updatedAt : createdAt;
       return { id, name, createdAt, updatedAt, persisted: true };
@@ -442,7 +470,9 @@ const categoryOptions = [
           ? record.name
           : "Untitled plan";
       const createdAt =
-        typeof record.createdAt === "string" ? record.createdAt : new Date().toISOString();
+        typeof record.createdAt === "string"
+          ? record.createdAt
+          : new Date().toISOString();
       const updatedAt =
         typeof record.updatedAt === "string" ? record.updatedAt : createdAt;
       const notebookId =
@@ -453,19 +483,23 @@ const categoryOptions = [
         ? record.schedule
             .map((item) => {
               if (!item || typeof item !== "object") return null;
-              const category = typeof item.category === "string" ? item.category : null;
+              const category =
+                typeof item.category === "string" ? item.category : null;
               const slug = typeof item.slug === "string" ? item.slug : null;
               if (!category || !slug || !itemLookup[category]?.has(slug)) {
                 return null;
               }
               const itemId =
-                typeof item.id === "string" && item.id ? item.id : generateId("item");
+                typeof item.id === "string" && item.id
+                  ? item.id
+                  : generateId("item");
               return { id: itemId, category, slug };
             })
             .filter(Boolean)
         : [];
       const aim = typeof record.aim === "string" ? record.aim : "";
-      const followUps = typeof record.followUps === "string" ? record.followUps : "";
+      const followUps =
+        typeof record.followUps === "string" ? record.followUps : "";
       return {
         id,
         name,
@@ -670,7 +704,8 @@ const categoryOptions = [
         button.type = "button";
         button.className = "plan-list__select";
         const displayPlan = isCurrent && currentPlan ? currentPlan : plan;
-        button.textContent = (displayPlan.name || "Untitled plan").trim() || "Untitled plan";
+        button.textContent =
+          (displayPlan.name || "Untitled plan").trim() || "Untitled plan";
         button.addEventListener("click", () => {
           if (plan.id === currentPlan?.id) return;
           if (hasUnsavedChanges) {
@@ -690,7 +725,9 @@ const categoryOptions = [
         const schedule = displayPlan.schedule || [];
         const itemCount = schedule.length;
         const parts = [`${itemCount} ${itemCount === 1 ? "item" : "items"}`];
-        const timestampSource = plan.persisted ? plan.updatedAt : plan.createdAt;
+        const timestampSource = plan.persisted
+          ? plan.updatedAt
+          : plan.createdAt;
         const formatted = formatTimestamp(timestampSource);
         if (formatted) {
           parts.push(`${plan.persisted ? "updated" : "created"} ${formatted}`);
@@ -856,7 +893,9 @@ const categoryOptions = [
         : currentPlan.createdAt;
       const formatted = formatTimestamp(referenceTime);
       if (formatted) {
-        parts.push(`${currentPlanPersisted ? "updated" : "created"} ${formatted}`);
+        parts.push(
+          `${currentPlanPersisted ? "updated" : "created"} ${formatted}`
+        );
       }
       if (!currentPlanPersisted) {
         parts.push("not saved yet");
@@ -892,7 +931,8 @@ const categoryOptions = [
 
         const badge = document.createElement("span");
         badge.className = "schedule-item__badge";
-        badge.textContent = categoryLookup.get(entry.category)?.label || entry.category;
+        badge.textContent =
+          categoryLookup.get(entry.category)?.label || entry.category;
         info.appendChild(badge);
 
         const details = itemLookup[entry.category]?.get(entry.slug) ?? null;
@@ -936,7 +976,8 @@ const categoryOptions = [
 
         const removeButton = document.createElement("button");
         removeButton.type = "button";
-        removeButton.className = "schedule-item__control schedule-item__control--danger";
+        removeButton.className =
+          "schedule-item__control schedule-item__control--danger";
         removeButton.dataset.action = "remove";
         removeButton.textContent = "Remove";
         actions.appendChild(removeButton);
@@ -1005,9 +1046,12 @@ const categoryOptions = [
         currentPlan.notebookId || currentNotebook?.id || DEFAULT_NOTEBOOK_ID;
       currentPlan.notebookId = notebookId;
       const now = new Date().toISOString();
-      const existingIndex = plans.findIndex((plan) => plan.id === currentPlan.id);
+      const existingIndex = plans.findIndex(
+        (plan) => plan.id === currentPlan.id
+      );
       const createdAt =
-        currentPlan.createdAt || (existingIndex !== -1 ? plans[existingIndex].createdAt : now);
+        currentPlan.createdAt ||
+        (existingIndex !== -1 ? plans[existingIndex].createdAt : now);
       const recordForStorage = {
         id: currentPlan.id,
         name: currentPlan.name,
@@ -1086,16 +1130,16 @@ const categoryOptions = [
             type: NOTE_TYPE,
           }
         : currentNotebook
-        ? {
-            key: `${NOTE_PREFIX}${currentNotebook.id}:workspace`,
-            title: `${currentNotebook.name} notebook`,
-            type: NOTE_TYPE,
-          }
-        : {
-            key: `${NOTE_PREFIX}workspace`,
-            title: "Lesson plan",
-            type: NOTE_TYPE,
-          };
+          ? {
+              key: `${NOTE_PREFIX}${currentNotebook.id}:workspace`,
+              title: `${currentNotebook.name} notebook`,
+              type: NOTE_TYPE,
+            }
+          : {
+              key: `${NOTE_PREFIX}workspace`,
+              title: "Lesson plan",
+              type: NOTE_TYPE,
+            };
       notesPanel.dispatchEvent(
         new CustomEvent("note:context", {
           detail,
@@ -1247,7 +1291,9 @@ const categoryOptions = [
 
     function removeScheduleItem(itemId) {
       if (!currentPlan) return;
-      const index = currentPlan.schedule.findIndex((item) => item.id === itemId);
+      const index = currentPlan.schedule.findIndex(
+        (item) => item.id === itemId
+      );
       if (index === -1) return;
       currentPlan.schedule.splice(index, 1);
       markDirty();
@@ -1423,7 +1469,9 @@ const categoryOptions = [
           },
           NOTEBOOK_STORE_NAME
         );
-        notebooks = loaded.map((record) => normaliseNotebookRecord(record)).filter(Boolean);
+        notebooks = loaded
+          .map((record) => normaliseNotebookRecord(record))
+          .filter(Boolean);
         if (!notebooks.length) {
           const fallback = createDefaultNotebook(false);
           notebooks = [fallback];
@@ -1546,9 +1594,13 @@ const categoryOptions = [
       display: grid;
       gap: 1rem;
       padding: clamp(1.5rem, 4vw, 2rem);
-      background: color-mix(in srgb, var(--surface-panel, #221721) 92%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--surface-panel, #221721) 92%,
+        transparent
+      );
       border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: var(--radius-lg, 28px);
+      border-radius: var(--radius-md, 28px);
       box-shadow: var(--shadow-soft, 0 18px 42px rgba(5, 2, 8, 0.35));
     }
 
@@ -1577,7 +1629,8 @@ const categoryOptions = [
     }
 
     .lesson-notebooks__select:focus {
-      outline: 2px solid color-mix(in srgb, var(--accent, #ff6ad5) 70%, transparent);
+      outline: 2px solid
+        color-mix(in srgb, var(--accent, #ff6ad5) 70%, transparent);
       outline-offset: 2px;
     }
 
@@ -1602,8 +1655,13 @@ const categoryOptions = [
       margin: 0;
       padding: 0.85rem 1rem;
       border-radius: var(--radius-md);
-      border: 1px solid color-mix(in srgb, var(--color-accent, #ff2f55) 36%, transparent);
-      background: color-mix(in srgb, var(--surface-panel, #221721) 85%, transparent);
+      border: 1px solid
+        color-mix(in srgb, var(--color-accent, #ff2f55) 36%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--surface-panel, #221721) 85%,
+        transparent
+      );
       font-size: 0.9rem;
       color: color-mix(in srgb, var(--color-accent, #ff2f55) 70%, white 30%);
     }
@@ -1630,14 +1688,25 @@ const categoryOptions = [
       gap: 0.5rem;
       padding: 0.85rem 0.95rem;
       border-radius: var(--radius-md);
-      background: color-mix(in srgb, var(--surface-raised, #1f1521) 85%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--surface-raised, #1f1521) 85%,
+        transparent
+      );
       border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
     }
 
     .plan-list__item.is-active {
-      border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
-      box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent, #ff2f55) 22%, transparent);
+      border-color: color-mix(
+        in srgb,
+        var(--color-accent, #ff2f55) 45%,
+        transparent
+      );
+      box-shadow: 0 0 0 1px
+        color-mix(in srgb, var(--color-accent, #ff2f55) 22%, transparent);
     }
 
     .plan-list__select {
@@ -1680,8 +1749,12 @@ const categoryOptions = [
     .plan-empty {
       margin: 0;
       padding: clamp(2rem, 5vw, 2.8rem);
-      border-radius: var(--radius-lg, 28px);
-      background: color-mix(in srgb, var(--surface-panel, #221721) 92%, transparent);
+      border-radius: var(--radius-md, 28px);
+      background: color-mix(
+        in srgb,
+        var(--surface-panel, #221721) 92%,
+        transparent
+      );
       border: 1px solid rgba(255, 255, 255, 0.08);
       color: color-mix(in srgb, var(--color-muted, #cbbfca) 88%, black 12%);
       text-align: center;
@@ -1691,8 +1764,12 @@ const categoryOptions = [
       display: grid;
       gap: clamp(1.25rem, 3vw, 1.75rem);
       padding: clamp(1.5rem, 4vw, 2.5rem);
-      border-radius: var(--radius-lg, 28px);
-      background: color-mix(in srgb, var(--surface-panel, #221721) 95%, transparent);
+      border-radius: var(--radius-md, 28px);
+      background: color-mix(
+        in srgb,
+        var(--surface-panel, #221721) 95%,
+        transparent
+      );
       border: 1px solid rgba(255, 255, 255, 0.12);
       box-shadow: var(--shadow-soft, 0 18px 42px rgba(5, 2, 8, 0.35));
     }
@@ -1715,16 +1792,26 @@ const categoryOptions = [
       width: 100%;
       border-radius: var(--radius-md);
       border: 1px solid rgba(255, 255, 255, 0.18);
-      background: color-mix(in srgb, var(--surface-raised, #1f1521) 85%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--surface-raised, #1f1521) 85%,
+        transparent
+      );
       padding: 0.7rem 0.85rem;
       color: inherit;
       font-size: 1.05rem;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
     }
 
     .workspace-title input:focus-visible {
       outline: none;
-      border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 55%, transparent);
+      border-color: color-mix(
+        in srgb,
+        var(--color-accent, #ff2f55) 55%,
+        transparent
+      );
       box-shadow: 0 0 0 2px rgba(255, 63, 94, 0.3);
     }
 
@@ -1760,13 +1847,21 @@ const categoryOptions = [
       font-size: 0.82rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 70%, white 30%);
+      color: color-mix(
+        in srgb,
+        var(--color-muted-strong, #f1d5dc) 70%,
+        white 30%
+      );
     }
 
     .plan-field__input {
       border-radius: var(--radius-md);
       border: 1px solid rgba(255, 255, 255, 0.18);
-      background: color-mix(in srgb, var(--surface-raised, #1f1521) 85%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--surface-raised, #1f1521) 85%,
+        transparent
+      );
       padding: 0.75rem 0.85rem;
       color: inherit;
       font: inherit;
@@ -1776,7 +1871,11 @@ const categoryOptions = [
 
     .plan-field__input:focus-visible {
       outline: none;
-      border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+      border-color: color-mix(
+        in srgb,
+        var(--color-accent, #ff2f55) 45%,
+        transparent
+      );
       box-shadow: 0 0 0 2px rgba(255, 63, 94, 0.25);
     }
 
@@ -1811,7 +1910,11 @@ const categoryOptions = [
       padding: 0.9rem 1rem;
       border-radius: var(--radius-md);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      background: color-mix(in srgb, var(--surface-raised, #1f1521) 92%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--surface-raised, #1f1521) 92%,
+        transparent
+      );
     }
 
     .schedule-item__info {
@@ -1828,7 +1931,11 @@ const categoryOptions = [
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 70%, white 30%);
+      color: color-mix(
+        in srgb,
+        var(--color-muted-strong, #f1d5dc) 70%,
+        white 30%
+      );
     }
 
     .schedule-item__name {
@@ -1859,18 +1966,28 @@ const categoryOptions = [
 
     .schedule-item__control {
       border: 1px solid rgba(255, 255, 255, 0.18);
-      background: color-mix(in srgb, var(--surface-color, #161018) 80%, black 20%);
+      background: color-mix(
+        in srgb,
+        var(--surface-color, #161018) 80%,
+        black 20%
+      );
       color: inherit;
       border-radius: var(--radius-sm, 14px);
       padding: 0.45rem 0.85rem;
       font-size: 0.85rem;
       cursor: pointer;
-      transition: background 0.2s ease, border-color 0.2s ease;
+      transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
     }
 
     .schedule-item__control:hover,
     .schedule-item__control:focus-visible {
-      border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 35%, transparent);
+      border-color: color-mix(
+        in srgb,
+        var(--color-accent, #ff2f55) 35%,
+        transparent
+      );
     }
 
     .schedule-item__control--danger {
@@ -1892,11 +2009,15 @@ const categoryOptions = [
 
     .plan-dialog {
       border: none;
-      border-radius: var(--radius-lg, 28px);
+      border-radius: var(--radius-md, 28px);
       padding: 0;
       max-width: min(34rem, 90vw);
       width: 100%;
-      background: color-mix(in srgb, var(--surface-panel, #221721) 97%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--surface-panel, #221721) 97%,
+        transparent
+      );
       color: inherit;
       box-shadow: 0 18px 42px rgba(5, 2, 8, 0.55);
     }
@@ -1936,20 +2057,32 @@ const categoryOptions = [
       font-size: 0.82rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: color-mix(in srgb, var(--color-muted-strong, #f1d5dc) 70%, white 30%);
+      color: color-mix(
+        in srgb,
+        var(--color-muted-strong, #f1d5dc) 70%,
+        white 30%
+      );
     }
 
     .plan-dialog__field input {
       border-radius: var(--radius-md);
       border: 1px solid rgba(255, 255, 255, 0.18);
-      background: color-mix(in srgb, var(--surface-raised, #1f1521) 80%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--surface-raised, #1f1521) 80%,
+        transparent
+      );
       padding: 0.6rem 0.75rem;
       color: inherit;
     }
 
     .plan-dialog__field input:focus-visible {
       outline: none;
-      border-color: color-mix(in srgb, var(--color-accent, #ff2f55) 45%, transparent);
+      border-color: color-mix(
+        in srgb,
+        var(--color-accent, #ff2f55) 45%,
+        transparent
+      );
       box-shadow: 0 0 0 2px rgba(255, 63, 94, 0.25);
     }
 
@@ -1970,7 +2103,11 @@ const categoryOptions = [
     .plan-dialog__option {
       border-radius: var(--radius-md);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      background: color-mix(in srgb, var(--surface-raised, #1f1521) 85%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--surface-raised, #1f1521) 85%,
+        transparent
+      );
     }
 
     .plan-dialog__button {
@@ -1987,7 +2124,11 @@ const categoryOptions = [
 
     .plan-dialog__button:hover,
     .plan-dialog__button:focus-visible {
-      background: color-mix(in srgb, var(--color-accent, #ff2f55) 15%, transparent);
+      background: color-mix(
+        in srgb,
+        var(--color-accent, #ff2f55) 15%,
+        transparent
+      );
     }
 
     .plan-dialog__option-title {
