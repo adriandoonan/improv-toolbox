@@ -171,7 +171,7 @@ const highlights = [
       align-items: center;
       padding: clamp(2.5rem, 6vw, 3.5rem);
       background: color-mix(in srgb, var(--surface-panel) 95%, transparent);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-elevated);
       isolation: isolate;
     }
     .hero__glow {
@@ -179,12 +179,12 @@ const highlights = [
       inset: 0;
       background: radial-gradient(
           140% 160% at 10% 0%,
-          rgba(255, 63, 94, 0.22),
+          color-mix(in srgb, var(--color-accent) 24%, transparent) 0%,
           transparent 60%
         ),
         radial-gradient(
           120% 160% at 90% 10%,
-          rgba(255, 108, 140, 0.18),
+          color-mix(in srgb, var(--color-accent-soft) 20%, transparent) 0%,
           transparent 60%
         );
       filter: blur(4px);
@@ -200,7 +200,7 @@ const highlights = [
       letter-spacing: 0.26em;
       font-size: 0.78rem;
       font-weight: 700;
-      color: rgba(255, 208, 218, 0.9);
+      color: color-mix(in srgb, var(--color-accent) 65%, var(--color-text) 35%);
     }
     .hero h1 {
       font-size: clamp(2.3rem, 6vw, 3.4rem);
@@ -209,7 +209,7 @@ const highlights = [
     .hero__lead {
       font-size: clamp(1.05rem, 2.6vw, 1.25rem);
       max-width: 44ch;
-      color: rgba(255, 235, 239, 0.82);
+      color: color-mix(in srgb, var(--color-muted) 70%, var(--color-text) 30%);
     }
     .hero__actions {
       gap: 0.75rem;
@@ -227,24 +227,30 @@ const highlights = [
         box-shadow 0.2s ease;
     }
     .hero__cta--primary {
-      background: linear-gradient(135deg, #ff2f55, #ff6b82);
-      color: #140408;
-      box-shadow: 0 18px 36px rgba(255, 63, 94, 0.4);
+      background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-accent) 96%, var(--color-on-accent) 4%),
+        color-mix(in srgb, var(--color-accent-soft) 92%, var(--color-on-accent) 8%)
+      );
+      color: var(--color-on-accent);
+      box-shadow: 0 18px 36px color-mix(in srgb, var(--color-accent) 42%, transparent);
     }
     .hero__cta--primary:hover,
     .hero__cta--primary:focus-visible {
       transform: translateY(-2px);
-      box-shadow: 0 22px 46px rgba(255, 63, 94, 0.5);
+      box-shadow: 0 22px 46px
+        color-mix(in srgb, var(--color-accent) 52%, transparent);
     }
     .hero__cta--secondary {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      color: rgba(255, 220, 229, 0.85);
+      background: color-mix(in srgb, var(--surface-panel) 88%, transparent);
+      border: 1px solid var(--border-elevated);
+      color: color-mix(in srgb, var(--color-text) 90%, var(--color-muted) 10%);
     }
     .hero__cta--secondary:hover,
     .hero__cta--secondary:focus-visible {
       transform: translateY(-2px);
-      box-shadow: 0 18px 32px rgba(255, 83, 108, 0.28);
+      box-shadow: 0 18px 32px
+        color-mix(in srgb, var(--color-accent) 32%, transparent);
     }
     .hero__image {
       justify-self: center;
@@ -254,15 +260,15 @@ const highlights = [
     .hero__image img {
       width: 100%;
       border-radius: 1.75rem;
-      box-shadow: 0 26px 54px rgba(10, 5, 16, 0.55);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: var(--shadow-hard);
+      border: 1px solid var(--border-elevated);
     }
     .hero__badge {
       position: absolute;
       top: -0.5rem;
       right: -0.5rem;
-      background: rgba(255, 255, 255, 0.1);
-      color: rgba(255, 220, 229, 0.9);
+      background: color-mix(in srgb, var(--surface-raised) 84%, transparent);
+      color: color-mix(in srgb, var(--color-accent) 60%, var(--color-text) 40%);
       padding: 0.4rem 0.85rem;
       border-radius: var(--radius-md);
       font-size: 0.7rem;
@@ -278,8 +284,7 @@ const highlights = [
     .category-card {
       text-decoration: none;
       background: color-mix(in srgb, var(--surface-panel) 92%, transparent);
-      border: 1px solid
-        color-mix(in srgb, var(--color-accent) 18%, rgba(255, 255, 255, 0.08));
+      border: 1px solid var(--border-elevated);
     }
     .category-card__header {
       display: flex;
@@ -291,12 +296,12 @@ const highlights = [
     }
     .category-card__blurb {
       margin: 0;
-      color: rgba(255, 235, 239, 0.7);
+      color: var(--color-muted);
     }
     .category-card__preview {
       font-size: 0.9rem;
       margin: 0;
-      color: rgba(255, 208, 218, 0.85);
+      color: color-mix(in srgb, var(--color-accent) 55%, var(--color-text) 45%);
     }
     .highlights {
       display: grid;
@@ -305,25 +310,30 @@ const highlights = [
     .highlight-card {
       border-radius: var(--radius-md);
       padding: 1.5rem;
-      background: color-mix(in srgb, var(--surface-raised) 88%, transparent);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 18px 32px rgba(7, 3, 12, 0.45);
+      background: color-mix(in srgb, var(--surface-raised) 90%, transparent);
+      border: 1px solid var(--border-elevated);
+      box-shadow: var(--shadow-soft);
       display: grid;
       gap: 0.5rem;
     }
     .highlight-card p {
       margin: 0;
-      color: rgba(255, 220, 229, 0.75);
+      color: var(--color-muted);
     }
     .cta {
       margin: clamp(2.5rem, 6vw, 4rem) auto 0;
       background: radial-gradient(
           120% 120% at 20% 0%,
-          rgba(255, 63, 94, 0.28),
+          color-mix(in srgb, var(--color-accent) 26%, transparent),
           transparent 60%
         ),
-        linear-gradient(140deg, #17040a 0%, #2b0512 55%, #1a0308 100%);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+        linear-gradient(
+          140deg,
+          color-mix(in srgb, var(--surface-panel) 92%, transparent) 0%,
+          color-mix(in srgb, var(--surface-raised) 94%, transparent) 55%,
+          color-mix(in srgb, var(--surface-panel) 85%, transparent) 100%
+        );
+      border: 1px solid var(--border-elevated);
     }
     .cta__content {
       max-width: 50ch;
