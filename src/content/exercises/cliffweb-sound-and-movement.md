@@ -1,31 +1,27 @@
 ---
-name: "Follow The Follower / Sound And Movement"
-purpose: "Opening"
-shortDescription: "\u201cSound and movement\u201d is a kind of opening. It is notoriously weird and annoying, and is one of those things that seems so useless at first that it will make you doubt whether you should be doing improv at all.However, there are also great lessons to be learned in it\u2014about letting go and letting the animal part of your brain make decisions before your inner judge screws it all up. About hearing and reacting intuitively, versus struggling to figure out a logical move. Doing a sound and movement and then immediately doing scenes will bring out a confidence in many players that they previously did not have. It will get people out of their heads. It will make them play more physically and less hesitantly. It\u2019s a great thing to do as an exercise to practice playing more boldly. \u201cSound and movement\u201d is a version of \u201cfollow the follower,\u201d so let\u2019s explain that first. **Follow the Follower** In \u201cfollow the follower,\u201d the whole group stands in a circle and starts in a neutral position. Then the teacher says go. Everyone should start copying and heightening each other, meaning: whatever you see someone else doing, you start doing, but more. At first, because everyone starts in a neutral position, you will just be copying very gentle sways and twitches. Then you will amplify those sways a bit\u2014into a more pronounced, exaggerated version. Then people will copy the way you are swaying, but they\u2019ll do it even more. No one leads. You just copy. Any time you see two or three people doing something, you just start doing it, only more. No thinking, just doing. If anyone makes even the slightest sound or even breathes in a noticeable way, you copy that. There is a group-wide agreement that you will let the action change and morph easily. Don\u2019t get stuck doing any one thing for too long. You can make non-verbal noises, meaning no actual words. Commit, meaning you do the physical gestures with full enthusiasm, as opposed to shyly doing them just a little bit. The group can break out of the circle if it naturally happens and start wandering around the room like dust particles, all still copying each other. Do this for 3\u20135 minutes. In general, exercises of follow the follower tend to be a bit similar. You will get tired of them if you do too many within a short period, but they are a great warm-up that forces you to get out of your head, pay attention to others, and give up control. They\u2019re silly in a way that makes you get over yourself so you can do improv. By itself, this is a good warm-up to do in a class."
+name: "Sound And Movement"
+purpose: "Matching"
+shortDescription: "Match physicality, honoring choices made by others"
 description: |
-  “Sound and movement” is a kind of opening. It is notoriously weird and annoying,
-  and is one of those things that seems so useless at first that it will make you
-  doubt whether you should be doing improv at all.However, there are also great
-  lessons to be learned in it—about letting go and letting the animal part of your
-  brain make decisions before your inner judge screws it all up. About hearing and
-  reacting intuitively, versus struggling to figure out a logical move. Doing a
-  sound and movement and then immediately doing scenes will bring out a confidence
-  in many players that they previously did not have. It will get people out of
-  their heads. It will make them play…
+  An everyone in a circle type exercise where improvisers will be watching for the small, subtle movements made by the rest of
+  the circle and looking to match and amplify. Eventually something will happen. Incorporate sounds for a sound and movement that 
+  also be used to jump start scenes
 tags:
   - "Will Hines - How to be the greatest improviser on earth"
   - "Opening"
   - "Warm up"
-source: "cliffweb; Will Hines - How to be the greatest improviser on earth"
+source: "Will Hines - How to be the greatest improviser on earth"
 
-credit: "unclaimed"
+credit: Will Hines
 ---
 
 “Sound and movement” is a kind of opening. It is notoriously weird and annoying, and is one of those things that seems so useless at first that it will make you doubt whether you should be doing improv at all.However, there are also great lessons to be learned in it—about letting go and letting the animal part of your brain make decisions before your inner judge screws it all up. About hearing and reacting intuitively, versus struggling to figure out a logical move.
 Doing a sound and movement and then immediately doing scenes will bring out a confidence in many players that they previously did not have. It will get people out of their heads. It will make them play more physically and less hesitantly. It’s a great thing to do as an exercise to
 practice playing more boldly.
 “Sound and movement” is a version of “follow the follower,” so let’s explain that first.
+
 **Follow the Follower**
+
 In “follow the follower,” the whole group stands in a circle and starts in a neutral position.
 Then the teacher says go. Everyone should start copying and heightening each other, meaning: whatever you see someone else doing, you start doing, but more.
 At first, because everyone starts in a neutral position, you will just be copying very gentle sways and twitches. Then you will amplify those sways a bit—into a more pronounced, exaggerated version. Then people will copy the way you are swaying, but they’ll do it even more.
