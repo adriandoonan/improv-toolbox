@@ -1,10 +1,10 @@
 ---
 name: One Word Emotional Reaction
-purpose: Annoyance
+purpose: Reacting
 shortDescription: Two players up, one word suggestion. Each player states their instant, gut reaction to that suggestion in one word.
 description: Two players up, one word suggestion. Each player states their instant, gut reaction to that suggestion in one word. For example, if the suggestion is "techno", one player's reaction might be "joy" and the other's "irritation".
 tags:
-- Annoyance
+  - Annoyance
 source: cliffweb
 credit: Annoyance
 ---

@@ -1,11 +1,11 @@
 ---
 name: Truthful At All Costs
-purpose: GroundedPlay
+purpose: Grounded Play
 shortDescription: Try doing a series of scenes like this. Two people up. Whoever initiates must make a big choice. Something unusual, fantastical, or strange.
 description: Try doing a series of scenes like this. Two people up. Whoever initiates must make a big choice. Something unusual, fantastical, or strange. The responder simply has to act exactly as they would in real life.
 tags:
-- Will Hines - How to be the greatest improviser on earth
-- Grounded play
+  - Will Hines - How to be the greatest improviser on earth
+  - Grounded play
 source: cliffweb; Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---

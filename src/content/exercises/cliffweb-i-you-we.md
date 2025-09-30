@@ -1,11 +1,11 @@
 ---
 name: I, You, We
-purpose: SceneWork
+purpose: Scene Work
 shortDescription: A good shortcut to knowing, caring, and saying is to make the scene about the people in the scene.
 description: A good shortcut to knowing, caring, and saying is to make the scene about the people in the scene. A common error for newer improvisers is when two characters spend the whole scene talking about a third character who isn’t there.
 tags:
-- Will Hines - How to be the greatest improviser on earth
-- Scene work
+  - Will Hines - How to be the greatest improviser on earth
+  - Scene work
 source: cliffweb; Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---

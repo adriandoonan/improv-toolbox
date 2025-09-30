@@ -1,10 +1,10 @@
 ---
 name: You wanted to see me?
-purpose: WillHinesHowToBeTheGreatestImproviserOnEarth
+purpose: Justifications
 shortDescription: Two-person scene where a boss makes an absurd ask and the employee stays grounded.
 description: Play a two-person scene in which one character pushes a wildly unreasonable workplace agenda and the other responds realistically, forcing the initiator to justify their logic.
 tags:
-- Will Hines - How to be the greatest improviser on earth
+  - Will Hines - How to be the greatest improviser on earth
 source: cliffweb; Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---

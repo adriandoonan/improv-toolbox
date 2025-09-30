@@ -1,11 +1,11 @@
 ---
 name: Object Point Of View
-purpose: GroundedPlay
+purpose: Grounded Play
 shortDescription: A strong point of view underlies an authentic scene.
 description: A strong point of view underlies an authentic scene. An improviser should be able to fish a good point of view out of any situation, no matter how mundane.
 tags:
-- Will Hines - How to be the greatest improviser on earth
-- Grounded play
+  - Will Hines - How to be the greatest improviser on earth
+  - Grounded play
 source: cliffweb; Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---

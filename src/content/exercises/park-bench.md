@@ -1,15 +1,14 @@
 ---
 name: Park Bench
-purpose: Character
+purpose: Characters
 shortDescription: Park Bench is an exercise where one player sits on a bench as a character, and others join one at a time, creating new interactions.
 description: Park Bench is an exercise where one player sits on a bench as a character, and others join one at a time, creating new interactions. Builds character work, listening, and scene initiation skills.
 focus: Character, Listening, Initiation
 tags:
-- Character
-- Listening
-- Initiation
+  - Character
+  - Listening
+  - Initiation
 source: improv-toolbox
 credit: unclaimed
 minimumPeople: 3
 ---
-

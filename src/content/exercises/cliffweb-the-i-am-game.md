@@ -1,11 +1,11 @@
 ---
 name: The "I am" game
-purpose: GroupGame
+purpose: Group Game
 shortDescription: Players step out to personify objects with “I am…” declarations, locking into a shared pattern of boasts or traits.
 description: Split the group into performers and audience. One at a time, players claim “I am ___,” describe that object’s thoughts or behaviors, and later speakers heighten or echo the discovered pattern so the whole ensemble shares a point of view.
 tags:
-- UCB Manual
-- Group game
+  - UCB Manual
+  - Group game
 source: cliffweb; UCB Manual
 credit: UCB
 ---
@@ -14,17 +14,17 @@ credit: UCB
 
 - One member of the ensemble steps off of the backline and directly addresses the audience.
 
-- This improviser makes a statement in the following format: "I am _ ." This blank is filled in with an inanimate object.
+- This improviser makes a statement in the following format: "I am \_ ." This blank is filled in with an inanimate object.
 
 - After this improviser declares their object, they should take a few lines to describe the object's actions, thoughts, feelings, beliefs, or opinions.
 
 - The improviser embodies the object both verbally and physically.
 
-- A second improviser will then step out to play a different inanimate object, adhering to the same "I am __" format, followed by a few lines of further description
-The second improviser will be looking to establish a pattern of some sort.
+- A second improviser will then step out to play a different inanimate object, adhering to the same "I am \_\_" format, followed by a few lines of further description
+  The second improviser will be looking to establish a pattern of some sort.
 
-- A third improviser will step out to play a different inanimate object, speaking in the "I am __" format once again
-This third improviser will follow the pattern established by the second If they do so, the pattern begun by the second improviser will be locked.
+- A third improviser will step out to play a different inanimate object, speaking in the "I am \_\_" format once again
+  This third improviser will follow the pattern established by the second If they do so, the pattern begun by the second improviser will be locked.
 
 - Once the other improvisers on the backline have established each of their inanimate objects, the ensemble will continue to describe their inanimate objects, adhering to the pattern that has been established.
 

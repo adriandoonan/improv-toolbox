@@ -1,13 +1,13 @@
 ---
 name: Three-line scenes
-purpose: SceneWork
+purpose: Scene Work
 shortDescription: Rotate fast three-line scenes to drill initiations, responses, and quick commitments.
 description: Form two single-file lines facing each other. The initiator delivers the first line from a suggestion, the responder answers, and the initiator buttons with a third line before both head to the opposite line—rapid reps for strong offers and attentive listening.
 focus: Scene work
 tags:
-- Scene work
-- Who what where
-- UCB Manual
+  - Scene work
+  - Who what where
+  - UCB Manual
 source: cliffweb
 credit: unclaimed
 ---
@@ -24,4 +24,4 @@ credit: unclaimed
 
 - These scenes don't have to reach any sort of resolution. You should still make strong choices and commit as if these are going to be full-length scenes.
 
--  Continue until everyone has had a chance to respond
+- Continue until everyone has had a chance to respond

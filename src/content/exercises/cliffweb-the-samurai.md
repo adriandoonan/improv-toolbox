@@ -1,13 +1,13 @@
 ---
 name: The Samurai
-purpose: SceneWork
+purpose: Scene Work
 shortDescription: Practicing being funny is tough.
 description: Practicing being funny is tough. Here’s an exercise designed to reward you when you do something that is both funny and still productive for an improv scene.
 tags:
-- Will Hines - How to be the greatest improviser on earth
-- Scene work
-- Object work
-- Characters
+  - Will Hines - How to be the greatest improviser on earth
+  - Scene work
+  - Object work
+  - Characters
 source: cliffweb; Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---

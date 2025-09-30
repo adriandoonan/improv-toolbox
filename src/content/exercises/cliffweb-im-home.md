@@ -1,6 +1,6 @@
 ---
 name: I'm Home
-purpose: IMHome
+purpose: Characters
 shortDescription: This exercise is for duos. Stand around six feet apart, facing each other.
 description: This exercise is for duos. Stand around six feet apart, facing each other. Player A mimes opening a door, in character, and declares "Im home".
 tags: []

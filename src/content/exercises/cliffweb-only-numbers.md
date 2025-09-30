@@ -1,11 +1,11 @@
 ---
 name: Only Numbers
-purpose: GroundedPlay
+purpose: Grounded Play
 shortDescription: Two people up. No suggestion. They do a scene where they only say numbers, in order, to each other.
 description: Two people up. No suggestion. They do a scene where they only say numbers, in order, to each other. So the first person says, “One.” And the other person responds, “Two, three, four?” And the first person says, “Five!
 tags:
-- Will Hines - How to be the greatest improviser on earth
-- Grounded play
+  - Will Hines - How to be the greatest improviser on earth
+  - Grounded play
 source: cliffweb; Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---

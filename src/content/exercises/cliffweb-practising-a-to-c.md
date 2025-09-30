@@ -1,11 +1,11 @@
 ---
 name: Practising A to C
-purpose: AToC
+purpose: Lateral Thinking
 shortDescription: Circle drill for practicing the associative A-to-C thinking used in openings.
 description: The group stands in a circle. One player states an “A” idea, the next silently leaps to a “C” association, and the following player guesses the missing “B” before starting the next chain—training quick, lateral connections.
 tags:
-- UCB Manual
-- A to C
+  - UCB Manual
+  - A to C
 source: cliffweb; UCB Manual
 credit: UCB
 ---

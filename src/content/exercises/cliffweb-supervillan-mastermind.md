@@ -1,10 +1,10 @@
 ---
 name: Supervillan / Mastermind
-purpose: WillHinesHowToBeTheGreatestImproviserOnEarth
+purpose: Characters
 shortDescription: Two people up. Player A makes an accusation. Player B deliberately acts like a supervillain or mastermind in response.
 description: Two people up. Player A makes an accusation. Player B deliberately acts like a supervillain or mastermind in response. Player A must then sympathetically disagree (otherwise, Player A will often get too angry).
 tags:
-- Will Hines - How to be the greatest improviser on earth
+  - Will Hines - How to be the greatest improviser on earth
 source: cliffweb; Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---

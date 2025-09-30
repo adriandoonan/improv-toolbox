@@ -1,11 +1,11 @@
 ---
 name: Pass The Card
-purpose: SceneWork
+purpose: Scene Work
 shortDescription: This is an exercise from teacher Corey Brown to practice giving and receiving offers. Two people up.
 description: This is an exercise from teacher Corey Brown to practice giving and receiving offers. Two people up. Give one a playing card (or a business card or even a scrap of paper).
 tags:
-- Will Hines - How to be the greatest improviser on earth
-- Scene work
+  - Will Hines - How to be the greatest improviser on earth
+  - Scene work
 source: cliffweb; Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---

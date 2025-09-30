@@ -1,13 +1,13 @@
 ---
 name: Would you?
-purpose: GroundedPlay
-shortDescription: 'Scene lab for emotional realism: play intense scenarios, record them, then ask “Would you really react that way?”'
+purpose: Grounded Play
+shortDescription: "Scene lab for emotional realism: play intense scenarios, record them, then ask “Would you really react that way?”"
 description: Run two-person scenes from emotionally charged suggestions, capture them on video, and review line by line. The group uses “Would you…?” to test whether the reactions feel truthful and to discuss grounded alternatives.
 tags:
-- UCB Manual
-- Grounded play
-- Self analysis
-- Videotape
+  - UCB Manual
+  - Grounded play
+  - Self analysis
+  - Videotape
 source: cliffweb; UCB Manual
 credit: UCB
 ---

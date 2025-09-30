@@ -1,12 +1,12 @@
 ---
 name: Protect the freak
-purpose: SceneWork
+purpose: Scene Work
 shortDescription: Coach scene partners to legitimize the wild character instead of calling them out—elevate the freak’s worldview.
 description: Run three-person scenes where two “straight” players embrace and defend the bizarre character’s logic, raising their status and bending reality to support the premise so the game can escalate together.
 tags:
-- Annoyance
-- Scene work
-- Deal
+  - Annoyance
+  - Scene work
+  - Deal
 source: cliffweb
 credit: Annoyance
 ---

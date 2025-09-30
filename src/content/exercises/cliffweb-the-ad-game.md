@@ -1,11 +1,11 @@
 ---
 name: The Ad Game
-purpose: GroupGame
+purpose: Group Game
 shortDescription: Build an improvised ad campaign for an unusual product, yes-anding every pitch as a group.
 description: Four or more players take the stage while another invents a fantastical product. The onstage group collaborates on name, slogan, spokesperson, jingle, and target market, supporting each offer until a complete campaign emerges.
 tags:
-- UCB Manual
-- Group game
+  - UCB Manual
+  - Group game
 source: cliffweb; UCB Manual
 credit: UCB
 ---
@@ -15,8 +15,8 @@ credit: UCB
 - Another member of the ensemble comes up with an unusual product by taking an ordinary item and giving it an unusual trait (e.g., a car that changes color based on its surroundings, or a refrigerator that is also a radio).
 
 - The ensemble will work together to create an advertising campaign for this product.
-They will work together to come up with a name for the product, a slogan, a target demographic, a celebrity spokesperson, a jingle, etc. All elements of the campaign should complement each other. For example, if Player 1 says, "We could call it 'The Chameleon,"' then Player 2 could say, "Yeah! We could have Meryl Streep be the spokesperson. She could talk about how she disappears into her roles just like this car disappears into its surroundings."
-No matter what idea is thrown out, the entire group must support and Yes And it.
+  They will work together to come up with a name for the product, a slogan, a target demographic, a celebrity spokesperson, a jingle, etc. All elements of the campaign should complement each other. For example, if Player 1 says, "We could call it 'The Chameleon,"' then Player 2 could say, "Yeah! We could have Meryl Streep be the spokesperson. She could talk about how she disappears into her roles just like this car disappears into its surroundings."
+  No matter what idea is thrown out, the entire group must support and Yes And it.
 
 Now let's look at an example of a full improvised ad campaign for the car that changes color based on its surroundings:
 

@@ -1,6 +1,6 @@
 ---
 name: Superhero / Supervillan
-purpose: SuperheroSupervillan
+purpose: Characters
 shortDescription: For the whole group.
 description: For the whole group. One by one each student comes up with an action and catchphrase for their "Superhero" It can be anything no matter how esoteric.
 tags: []

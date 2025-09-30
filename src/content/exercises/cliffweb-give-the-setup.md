@@ -1,12 +1,12 @@
 ---
 name: Give the setup
-purpose: GroundedPlay
+purpose: Grounded Play
 shortDescription: "**PART 1** - Two improvisers take the stage."
 description: "**PART 1** - Two improvisers take the stage. - Instead of receiving a suggestion, every scene will start with the two improvisers having a conversation as their actual selves."
 tags:
-- UCB Manual
-- Grounded play
-- Characters
+  - UCB Manual
+  - Grounded play
+  - Characters
 source: cliffweb; UCB Manual
 credit: UCB
 ---

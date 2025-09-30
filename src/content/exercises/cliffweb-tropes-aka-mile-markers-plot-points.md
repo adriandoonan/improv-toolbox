@@ -1,6 +1,6 @@
 ---
 name: Tropes aka Mile Markers, Plot Points
-purpose: TropesAkaMileMarkersPlotPoints
+purpose: Grounded Play
 shortDescription: 2-Person Scenes.
 description: 2-Person Scenes. Coach will provide players with a commonly known (whether through life or media) situations and players will perform an abridged (2-4 minute) version of this situation/interaction that is not funny or unusual, but as accurate as possible.
 tags: []

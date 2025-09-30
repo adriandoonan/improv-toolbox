@@ -1,11 +1,11 @@
 ---
 name: How Did You Become A [BLANK]?
-purpose: GroundedPlay
+purpose: Grounded Play
 shortDescription: This is an exercise in taking a situation that seems impossible and making it seem plausible. Two people up.
-description: 'This is an exercise in taking a situation that seems impossible and making it seem plausible. Two people up. One says to the other, “So, how did you get to be a [blank]?” where [blank] is any job: auto mechanic, deep sea diver, veterinarian, anything—but preferably something far away from what the person being asked really is.'
+description: "This is an exercise in taking a situation that seems impossible and making it seem plausible. Two people up. One says to the other, “So, how did you get to be a [blank]?” where [blank] is any job: auto mechanic, deep sea diver, veterinarian, anything—but preferably something far away from what the person being asked really is."
 tags:
-- Will Hines - How to be the greatest improviser on earth
-- Grounded play
+  - Will Hines - How to be the greatest improviser on earth
+  - Grounded play
 source: cliffweb; Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---

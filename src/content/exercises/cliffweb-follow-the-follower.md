@@ -1,12 +1,12 @@
 ---
 name: Follow the follower
-purpose: WarmUp
+purpose: Warm Up
 shortDescription: This is a good way to practice getting in sync with other improvisers when using sound and movement to generate information.
 description: This is a good way to practice getting in sync with other improvisers when using sound and movement to generate information. Sound and movement will be used in this way to generate information in an Organic Opening.
 tags:
-- UCB Manual
-- Warm up
-- Group mind
+  - UCB Manual
+  - Warm up
+  - Group mind
 source: UCB Manual
 credit: UCB
 ---

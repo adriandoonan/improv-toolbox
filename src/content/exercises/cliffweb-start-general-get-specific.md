@@ -1,12 +1,12 @@
 ---
 name: Start General, Get Specific
-purpose: GroundedPlay
+purpose: Grounded Play
 shortDescription: Begin a scene with broad character choices, then layer in personal specifics to ground the performance.
 description: Start with the most general version of the character so you can respond quickly, then fold in details from your own experience to make the scene specific and playable.
 tags:
-- Will Hines - How to be the greatest improviser on earth
-- Grounded play
-- Characters
+  - Will Hines - How to be the greatest improviser on earth
+  - Grounded play
+  - Characters
 source: cliffweb; Will Hines - How to be the greatest improviser on earth
 credit: Will Hines
 ---

@@ -1,11 +1,11 @@
 ---
 name: Morning Routine
-purpose: ObjectWork
+purpose: Object Work
 shortDescription: 8 up, 4 on stage, 4 facing them sat on chairs (backs to the audience).
 description: 8 up, 4 on stage, 4 facing them sat on chairs (backs to the audience). The 4 on stage simultaneously mime a part of their morning routine for a few minutes.
 tags:
-- Annoyance
-- Object work
+  - Annoyance
+  - Object work
 source: cliffweb
 credit: Annoyance
 ---

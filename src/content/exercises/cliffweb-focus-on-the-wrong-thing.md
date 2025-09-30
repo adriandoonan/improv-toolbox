@@ -1,10 +1,10 @@
 ---
 name: Focus on the wrong thing
-purpose: WillHinesGeneral
+purpose: General
 shortDescription: Players act out a scene where one improviser focuses on the wrong thing in a crisis.
 description: Players act out a scene where one improviser focuses on the wrong thing in a crisis. The character should accept the reality but bend where the audience will be expecting the scene to go by always coming back to something besides the point.
 tags:
-- Will Hines (general)
+  - Will Hines (general)
 source: cliffweb
 credit: Will Hines
 ---
