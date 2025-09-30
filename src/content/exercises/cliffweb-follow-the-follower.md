@@ -7,9 +7,8 @@ tags:
   - "UCB Manual"
   - "Warm up"
   - "Group mind"
-source: "cliffweb; UCB Manual"
-
-credit: "unclaimed"
+source: "UCB Manual"
+credit: UCB
 ---
 
 - A group of improvisers forms a circle.
