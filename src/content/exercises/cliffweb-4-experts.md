@@ -5,13 +5,7 @@ shortDescription: "Teaches that the philosophy or deal of a character can simply
 description: |
   4 Players up in 4 chairs. The audience suggests some interesting areas of
   expertise for the players one by one, such as Quiches, Flat earth theory, The
-  Church of Harry Potter. The players are now instructed to stand up and do a
-  small “character walk” and the teacher will instruct “How do you walk? Hold
-  yourself? How do you look? How old are you? What are your likes/dislikes?” Now
-  they sit back down and the audience will ask questions to the experts, it’s best
-  if they’re not tailored to any of the experts specialities. The idea is that the
-  experts should answer through the funnel of their area of expertise. EG if the
-  question was “How can I ask my…
+  Church of Harry Potter.
 tags:
   - "Annoyance"
   - "Characters"
