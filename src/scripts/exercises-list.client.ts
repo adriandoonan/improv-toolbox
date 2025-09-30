@@ -2,6 +2,19 @@ import { setupResourceListFiltering } from "../utils/resourceFilters";
 
 const OPTIONS = {
   listSelector: "#exerciseList",
+  searchField: "query",
+  fuzzyOptions: {
+    keys: [
+      { name: "name", weight: 0.45 },
+      { name: "focus", weight: 0.2 },
+      { name: "source", weight: 0.15 },
+      { name: "credit", weight: 0.1 },
+      { name: "description", weight: 0.3 },
+      { name: "tags", weight: 0.15 },
+    ],
+    threshold: 0.55,
+    minMatchCharLength: 2,
+  },
   equalityFilters: [
     { field: "name" },
     { field: "focus" },

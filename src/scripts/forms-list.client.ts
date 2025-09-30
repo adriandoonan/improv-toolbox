@@ -2,6 +2,17 @@ import { setupResourceListFiltering } from "../utils/resourceFilters";
 
 const OPTIONS = {
   listSelector: "#formList",
+  searchField: "query",
+  fuzzyOptions: {
+    keys: [
+      { name: "name", weight: 0.5 },
+      { name: "type", weight: 0.25 },
+      { name: "description", weight: 0.3 },
+      { name: "tags", weight: 0.15 },
+    ],
+    threshold: 0.55,
+    minMatchCharLength: 2,
+  },
   equalityFilters: [
     { field: "name" },
     { field: "type" },

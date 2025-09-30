@@ -19,6 +19,23 @@ const minPeople = Array.from(
     value != null
   ))
 ).sort((a, b) => a - b);
+const warmupResourceData = warmups.map((warmup) => ({
+  id: warmup.slug,
+  name: warmup.data.name,
+  focus: warmup.data.focus ?? "",
+  minimumPeople:
+    warmup.data.minimumPeople != null
+      ? String(warmup.data.minimumPeople)
+      : "",
+  description: warmup.data.shortDescription ?? "",
+  tags: Array.isArray(warmup.data.tags)
+    ? warmup.data.tags.filter(Boolean).join(" ")
+    : "",
+}));
+const warmupResourceJson = JSON.stringify(warmupResourceData).replace(
+  /</g,
+  "\\u003c"
+);
 ---
 
 <BaseLayout>
@@ -34,6 +51,13 @@ const minPeople = Array.from(
       <div class="collection__controls">
         <FilterDrawer
           fields={[
+            {
+              name: "query",
+              label: "Search",
+              type: "search",
+              placeholder: "Search warmups...",
+              autocomplete: "off",
+            },
             { name: "name", label: "Name", type: "select", options: names },
             focuses.length
               ? {
@@ -56,11 +80,17 @@ const minPeople = Array.from(
         />
       </div>
     </header>
+    <script
+      type="application/json"
+      data-resource-list="warmupList"
+      set:html={warmupResourceJson}
+    ></script>
     <ul id="warmupList" class="resource-list">
       {
         warmups.map((warmup) => (
           <li
             class="resource-card"
+            data-resource-id={warmup.slug}
             data-name={warmup.data.name}
             data-focus={warmup.data.focus ?? ""}
             data-minimum-people={

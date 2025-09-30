@@ -7,7 +7,7 @@ Improv Toolbox is a mobile-first Progressive Web App (PWA) for improv teachers a
 - **Main navigation drawer** with instant access to Home, Exercises, Forms, Warmups, and Tools.
 - **Landing page** hero cards that preview every collection and highlight sample content.
 - **Tools directory** with dedicated pages for Timer, Gauss Timer, Jam Groupaliser, and Suggestion Generator.
-- **Exercises, forms, and warmups** content collections with filter drawers, rich metadata, and generated detail pages.
+- **Exercises, forms, and warmups** content collections with weighted fuzzy search, structured filters, rich metadata, and generated detail pages.
 - **Favorites filters** so recurring go-to items surface quickly across the listings ([exercises index](src/pages/exercises/index.astro)).
 - **Personal notes** panels on every detail page so coaches can jot Markdown snippets per item ([NotesPanel](src/components/NotesPanel.astro)).
 - **Lesson Planner tool** for sequencing warmups, exercises, and breaks into reusable sessions ([lesson plans](src/pages/tools/lesson-plans/index.astro)).

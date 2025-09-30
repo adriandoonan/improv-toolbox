@@ -2,6 +2,15 @@
 
 ## Tasks
 
+### Backfill interaction coverage for resource filters
+
+- Add automated browser tests that exercise the fuzzy search, structured filters, and favourites-only toggle across exercises, warmups, and forms.
+- Capture baseline expectations for ranking so future tweaks to the fuzzy weights stay intentional.
+
+### Evaluate swapping custom fuzzy index for Fuse.js
+
+- Now that the listings rely on a homegrown `FuzzyIndex`, audit bundle impact and browser support before replacing it with the upstream Fuse.js package once dependency installs are available.
+
 ### Polish Cliffweb exercise import formatting
 
 - Review generated descriptions for edge cases where HTML lists or emphasis lost fidelity.

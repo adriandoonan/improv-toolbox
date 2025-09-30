@@ -25,6 +25,25 @@ const minPeople = Array.from(
     value != null
   ))
 ).sort((a, b) => a - b);
+const exerciseResourceData = exercises.map((exercise) => ({
+  id: exercise.slug,
+  name: exercise.data.name,
+  focus: exercise.data.focus ?? "",
+  source: exercise.data.source ?? "",
+  credit: exercise.data.credit ?? "",
+  minimumPeople:
+    exercise.data.minimumPeople != null
+      ? String(exercise.data.minimumPeople)
+      : "",
+  description: exercise.data.shortDescription ?? "",
+  tags: Array.isArray(exercise.data.tags)
+    ? exercise.data.tags.filter(Boolean).join(" ")
+    : "",
+}));
+const exerciseResourceJson = JSON.stringify(exerciseResourceData).replace(
+  /</g,
+  "\\u003c"
+);
 ---
 
 <BaseLayout>
@@ -41,6 +60,13 @@ const minPeople = Array.from(
       <div class="collection__controls">
         <FilterDrawer
           fields={[
+            {
+              name: "query",
+              label: "Search",
+              type: "search",
+              placeholder: "Search exercises...",
+              autocomplete: "off",
+            },
             { name: "name", label: "Name", type: "select", options: names },
             focuses.length
               ? {
@@ -79,11 +105,17 @@ const minPeople = Array.from(
         />
       </div>
     </header>
+    <script
+      type="application/json"
+      data-resource-list="exerciseList"
+      set:html={exerciseResourceJson}
+    ></script>
     <ul id="exerciseList" class="resource-list">
       {
         exercises.map((exercise) => (
           <li
             class="resource-card"
+            data-resource-id={exercise.slug}
             data-name={exercise.data.name}
             data-focus={exercise.data.focus ?? ""}
             data-source={exercise.data.source ?? ""}
