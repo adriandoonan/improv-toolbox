@@ -1,8 +1,17 @@
 # Todo & Refactor Backlog
 
+## Tasks
+
+### Import cliff's exercise database
+
+The file `cliffweb_ccbtse.json` in the project root contains a database of excersises from a friend that we would like to import into the improv toolbox.
+
+It unfortunately comes from a wordpress dump so will need to be properly imported.
+
 ## Refactor opportunities
 
 ### Modularize NotesPanel data and rendering helpers
+
 - **Context:** `src/components/NotesPanel.astro` currently couples storage, migration, markdown conversion, and UI wiring within a single inline script, increasing complexity and making testing difficult.
 - **Next steps:**
   - Extract storage (versioning, migrations, persistence) into a pure utility such as `src/utils/notesStorage.ts` with accompanying unit tests.
@@ -10,6 +19,7 @@
   - Keep the Astro component focused on UI orchestration by importing the new helpers and delegating side effects.
 
 ### Decouple Lesson Planner state management and persistence
+
 - **Context:** `src/pages/tools/lesson-plans/index.astro` intermixes IndexedDB access, domain modeling, and DOM manipulation, making the feature hard to reason about and extend.
 - **Next steps:**
   - Introduce a storage module under `src/utils/lesson-plans/` to encapsulate IndexedDB operations and error handling.
