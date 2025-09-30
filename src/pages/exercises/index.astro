@@ -3,10 +3,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import FavoriteToggle from "../../components/FavoriteToggle.astro";
-import exercisesTableModuleUrl from "../../scripts/exercises-table.client.ts?url";
+import exercisesTableEntryUrl from "../../scripts/exercises-table.entry.js?url";
 import { getCollection } from "astro:content";
-const toModuleScript = (url: string) => url.replace(/\.ts(?=\?|$)/, ".js");
-const exercisesTableScript = toModuleScript(exercisesTableModuleUrl);
+const exercisesTableScript = exercisesTableEntryUrl;
 const exercises = (await getCollection("exercises")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
 );

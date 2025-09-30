@@ -3,10 +3,9 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import FavoriteToggle from "../../components/FavoriteToggle.astro";
-import warmupsTableModuleUrl from "../../scripts/warmups-table.client.ts?url";
+import warmupsTableEntryUrl from "../../scripts/warmups-table.entry.js?url";
 import { getCollection } from "astro:content";
-const toModuleScript = (url: string) => url.replace(/\.ts(?=\?|$)/, ".js");
-const warmupsTableScript = toModuleScript(warmupsTableModuleUrl);
+const warmupsTableScript = warmupsTableEntryUrl;
 const warmups = (await getCollection("warmups")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
 );

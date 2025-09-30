@@ -1,11 +1,9 @@
 ---
-import favoritesClientModuleUrl from "../scripts/favorites.client.ts?url";
-import themeClientModuleUrl from "../scripts/theme.client.ts?url";
+import favoritesClientEntryUrl from "../scripts/favorites-client.entry.js?url";
+import themeClientEntryUrl from "../scripts/theme-client.entry.js?url";
 
-const toModuleScript = (url: string) => url.replace(/\.ts(?=\?|$)/, ".js");
-
-const favoritesClientScript = toModuleScript(favoritesClientModuleUrl);
-const themeClientScript = toModuleScript(themeClientModuleUrl);
+const favoritesClientScript = favoritesClientEntryUrl;
+const themeClientScript = themeClientEntryUrl;
 
 const {
   title = "Improv Toolbox",
