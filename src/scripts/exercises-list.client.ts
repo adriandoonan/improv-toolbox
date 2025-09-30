@@ -5,6 +5,8 @@ const OPTIONS = {
   equalityFilters: [
     { field: "name" },
     { field: "focus" },
+    { field: "source" },
+    { field: "credit" },
     { field: "minimumPeople" },
   ],
 };

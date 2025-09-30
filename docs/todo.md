@@ -2,11 +2,10 @@
 
 ## Tasks
 
-### Import cliff's exercise database
+### Polish Cliffweb exercise import formatting
 
-The file `cliffweb_ccbtse.json` in the project root contains a database of excersises from a friend that we would like to import into the improv toolbox.
-
-It unfortunately comes from a wordpress dump so will need to be properly imported.
+- Review generated descriptions for edge cases where HTML lists or emphasis lost fidelity.
+- Capture any manual corrections needed so the Python importer can be iterated instead of hand-editing.
 
 ## Refactor opportunities
 

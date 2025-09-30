@@ -1,8 +1,15 @@
 ---
 name: Emotional Rollercoaster
+purpose: Emotion
 shortDescription: Players change emotions rapidly during a scene.
 description: |
   Emotional Rollercoaster is an exercise where players act out a scene and change emotions on a signal, building emotional range and adaptability.
+focus: Emotion
+tags:
+  - Emotion
+  - Adaptability
+  - Range
+source: improv-toolbox
+credit: unclaimed
 minimumPeople: 2
-focus: Emotion, Adaptability, Range
 ---

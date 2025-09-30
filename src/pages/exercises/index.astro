@@ -14,6 +14,12 @@ const names = Array.from(new Set(exercises.map((e) => e.data.name))).sort(
 const focuses = Array.from(
   new Set(exercises.map((e) => e.data.focus).filter(Boolean))
 ).sort((a, b) => a.localeCompare(b));
+const sources = Array.from(
+  new Set(exercises.map((e) => e.data.source).filter(Boolean))
+).sort((a, b) => a.localeCompare(b));
+const credits = Array.from(
+  new Set(exercises.map((e) => e.data.credit).filter(Boolean))
+).sort((a, b) => a.localeCompare(b));
 const minPeople = Array.from(
   new Set(exercises.map((e) => e.data.minimumPeople).filter((value) =>
     value != null
@@ -44,6 +50,22 @@ const minPeople = Array.from(
                   options: focuses,
                 }
               : null,
+            sources.length
+              ? {
+                  name: "source",
+                  label: "Source",
+                  type: "select",
+                  options: sources,
+                }
+              : null,
+            credits.length
+              ? {
+                  name: "credit",
+                  label: "Credit",
+                  type: "select",
+                  options: credits,
+                }
+              : null,
             minPeople.length
               ? {
                   name: "minimumPeople",
@@ -64,6 +86,8 @@ const minPeople = Array.from(
             class="resource-card"
             data-name={exercise.data.name}
             data-focus={exercise.data.focus ?? ""}
+            data-source={exercise.data.source ?? ""}
+            data-credit={exercise.data.credit ?? ""}
             data-minimum-people={
               exercise.data.minimumPeople != null
                 ? String(exercise.data.minimumPeople)
