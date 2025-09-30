@@ -1,6 +1,6 @@
 # Improv Toolbox — Requirements
 
-_Last updated: 2025-10-12_
+_Last updated: 2025-10-16_
 
 ## 1. Project Purpose
 
@@ -115,7 +115,10 @@ Types:
 ## 6. Non-Functional Requirements
 
 - **Performance**: Optimized for mobile, low bandwidth, and offline use
+  - The service worker pre-caches the app shell, theme stylesheet, and hashed Astro bundles so the UI and styling remain available offline after installation.
 - **Usability**: Clean UI with minimal distractions
+- **Standalone home**: Installed PWA sessions open directly to the content categories; marketing hero/highlights/CTA are hidden
+  so facilitators can jump straight into resources.
 - **Accessibility**: WCAG AA compliance where possible
 - **Extensibility**: Easy for contributors to add new tools/content by following front matter schema
 
@@ -131,6 +134,7 @@ Types:
 ## Change Log
 
 - **2025-10-15:** Documented PWA quick actions that deep link to Timer, Warmups, and Exercises.
+- **2025-10-16:** Documented the streamlined standalone home experience for installed devices.
 - **2025-10-14:** Added single-word `purpose`, `tags`, `source`, and `credit` requirements for exercises and captured Cliffweb import metadata expectations.
 - **2025-10-12:** Documented delivered favourites, personal notes, and Lesson Planner functionality; refreshed future roadmap items.
 - **2025-10-05:** Captured alpha scope (navigation, content collections, tools) and documented automated HTML regression tests.
