@@ -12,6 +12,15 @@ const astroBin = resolve(
   process.platform === 'win32' ? 'astro.cmd' : 'astro'
 );
 
+const buildClients = spawnSync(process.execPath, ['scripts/build-client-scripts.mjs'], {
+  cwd: projectRoot,
+  stdio: 'inherit',
+});
+
+if (buildClients.status !== 0) {
+  process.exit(buildClients.status ?? 1);
+}
+
 const build = spawnSync(astroBin, ['build'], {
   cwd: projectRoot,
   stdio: 'inherit',

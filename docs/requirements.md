@@ -1,6 +1,6 @@
 # Improv Toolbox — Requirements
 
-_Last updated: 2025-10-16_
+_Last updated: 2025-10-20_
 
 ## 1. Project Purpose
 
@@ -133,6 +133,7 @@ Types:
 
 ## Change Log
 
+- **2025-10-20:** Shifted interactive scripts to precompiled `/scripts/*.client.js` assets (served network-first) and bumped the service worker cache (`toolbox-v4`) so PWAs fetch fresh bundles without MIME errors during deploys.
 - **2025-10-19:** Unified resource listings on TanStack Table, retiring the bespoke fuzzy matcher and Fuse.js dependency while adding source-aware filtering for forms, warmups, and exercises.
 - **2025-10-20:** Disabled script caching in the service worker so PWA sessions always execute fresh logic while retaining offline styling fallbacks.
 - **2025-10-19:** Switched the service worker to network-first for styles so PWA installs pick up fresh theme updates while keeping offline fallbacks.
