@@ -1,4 +1,4 @@
-const CACHE = "toolbox-v3";
+const CACHE = "toolbox-v4";
 const CORE_ASSETS = [
   "/manifest.webmanifest",
   "/icons/icon-192.png",

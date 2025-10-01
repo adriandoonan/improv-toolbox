@@ -2,6 +2,11 @@
 
 ## Tasks
 
+### Automate service worker cache purges
+
+- Add a post-deploy hook or Cloudflare Pages integration to purge `/sw.js` and `_astro/*` so new hashed client bundles reach installed PWAs without manual cache busting.
+- Consider shipping an activation handler that calls `caches.keys()` + `caches.delete()` as a one-time safety net when offline clients pick up a new cache version.
+
 ### Backfill interaction coverage for resource filters
 
 - Add automated browser tests that exercise the fuzzy search, structured filters, and favourites-only toggle across exercises, warmups, and forms.
