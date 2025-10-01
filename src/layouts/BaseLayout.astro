@@ -1,6 +1,8 @@
 ---
-import favoritesClientEntryUrl from "../scripts/favorites-client.entry.ts?url";
-import themeClientEntryUrl from "../scripts/theme-client.entry.ts?url";
+import favoritesClientUrlRaw from "../scripts/favorites.client.ts?url";
+import themeClientUrlRaw from "../scripts/theme.client.ts?url";
+const favoritesClientUrl = favoritesClientUrlRaw.replace(/\.ts$/, ".js");
+const themeClientUrl = themeClientUrlRaw.replace(/\.ts$/, ".js");
 
 const {
   title = "Improv Toolbox",
@@ -316,8 +318,8 @@ const isActive = (href: string) =>
       <small>© {currentYear} Improv Toolbox Collective</small>
     </footer>
 
-    <script type="module" src={favoritesClientEntryUrl}></script>
-    <script type="module" src={themeClientEntryUrl}></script>
+    <script type="module" src={favoritesClientUrl}></script>
+    <script type="module" src={themeClientUrl}></script>
 
     <script>
       (() => {

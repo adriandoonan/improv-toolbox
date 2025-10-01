@@ -141,7 +141,7 @@ test('exercises list exposes filters and dataset metadata', () => {
     exercisesHtml.matchAll(/<script type="module" src="([^"]+)"/g)
   );
   const hasFilterBootstrap = moduleScripts.some(([, src]) =>
-    src.includes('exercises-table.entry') && src.endsWith('.js')
+    src.includes('exercises-table.client') && src.endsWith('.js')
   );
   assert.ok(hasFilterBootstrap, 'exercises page should inline resource table bootstrap script');
   const nameOptions = ['Character Circle', 'Word at a Time Story'];

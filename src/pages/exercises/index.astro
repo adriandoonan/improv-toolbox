@@ -1,10 +1,11 @@
 ---
-import exercisesTableEntryUrl from "../../scripts/exercises-table.entry.ts?url";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
 import FavoriteToggle from "../../components/FavoriteToggle.astro";
 import { getCollection } from "astro:content";
+import exercisesTableClientUrlRaw from "../../scripts/exercises-table.client.ts?url";
+const exercisesTableClientUrl = exercisesTableClientUrlRaw.replace(/\.ts$/, ".js");
 const exercises = (await getCollection("exercises")).sort((a, b) =>
   a.data.name.localeCompare(b.data.name)
 );
@@ -132,7 +133,7 @@ const minPeople = Array.from(
       }
     </ul>
   </section>
-  <script type="module" src={exercisesTableEntryUrl}></script>
+  <script type="module" src={exercisesTableClientUrl}></script>
   <style>
     .resource-card__title a {
       color: inherit;
