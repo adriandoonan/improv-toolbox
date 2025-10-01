@@ -313,11 +313,9 @@ const isActive = (href: string) =>
       <small>© {currentYear} Improv Toolbox Collective</small>
     </footer>
 
-    <script type="module" is:inline>
-      import "../scripts/favorites.client.ts";
-    </script>
-    <script type="module" is:inline>
-      import "../scripts/theme.client.ts";
+    <script type="module">
+      import("../scripts/favorites.client.ts");
+      import("../scripts/theme.client.ts");
     </script>
 
     <script>
