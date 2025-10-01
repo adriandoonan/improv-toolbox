@@ -22,7 +22,7 @@ await Promise.all(
     build({
       entryPoints: [resolve(entryDir, entry)],
       outfile: resolve(outDir, entry.replace(/\.ts$/, '.js')),
-      bundle: false,
+      bundle: true,
       format: 'esm',
       target: 'es2020',
       logLevel: 'info',

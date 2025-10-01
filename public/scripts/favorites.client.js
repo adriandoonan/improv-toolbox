@@ -1,13 +1,184 @@
-import {
-  loadFavorites,
-  toggleFavorite,
-  subscribeToFavorites,
-  isStorageReady,
-  FAVORITES_EVENT
-} from "../utils/favorites";
-const ROOT_SELECTOR = "[data-favorite-root]";
-const INITIALIZED_FLAG = "favoriteInitialized";
-const cleanupMap = /* @__PURE__ */ new WeakMap();
+// src/utils/favorites.ts
+var STORAGE_NAMESPACE = "improv-toolbox:favorites";
+var STORAGE_VERSION = 1;
+var STORAGE_PROBE_KEY = `${STORAGE_NAMESPACE}-probe`;
+var CHANGE_EVENT = "improv-favorites:change";
+var FAVORITES_EVENT = CHANGE_EVENT;
+var storageStatus = null;
+var storageListenerBound = false;
+function isStorageReady() {
+  if (typeof window === "undefined" || !("localStorage" in window)) {
+    storageStatus = false;
+    return false;
+  }
+  if (storageStatus === true) {
+    return true;
+  }
+  try {
+    window.localStorage.setItem(STORAGE_PROBE_KEY, "ok");
+    window.localStorage.removeItem(STORAGE_PROBE_KEY);
+    storageStatus = true;
+  } catch (error) {
+    console.warn("Local storage is not available for favorites", error);
+    storageStatus = false;
+  }
+  return storageStatus ?? false;
+}
+function defaultPayload() {
+  return {
+    version: STORAGE_VERSION,
+    items: {}
+  };
+}
+function sanitizeItems(items) {
+  const sanitized = {};
+  for (const [key, value] of Object.entries(items)) {
+    if (!value || typeof value !== "object") {
+      continue;
+    }
+    const entryKey = typeof value.key === "string" ? value.key : key;
+    if (!entryKey) {
+      continue;
+    }
+    const addedAt = typeof value.addedAt === "string" ? value.addedAt : (/* @__PURE__ */ new Date()).toISOString();
+    sanitized[entryKey] = {
+      ...value,
+      key: entryKey,
+      addedAt
+    };
+  }
+  return sanitized;
+}
+function ensureStorageListener() {
+  if (storageListenerBound) {
+    return;
+  }
+  if (typeof window === "undefined" || typeof window.addEventListener !== "function") {
+    return;
+  }
+  window.addEventListener("storage", (event) => {
+    if (event.key && event.key !== STORAGE_NAMESPACE) {
+      return;
+    }
+    const payload = loadFavorites();
+    dispatchFavoritesChange({ payload });
+  });
+  storageListenerBound = true;
+}
+function loadFavorites() {
+  if (!isStorageReady()) {
+    return defaultPayload();
+  }
+  try {
+    const raw = window.localStorage.getItem(STORAGE_NAMESPACE);
+    if (!raw) {
+      return defaultPayload();
+    }
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") {
+      return defaultPayload();
+    }
+    if (parsed.version !== STORAGE_VERSION || typeof parsed.items !== "object") {
+      return defaultPayload();
+    }
+    return {
+      version: STORAGE_VERSION,
+      items: sanitizeItems(parsed.items)
+    };
+  } catch (error) {
+    console.warn("Failed to read favorites payload", error);
+    storageStatus = false;
+    return defaultPayload();
+  }
+}
+function saveFavorites(payload) {
+  if (!isStorageReady()) {
+    return;
+  }
+  try {
+    window.localStorage.setItem(
+      STORAGE_NAMESPACE,
+      JSON.stringify({
+        version: STORAGE_VERSION,
+        items: payload.items
+      })
+    );
+  } catch (error) {
+    console.warn("Failed to persist favorites payload", error);
+    storageStatus = false;
+  }
+}
+function toggleFavorite(key, entryInput = {}) {
+  if (!key) {
+    return null;
+  }
+  ensureStorageListener();
+  const payload = loadFavorites();
+  const items = { ...payload.items };
+  const existing = items[key];
+  let isFavorite;
+  let entry;
+  if (existing) {
+    delete items[key];
+    isFavorite = false;
+    entry = void 0;
+  } else {
+    const addedAt = (/* @__PURE__ */ new Date()).toISOString();
+    entry = {
+      key,
+      addedAt,
+      ...entryInput
+    };
+    items[key] = entry;
+    isFavorite = true;
+  }
+  const nextPayload = {
+    version: STORAGE_VERSION,
+    items
+  };
+  saveFavorites(nextPayload);
+  const detail = {
+    key,
+    isFavorite,
+    payload: nextPayload,
+    entry
+  };
+  dispatchFavoritesChange(detail);
+  return detail;
+}
+function dispatchFavoritesChange(detail) {
+  if (typeof window === "undefined" || typeof window.dispatchEvent !== "function") {
+    return;
+  }
+  if (typeof CustomEvent !== "function") {
+    return;
+  }
+  const event = new CustomEvent(CHANGE_EVENT, { detail });
+  window.dispatchEvent(event);
+}
+function subscribeToFavorites(listener) {
+  if (typeof window === "undefined" || typeof window.addEventListener !== "function") {
+    return () => {
+    };
+  }
+  ensureStorageListener();
+  const handler = (event) => {
+    const custom = event;
+    if (!custom.detail) {
+      return;
+    }
+    listener(custom.detail);
+  };
+  window.addEventListener(CHANGE_EVENT, handler);
+  return () => {
+    window.removeEventListener(CHANGE_EVENT, handler);
+  };
+}
+
+// src/scripts/favorites.client.ts
+var ROOT_SELECTOR = "[data-favorite-root]";
+var INITIALIZED_FLAG = "favoriteInitialized";
+var cleanupMap = /* @__PURE__ */ new WeakMap();
 function disableControl(root, message) {
   const button = root.querySelector("[data-favorite-button]");
   const srText = root.querySelector("[data-favorite-sr-text]");

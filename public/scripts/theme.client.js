@@ -1,25 +1,26 @@
-const STORAGE_KEY = "improv-toolbox-theme";
-const CYCLE_ORDER = ["system", "light", "dark"];
-const PREFERENCE_LABEL = {
+// src/scripts/theme.client.ts
+var STORAGE_KEY = "improv-toolbox-theme";
+var CYCLE_ORDER = ["system", "light", "dark"];
+var PREFERENCE_LABEL = {
   system: "System",
   light: "Light",
   dark: "Dark"
 };
-const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
-const root = document.documentElement;
-const themeMeta = document.querySelector(
+var prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+var root = document.documentElement;
+var themeMeta = document.querySelector(
   'meta[name="theme-color"]'
 );
-const metaThemeColors = {
+var metaThemeColors = {
   light: themeMeta?.dataset.themeColorLight ?? "#eef1ff",
   dark: themeMeta?.dataset.themeColorDark ?? "#050b19"
 };
-const toggleButtons = Array.from(
+var toggleButtons = Array.from(
   document.querySelectorAll("[data-theme-toggle]")
 );
-let activePreference = getInitialPreference();
+var activePreference = getInitialPreference();
 applyPreference(activePreference, { persist: hasStoredPreference() });
-const handleMediaChange = () => {
+var handleMediaChange = () => {
   if (activePreference === "system") {
     applyPreference("system", { persist: false });
   }
