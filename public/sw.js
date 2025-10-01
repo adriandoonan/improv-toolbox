@@ -1,18 +1,18 @@
-const CACHE = "toolbox-v3";
+const CACHE = "toolbox-v4";
 const CORE_ASSETS = [
   "/manifest.webmanifest",
   "/icons/icon-192.png",
   "/icons/icon-512.png"
 ];
 const SHELL_URL = "/";
-const ASTRO_BUNDLE_REGEX = /["'](\/_astro\/[^"']+\.(?:css|js))(?:\?[^"']*)?["']/g;
+const ASTRO_STYLE_REGEX = /["'](\/_astro\/[^"']+\.css)(?:\?[^"']*)?["']/g;
 
 function shouldCache(request, response) {
   return (
     request.url.startsWith(self.location.origin) &&
     response &&
     response.ok &&
-    ["style", "script", "font"].includes(request.destination)
+    ["style", "font"].includes(request.destination)
   );
 }
 
@@ -25,7 +25,7 @@ async function precacheShell(cache) {
     const html = await response.text();
     const bundleUrls = new Set();
     let match;
-    while ((match = ASTRO_BUNDLE_REGEX.exec(html)) !== null) {
+    while ((match = ASTRO_STYLE_REGEX.exec(html)) !== null) {
       bundleUrls.add(match[1]);
     }
     if (bundleUrls.size === 0) return;
@@ -79,7 +79,7 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  if (["style", "script"].includes(request.destination)) {
+  if (request.destination === "style") {
     event.respondWith(
       (async () => {
         try {
@@ -89,6 +89,23 @@ self.addEventListener("fetch", event => {
             cache.put(request, response.clone());
           }
           return response;
+        } catch (err) {
+          const cached = await caches.match(request);
+          if (cached) {
+            return cached;
+          }
+          throw err;
+        }
+      })()
+    );
+    return;
+  }
+
+  if (request.destination === "script") {
+    event.respondWith(
+      (async () => {
+        try {
+          return await fetch(request, { cache: "no-cache" });
         } catch (err) {
           const cached = await caches.match(request);
           if (cached) {

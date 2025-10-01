@@ -115,7 +115,7 @@ Types:
 ## 6. Non-Functional Requirements
 
 - **Performance**: Optimized for mobile, low bandwidth, and offline use
-  - The service worker pre-caches the app shell, theme stylesheet, and hashed Astro bundles so the UI and styling remain available offline after installation.
+  - The service worker pre-caches the app shell, theme stylesheet, and hashed Astro CSS bundles so the UI styling remains available offline after installation.
 - **Usability**: Clean UI with minimal distractions
 - **Standalone home**: Installed PWA sessions open directly to the content categories; marketing hero/highlights/CTA are hidden
   so facilitators can jump straight into resources.
@@ -134,7 +134,8 @@ Types:
 ## Change Log
 
 - **2025-10-19:** Unified resource listings on TanStack Table, retiring the bespoke fuzzy matcher and Fuse.js dependency while adding source-aware filtering for forms, warmups, and exercises.
-- **2025-10-19:** Switched the service worker to network-first for styles/scripts so PWA installs pick up fresh theme updates while keeping offline fallbacks.
+- **2025-10-20:** Disabled script caching in the service worker so PWA sessions always execute fresh logic while retaining offline styling fallbacks.
+- **2025-10-19:** Switched the service worker to network-first for styles so PWA installs pick up fresh theme updates while keeping offline fallbacks.
 - **2025-10-18:** Hardened resource filter bootstrap so fuzzy search, equality selects, and favourites wiring load reliably after build.
 - **2025-10-17:** Added weighted fuzzy search across resource listings and refreshed filter tooling.
 - **2025-10-16:** Documented the streamlined standalone home experience for installed devices.
