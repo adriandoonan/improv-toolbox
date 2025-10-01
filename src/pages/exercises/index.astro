@@ -1,4 +1,5 @@
 ---
+import exercisesTableEntryUrl from "../../scripts/exercises-table.entry.js?url";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
@@ -131,9 +132,7 @@ const minPeople = Array.from(
       }
     </ul>
   </section>
-  <script type="module">
-    import("../../scripts/exercises-table.client.ts");
-  </script>
+  <script type="module" src={exercisesTableEntryUrl}></script>
   <style>
     .resource-card__title a {
       color: inherit;

@@ -1,4 +1,5 @@
 ---
+import warmupsTableEntryUrl from "../../scripts/warmups-table.entry.js?url";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
@@ -106,9 +107,7 @@ const minPeople = Array.from(
       }
     </ul>
   </section>
-  <script type="module">
-    import("../../scripts/warmups-table.client.ts");
-  </script>
+  <script type="module" src={warmupsTableEntryUrl}></script>
   <style>
     .resource-card__title a {
       color: inherit;

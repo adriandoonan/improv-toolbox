@@ -1,4 +1,5 @@
 ---
+import formsTableEntryUrl from "../../scripts/forms-table.entry.js?url";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import FilterDrawer from "../../components/FilterDrawer.astro";
@@ -98,9 +99,7 @@ const sources = Array.from(
       }
     </ul>
   </section>
-  <script type="module">
-    import("../../scripts/forms-table.client.ts");
-  </script>
+  <script type="module" src={formsTableEntryUrl}></script>
   <style>
     .resource-card__title a {
       color: inherit;

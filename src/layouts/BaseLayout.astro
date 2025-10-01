@@ -1,4 +1,7 @@
 ---
+import favoritesClientEntryUrl from "../scripts/favorites-client.entry.js?url";
+import themeClientEntryUrl from "../scripts/theme-client.entry.js?url";
+
 const {
   title = "Improv Toolbox",
   description = "Exercises, warmups, forms, and show tools.",
@@ -313,10 +316,8 @@ const isActive = (href: string) =>
       <small>© {currentYear} Improv Toolbox Collective</small>
     </footer>
 
-    <script type="module">
-      import("../scripts/favorites.client.ts");
-      import("../scripts/theme.client.ts");
-    </script>
+    <script type="module" src={favoritesClientEntryUrl}></script>
+    <script type="module" src={themeClientEntryUrl}></script>
 
     <script>
       (() => {
