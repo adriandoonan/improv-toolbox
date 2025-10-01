@@ -13,6 +13,14 @@ const { fields = [], slot } = Astro.props as {
   fields?: FilterField[];
   slot?: unknown;
 };
+
+const componentId = Astro.uid();
+const toggleId = `filterDrawerToggle-${componentId}`;
+const drawerId = `filterDrawer-${componentId}`;
+const backdropId = `filterDrawerBackdrop-${componentId}`;
+const toggleSelector = `#${toggleId}`;
+const drawerSelector = `#${drawerId}`;
+const backdropSelector = `#${backdropId}`;
 ---
 
 <style>
@@ -88,9 +96,9 @@ const { fields = [], slot } = Astro.props as {
 </style>
 <button
   class="filter-trigger"
-  id="filterDrawerToggle"
+  id={toggleId}
   aria-label="Filter"
-  aria-controls="filterDrawer"
+  aria-controls={drawerId}
   aria-expanded="false"
   tabindex="0"
 >
@@ -101,7 +109,7 @@ const { fields = [], slot } = Astro.props as {
   </svg>
   Filters
 </button>
-<div class="filter-drawer" id="filterDrawer">
+<div class="filter-drawer" id={drawerId}>
   <h2>Refine</h2>
   <form class="filter-form">
     {
@@ -142,43 +150,105 @@ const { fields = [], slot } = Astro.props as {
   </form>
   <div>{slot}</div>
 </div>
-<div class="filter-drawer-backdrop" id="filterDrawerBackdrop"></div>
-<script>
-  const drawer = document.getElementById("filterDrawer");
-  const toggleBtn = document.getElementById("filterDrawerToggle");
-  const backdrop = document.getElementById("filterDrawerBackdrop");
-  let open = false;
-  function openDrawer() {
-    drawer?.classList.add("open");
-    backdrop?.classList.add("open");
-    toggleBtn?.classList.add("open");
-    toggleBtn?.setAttribute("aria-expanded", "true");
-    open = true;
-    document.addEventListener("keydown", onKeyDown);
-  }
-  function closeDrawer() {
-    drawer?.classList.remove("open");
-    backdrop?.classList.remove("open");
-    toggleBtn?.classList.remove("open");
-    toggleBtn?.setAttribute("aria-expanded", "false");
-    open = false;
-    document.removeEventListener("keydown", onKeyDown);
-  }
-  function onKeyDown(event) {
-    if (event.key === "Escape") {
-      closeDrawer();
-    }
-  }
-  toggleBtn?.addEventListener("click", () => {
-    open ? closeDrawer() : openDrawer();
-  });
-  backdrop?.addEventListener("click", closeDrawer);
-  drawer?.querySelectorAll("input,select").forEach((el) => {
-    if (el instanceof HTMLInputElement && el.type === "search") {
+  <div class="filter-drawer-backdrop" id={backdropId}></div>
+  <script
+    data-toggle-selector={toggleSelector}
+    data-drawer-selector={drawerSelector}
+    data-backdrop-selector={backdropSelector}
+  >
+  (() => {
+    const script = document.currentScript;
+    const potentialRoot =
+      script?.parentElement ??
+      (script?.getRootNode?.() instanceof ShadowRoot
+        ? script.getRootNode().host
+        : null) ??
+      document.body ??
+      document.documentElement;
+    if (!(potentialRoot instanceof HTMLElement)) {
       return;
     }
-    el.addEventListener("change", () => {
+    const root = potentialRoot;
+    const toggleSelector = script?.dataset.toggleSelector ?? "";
+    const drawerSelector = script?.dataset.drawerSelector ?? "";
+    const backdropSelector = script?.dataset.backdropSelector ?? "";
+    if (!toggleSelector || !drawerSelector || !backdropSelector) {
+      return;
+    }
+    const toggleBtn = root.querySelector(toggleSelector);
+    const drawer = root.querySelector(drawerSelector);
+    const backdrop = root.querySelector(backdropSelector);
+    if (
+      !(toggleBtn instanceof HTMLElement) ||
+      !(drawer instanceof HTMLElement) ||
+      !(backdrop instanceof HTMLElement)
+    ) {
+      return;
+    }
+    const ownerDocument = root.ownerDocument ?? document;
+    let open = false;
+    const cleanup = () => {
+      ownerDocument.removeEventListener("keydown", onKeyDown);
+    };
+    const guardConnected = () => {
+      if (!root.isConnected) {
+        cleanup();
+        return false;
+      }
+      return true;
+    };
+    function onKeyDown(event) {
+      if (!guardConnected()) {
+        return;
+      }
+      if (event.key === "Escape") {
+        closeDrawer();
+      }
+    }
+    function openDrawer() {
+      if (!guardConnected() || open) {
+        return;
+      }
+      drawer.classList.add("open");
+      backdrop.classList.add("open");
+      toggleBtn.classList.add("open");
+      toggleBtn.setAttribute("aria-expanded", "true");
+      open = true;
+      ownerDocument.addEventListener("keydown", onKeyDown);
+    }
+    function closeDrawer() {
+      if (!guardConnected() || !open) {
+        return;
+      }
+      drawer.classList.remove("open");
+      backdrop.classList.remove("open");
+      toggleBtn.classList.remove("open");
+      toggleBtn.setAttribute("aria-expanded", "false");
+      open = false;
+      cleanup();
+    }
+    toggleBtn.addEventListener("click", () => {
+      if (!guardConnected()) {
+        return;
+      }
+      open ? closeDrawer() : openDrawer();
+    });
+    backdrop.addEventListener("click", () => {
+      if (!guardConnected()) {
+        return;
+      }
       closeDrawer();
     });
-  });
+    drawer.querySelectorAll("input,select").forEach((el) => {
+      if (el instanceof HTMLInputElement && el.type === "search") {
+        return;
+      }
+      el.addEventListener("change", () => {
+        if (!guardConnected()) {
+          return;
+        }
+        closeDrawer();
+      });
+    });
+  })();
 </script>
