@@ -14,7 +14,15 @@ const { fields = [], slot } = Astro.props as {
   slot?: unknown;
 };
 
-const componentId = Astro.uid();
+const generateUUID = () =>
+  ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+    (
+      c ^
+      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+    ).toString(16)
+  );
+
+const componentId = generateUUID();
 const toggleId = `filterDrawerToggle-${componentId}`;
 const drawerId = `filterDrawer-${componentId}`;
 const backdropId = `filterDrawerBackdrop-${componentId}`;
@@ -103,9 +111,9 @@ const backdropSelector = `#${backdropId}`;
   tabindex="0"
 >
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <path d="M4 5h16" />
-    <path d="M7 12h10" />
-    <path d="M10 19h4" />
+    <path d="M4 5h16"></path>
+    <path d="M7 12h10"></path>
+    <path d="M10 19h4"></path>
   </svg>
   Filters
 </button>
@@ -150,12 +158,12 @@ const backdropSelector = `#${backdropId}`;
   </form>
   <div>{slot}</div>
 </div>
-  <div class="filter-drawer-backdrop" id={backdropId}></div>
-  <script
-    data-toggle-selector={toggleSelector}
-    data-drawer-selector={drawerSelector}
-    data-backdrop-selector={backdropSelector}
-  >
+<div class="filter-drawer-backdrop" id={backdropId}></div>
+<script
+  data-toggle-selector={toggleSelector}
+  data-drawer-selector={drawerSelector}
+  data-backdrop-selector={backdropSelector}
+>
   (() => {
     const script = document.currentScript;
     const potentialRoot =
